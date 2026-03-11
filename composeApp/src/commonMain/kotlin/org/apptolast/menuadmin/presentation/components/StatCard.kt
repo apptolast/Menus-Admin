@@ -38,8 +38,8 @@ fun StatCard(
     value: String,
     icon: ImageVector,
     iconTint: Color,
-    changeText: String,
-    changeColor: Color,
+    changeText: String? = null,
+    changeColor: Color = Green500,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -88,18 +88,20 @@ fun StatCard(
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                 )
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(changeColor.copy(alpha = 0.1f))
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                ) {
-                    Text(
-                        text = changeText,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = changeColor,
-                    )
+                if (changeText != null) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(changeColor.copy(alpha = 0.1f))
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                    ) {
+                        Text(
+                            text = changeText,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = changeColor,
+                        )
+                    }
                 }
             }
         }

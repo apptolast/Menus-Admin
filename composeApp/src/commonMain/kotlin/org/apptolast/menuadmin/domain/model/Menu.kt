@@ -7,11 +7,17 @@ import kotlin.time.Instant
 data class Menu(
     val id: String,
     val name: String,
-    val companyName: String,
+    val description: String = "",
+    val displayOrder: Int = 0,
+    val sections: List<Section> = emptyList(),
+    val archived: Boolean = false,
+    // Flattened dishes from all sections (for backward compatibility)
     val dishes: List<Dish> = emptyList(),
+    // Legacy fields (used by mock data)
+    val companyName: String = "",
     val isActive: Boolean = true,
-    val createdAt: Instant,
-    val updatedAt: Instant,
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
 )
 
 @Serializable
@@ -20,11 +26,16 @@ data class Dish(
     val name: String,
     val description: String = "",
     val price: Double = 0.0,
-    val category: DishCategory = DishCategory.ENTRANTE,
-    val ingredients: List<String> = emptyList(),
+    val sectionId: String = "",
     val allergens: Set<AllergenType> = emptySet(),
+    val dishAllergens: List<DishAllergen> = emptyList(),
+    val safetyLevel: SafetyLevel? = null,
+    val matchedAllergens: List<String> = emptyList(),
     val imageUrl: String? = null,
     val isAvailable: Boolean = true,
+    // Legacy fields (used by mock data)
+    val category: DishCategory = DishCategory.ENTRANTE,
+    val ingredients: List<String> = emptyList(),
 )
 
 @Serializable

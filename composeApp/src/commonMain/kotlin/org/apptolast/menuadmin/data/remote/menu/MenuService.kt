@@ -1,0 +1,63 @@
+package org.apptolast.menuadmin.data.remote.menu
+
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import org.apptolast.menuadmin.data.remote.ApiConstants
+
+class MenuService(
+    private val client: HttpClient,
+) {
+    // Menus
+    suspend fun getMenus(archived: Boolean = false): List<MenuResponseDto> =
+        client.get(ApiConstants.ADMIN_MENUS) {
+            parameter("archived", archived)
+        }.body()
+
+    suspend fun createMenu(request: MenuRequestDto): MenuResponseDto =
+        client.post(ApiConstants.ADMIN_MENUS) {
+            setBody(request)
+        }.body()
+
+    suspend fun updateMenu(
+        id: String,
+        request: MenuRequestDto,
+    ): MenuResponseDto =
+        client.put("${ApiConstants.ADMIN_MENUS}/$id") {
+            setBody(request)
+        }.body()
+
+    suspend fun archiveMenu(id: String) {
+        client.delete("${ApiConstants.ADMIN_MENUS}/$id")
+    }
+
+    // Sections
+    suspend fun createSection(
+        menuId: String,
+        request: SectionRequestDto,
+    ): SectionResponseDto =
+        client.post("${ApiConstants.ADMIN_MENUS}/$menuId/sections") {
+            setBody(request)
+        }.body()
+
+    suspend fun updateSection(
+        menuId: String,
+        sectionId: String,
+        request: SectionRequestDto,
+    ): SectionResponseDto =
+        client.put("${ApiConstants.ADMIN_MENUS}/$menuId/sections/$sectionId") {
+            setBody(request)
+        }.body()
+
+    suspend fun deleteSection(
+        menuId: String,
+        sectionId: String,
+    ) {
+        client.delete("${ApiConstants.ADMIN_MENUS}/$menuId/sections/$sectionId")
+    }
+}

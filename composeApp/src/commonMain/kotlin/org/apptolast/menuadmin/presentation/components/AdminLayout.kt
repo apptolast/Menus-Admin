@@ -19,6 +19,7 @@ import org.apptolast.menuadmin.navigation.CartaDigitalRoute
 import org.apptolast.menuadmin.navigation.DashboardRoute
 import org.apptolast.menuadmin.navigation.IngredientsRoute
 import org.apptolast.menuadmin.navigation.MenusRoute
+import org.apptolast.menuadmin.navigation.ProfileRoute
 import org.apptolast.menuadmin.navigation.RecipesRoute
 import org.apptolast.menuadmin.navigation.SettingsRoute
 import org.apptolast.menuadmin.presentation.screens.backup.BackupRestoreScreen
@@ -26,6 +27,7 @@ import org.apptolast.menuadmin.presentation.screens.cartadigital.CartaDigitalScr
 import org.apptolast.menuadmin.presentation.screens.dashboard.DashboardScreen
 import org.apptolast.menuadmin.presentation.screens.ingredients.IngredientsScreen
 import org.apptolast.menuadmin.presentation.screens.menus.MenusScreen
+import org.apptolast.menuadmin.presentation.screens.profile.ProfileScreen
 import org.apptolast.menuadmin.presentation.screens.recipes.RecipesScreen
 import org.apptolast.menuadmin.presentation.screens.settings.SettingsScreen
 import org.apptolast.menuadmin.presentation.theme.BgSecondary
@@ -33,6 +35,7 @@ import org.apptolast.menuadmin.presentation.theme.BgSecondary
 @Composable
 fun AdminLayout(
     navController: NavHostController,
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -50,6 +53,7 @@ fun AdminLayout(
                     restoreState = true
                 }
             },
+            onLogout = onLogout,
             modifier = Modifier
                 .width(260.dp)
                 .fillMaxHeight(),
@@ -85,6 +89,9 @@ fun AdminLayout(
                 }
                 composable<BackupRestoreRoute> {
                     BackupRestoreScreen()
+                }
+                composable<ProfileRoute> {
+                    ProfileScreen(onAccountDeleted = onLogout)
                 }
             }
         }

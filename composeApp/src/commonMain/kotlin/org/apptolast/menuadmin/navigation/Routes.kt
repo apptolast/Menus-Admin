@@ -3,6 +3,9 @@ package org.apptolast.menuadmin.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
+object LoginRoute
+
+@Serializable
 object DashboardRoute
 
 @Serializable
@@ -27,3 +30,6 @@ object SettingsRoute
 
 @Serializable
 object BackupRestoreRoute
+
+@Serializable
+object ProfileRoute

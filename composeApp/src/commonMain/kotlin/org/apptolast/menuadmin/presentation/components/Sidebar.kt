@@ -16,9 +16,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Book
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.Settings
@@ -40,6 +42,7 @@ import org.apptolast.menuadmin.navigation.CartaDigitalRoute
 import org.apptolast.menuadmin.navigation.DashboardRoute
 import org.apptolast.menuadmin.navigation.IngredientsRoute
 import org.apptolast.menuadmin.navigation.MenusRoute
+import org.apptolast.menuadmin.navigation.ProfileRoute
 import org.apptolast.menuadmin.navigation.RecipesRoute
 import org.apptolast.menuadmin.navigation.SettingsRoute
 import org.apptolast.menuadmin.presentation.theme.Blue500
@@ -53,6 +56,7 @@ import org.apptolast.menuadmin.presentation.theme.TextWhite
 fun Sidebar(
     currentRoute: String?,
     onNavigate: (Any) -> Unit,
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -163,6 +167,33 @@ fun Sidebar(
             isSelected = currentRoute == SettingsRoute::class.qualifiedName,
             onClick = { onNavigate(SettingsRoute) },
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Section: CUENTA
+        SectionHeader(title = "CUENTA")
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        NavItem(
+            icon = Icons.Outlined.Person,
+            label = "Mi Perfil",
+            isSelected = currentRoute == ProfileRoute::class.qualifiedName,
+            onClick = { onNavigate(ProfileRoute) },
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        HorizontalDivider(color = SidebarDarkSurface)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        NavItem(
+            icon = Icons.AutoMirrored.Outlined.Logout,
+            label = "Cerrar sesión",
+            isSelected = false,
+            onClick = onLogout,
+        )
     }
 }
 
@@ -190,6 +221,7 @@ private fun SidebarPreview() {
         Sidebar(
             currentRoute = null,
             onNavigate = {},
+            onLogout = {},
         )
     }
 }

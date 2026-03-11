@@ -1,0 +1,34 @@
+package org.apptolast.menuadmin.data.remote.menu
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class MenuResponseDto(
+    val id: String,
+    val name: String,
+    val description: String = "",
+    val displayOrder: Int = 0,
+    val sections: List<SectionResponseDto> = emptyList(),
+    val updatedAt: String? = null,
+    val archived: Boolean = false,
+)
+
+@Serializable
+data class SectionResponseDto(
+    val id: String,
+    val name: String,
+    val displayOrder: Int = 0,
+)
+
+@Serializable
+data class MenuRequestDto(
+    val name: String,
+    val description: String? = null,
+    val displayOrder: Int? = null,
+)
+
+@Serializable
+data class SectionRequestDto(
+    val name: String,
+    val displayOrder: Int? = null,
+)
