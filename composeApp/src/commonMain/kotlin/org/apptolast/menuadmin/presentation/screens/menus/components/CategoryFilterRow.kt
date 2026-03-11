@@ -1,0 +1,94 @@
+package org.apptolast.menuadmin.presentation.screens.menus.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.apptolast.menuadmin.domain.model.DishCategory
+import org.apptolast.menuadmin.presentation.theme.Blue500
+import org.apptolast.menuadmin.presentation.theme.BorderLight
+import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
+import org.apptolast.menuadmin.presentation.theme.TextPrimary
+import org.apptolast.menuadmin.presentation.theme.TextWhite
+
+@Composable
+fun CategoryFilterRow(
+    selectedCategory: DishCategory?,
+    onCategorySelected: (DishCategory?) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        // "Todos" chip
+        FilterChip(
+            selected = selectedCategory == null,
+            onClick = { onCategorySelected(null) },
+            label = {
+                Text(
+                    text = "Todos",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+            },
+            colors = FilterChipDefaults.filterChipColors(
+                selectedContainerColor = Blue500,
+                selectedLabelColor = TextWhite,
+                containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                labelColor = TextPrimary,
+            ),
+            border = FilterChipDefaults.filterChipBorder(
+                borderColor = BorderLight,
+                selectedBorderColor = Blue500,
+                enabled = true,
+                selected = selectedCategory == null,
+            ),
+        )
+
+        DishCategory.entries.forEach { category ->
+            FilterChip(
+                selected = selectedCategory == category,
+                onClick = { onCategorySelected(category) },
+                label = {
+                    Text(
+                        text = category.labelEs,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = Blue500,
+                    selectedLabelColor = TextWhite,
+                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    labelColor = TextPrimary,
+                ),
+                border = FilterChipDefaults.filterChipBorder(
+                    borderColor = BorderLight,
+                    selectedBorderColor = Blue500,
+                    enabled = true,
+                    selected = selectedCategory == category,
+                ),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun CategoryFilterRowPreview() {
+    MenuAdminTheme {
+        CategoryFilterRow(
+            selectedCategory = DishCategory.ENTRANTE,
+            onCategorySelected = {},
+        )
+    }
+}

@@ -1,0 +1,586 @@
+package org.apptolast.menuadmin.presentation.screens.ingredients
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.outlined.CameraAlt
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedAssistChip
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.apptolast.menuadmin.domain.model.AllergenType
+import org.apptolast.menuadmin.domain.model.Ingredient
+import org.apptolast.menuadmin.presentation.components.AllergenBadge
+import org.apptolast.menuadmin.presentation.components.LucideIcon
+import org.apptolast.menuadmin.presentation.components.SearchBar
+import org.apptolast.menuadmin.presentation.screens.ingredients.components.AllergenSelector
+import org.apptolast.menuadmin.presentation.theme.BgCard
+import org.apptolast.menuadmin.presentation.theme.Blue500
+import org.apptolast.menuadmin.presentation.theme.Blue600
+import org.apptolast.menuadmin.presentation.theme.BorderLight
+import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
+import org.apptolast.menuadmin.presentation.theme.Red500
+import org.apptolast.menuadmin.presentation.theme.TextPrimary
+import org.apptolast.menuadmin.presentation.theme.TextSecondary
+import org.apptolast.menuadmin.presentation.theme.TextWhite
+import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.Clock
+
+@Composable
+fun IngredientsScreen(viewModel: IngredientsViewModel = koinViewModel()) {
+    val uiState by viewModel.uiState.collectAsState()
+    IngredientsContent(
+        uiState = uiState,
+        onNewIngredient = viewModel::onNewIngredient,
+        onDismissEditor = viewModel::onDismissEditor,
+        onFormLabelInfoChange = viewModel::onFormLabelInfoChange,
+        onFormNameChange = viewModel::onFormNameChange,
+        onFormBrandChange = viewModel::onFormBrandChange,
+        onFormDescriptionChange = viewModel::onFormDescriptionChange,
+        onToggleAllergen = viewModel::onToggleAllergen,
+        onSaveIngredient = viewModel::onSaveIngredient,
+        onDeleteIngredient = viewModel::onDeleteIngredient,
+        onSearchQueryChange = viewModel::onSearchQueryChange,
+        onEditIngredient = viewModel::onEditIngredient,
+        onToggleAllergenFilter = viewModel::onToggleAllergenFilter,
+        onClearAllergenFilters = viewModel::onClearAllergenFilters,
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun IngredientsContent(
+    uiState: IngredientsUiState,
+    onNewIngredient: () -> Unit,
+    onDismissEditor: () -> Unit,
+    onFormLabelInfoChange: (String) -> Unit,
+    onFormNameChange: (String) -> Unit,
+    onFormBrandChange: (String) -> Unit,
+    onFormDescriptionChange: (String) -> Unit,
+    onToggleAllergen: (AllergenType) -> Unit,
+    onSaveIngredient: () -> Unit,
+    onDeleteIngredient: (String) -> Unit,
+    onSearchQueryChange: (String) -> Unit,
+    onEditIngredient: (Ingredient) -> Unit,
+    onToggleAllergenFilter: (AllergenType) -> Unit,
+    onClearAllergenFilters: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (uiState.isLoading) {
+        CircularProgressIndicator()
+        return
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                if (uiState.isEditing) {
+                    IconButton(onClick = onDismissEditor) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = TextPrimary,
+                        )
+                    }
+                }
+                Column {
+                    Text(
+                        text = "Maestro de Ingredientes",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
+                    )
+                    Text(
+                        text = if (uiState.isEditing) {
+                            "Analiza etiquetas y registra materias primas"
+                        } else {
+                            "Gestiona los ingredientes y sus alergenos"
+                        },
+                        fontSize = 14.sp,
+                        color = TextSecondary,
+                    )
+                }
+            }
+            if (!uiState.isEditing) {
+                Button(
+                    onClick = onNewIngredient,
+                    colors = ButtonDefaults.buttonColors(containerColor = Blue500),
+                    shape = RoundedCornerShape(8.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Nuevo",
+                        tint = TextWhite,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Nuevo Ingrediente",
+                        color = TextWhite,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+        }
+
+        if (uiState.isEditing) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                // Label Scanner Section
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            width = 1.dp,
+                            color = BorderLight,
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(BgCard)
+                        .padding(16.dp),
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Text(
+                            text = "Escanear Etiqueta (OCR) o Pegar Texto",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Blue500,
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.Top,
+                        ) {
+                            OutlinedTextField(
+                                value = uiState.formLabelInfo,
+                                onValueChange = onFormLabelInfoChange,
+                                placeholder = {
+                                    Text("Sube una foto o pega aqui el texto de la etiqueta..")
+                                },
+                                modifier = Modifier.weight(1f).height(100.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Blue500,
+                                    unfocusedBorderColor = BorderLight,
+                                ),
+                            )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                OutlinedButton(
+                                    onClick = { /* Upload photo */ },
+                                    shape = RoundedCornerShape(8.dp),
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.CameraAlt,
+                                        contentDescription = "Subir Foto",
+                                        modifier = Modifier.size(16.dp),
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("Subir Foto")
+                                }
+                                Button(
+                                    onClick = { /* Analyze */ },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Blue600,
+                                    ),
+                                    shape = RoundedCornerShape(8.dp),
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Search,
+                                        contentDescription = "Analizar",
+                                        tint = TextWhite,
+                                        modifier = Modifier.size(16.dp),
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("Analizar", color = TextWhite)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Form Fields - Name and Brand side by side
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    OutlinedTextField(
+                        value = uiState.formName,
+                        onValueChange = onFormNameChange,
+                        label = { Text("Nombre del Producto") },
+                        placeholder = { Text("Ej. Salsa de Soja Kikkoman") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Blue500,
+                            unfocusedBorderColor = BorderLight,
+                        ),
+                    )
+                    OutlinedTextField(
+                        value = uiState.formBrand,
+                        onValueChange = onFormBrandChange,
+                        label = { Text("Marca / Proveedor") },
+                        placeholder = { Text("Ej. Kikkoman") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Blue500,
+                            unfocusedBorderColor = BorderLight,
+                        ),
+                    )
+                }
+
+                // Allergen Selector
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        text = "Marcar Alergenos Contenidos (Click para activar)",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextPrimary,
+                    )
+                    AllergenSelector(
+                        selectedAllergens = uiState.formAllergens,
+                        onToggle = onToggleAllergen,
+                    )
+                }
+
+                // Action Buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (uiState.editingIngredient != null) {
+                        OutlinedButton(
+                            onClick = {
+                                onDeleteIngredient(uiState.editingIngredient.id)
+                            },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Red500,
+                            ),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                Red500,
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Eliminar",
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.width(1.dp))
+                    }
+                    Button(
+                        onClick = onSaveIngredient,
+                        colors = ButtonDefaults.buttonColors(containerColor = Blue500),
+                        shape = RoundedCornerShape(8.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Save,
+                            contentDescription = null,
+                            tint = TextWhite,
+                            modifier = Modifier.size(18.dp),
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Guardar Ingrediente",
+                            color = TextWhite,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+                }
+            }
+        } else {
+            // Search bar
+            SearchBar(
+                query = uiState.searchQuery,
+                onQueryChange = onSearchQueryChange,
+                placeholder = "Buscar ingredientes...",
+            )
+
+            // Allergen filter chips
+            AllergenFilterBar(
+                selectedFilters = uiState.filterAllergens,
+                onToggleFilter = onToggleAllergenFilter,
+                onClearFilters = onClearAllergenFilters,
+            )
+
+            // Grid of ingredient cards
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 220.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                items(
+                    items = uiState.ingredients,
+                    key = { it.id },
+                ) { ingredient ->
+                    IngredientCard(
+                        ingredient = ingredient,
+                        onClick = { onEditIngredient(ingredient) },
+                    )
+                }
+            }
+        }
+
+        // Error display
+        uiState.error?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AllergenFilterBar(
+    selectedFilters: Set<AllergenType>,
+    onToggleFilter: (AllergenType) -> Unit,
+    onClearFilters: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (selectedFilters.isNotEmpty()) {
+            ElevatedAssistChip(
+                onClick = onClearFilters,
+                label = {
+                    Text(
+                        text = "Limpiar filtros",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Limpiar",
+                        modifier = Modifier.size(16.dp),
+                        tint = Red500,
+                    )
+                },
+                colors = AssistChipDefaults.elevatedAssistChipColors(
+                    labelColor = Red500,
+                ),
+            )
+        }
+        AllergenType.entries.forEach { allergen ->
+            val isSelected = allergen in selectedFilters
+            FilterChip(
+                selected = isSelected,
+                onClick = { onToggleFilter(allergen) },
+                label = {
+                    Text(
+                        text = allergen.nameEs,
+                        fontSize = 12.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                    )
+                },
+                leadingIcon = {
+                    LucideIcon(
+                        codepoint = allergen.icon,
+                        size = 16.sp,
+                        color = if (isSelected) allergen.color else TextSecondary,
+                    )
+                },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = allergen.color.copy(alpha = 0.15f),
+                    selectedLabelColor = allergen.color,
+                ),
+                border = FilterChipDefaults.filterChipBorder(
+                    enabled = true,
+                    selected = isSelected,
+                    borderColor = BorderLight,
+                    selectedBorderColor = allergen.color,
+                ),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun IngredientCard(
+    ingredient: Ingredient,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val shape = RoundedCornerShape(12.dp)
+    Column(
+        modifier = modifier
+            .clip(shape)
+            .border(width = 1.dp, color = BorderLight, shape = shape)
+            .background(BgCard)
+            .clickable(onClick = onClick)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = ingredient.name,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = TextPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (ingredient.brand.isNotBlank()) {
+            Text(
+                text = ingredient.brand,
+                fontSize = 13.sp,
+                color = TextSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        if (ingredient.allergens.isNotEmpty()) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                ingredient.allergens.forEach { allergen ->
+                    AllergenBadge(
+                        allergenType = allergen,
+                        isActive = true,
+                    )
+                }
+            }
+        } else {
+            Text(
+                text = "Sin alergenos",
+                fontSize = 12.sp,
+                color = TextSecondary,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun IngredientsContentPreview() {
+    MenuAdminTheme {
+        IngredientsContent(
+            uiState = IngredientsUiState(
+                isLoading = false,
+                ingredients = listOf(
+                    Ingredient(
+                        id = "1",
+                        name = "Harina de trigo",
+                        brand = "Harinera La Meta",
+                        allergens = setOf(AllergenType.GLUTEN),
+                        createdAt = Clock.System.now(),
+                        updatedAt = Clock.System.now(),
+                    ),
+                    Ingredient(
+                        id = "2",
+                        name = "Leche entera",
+                        brand = "Central Lechera",
+                        allergens = setOf(AllergenType.DAIRY),
+                        createdAt = Clock.System.now(),
+                        updatedAt = Clock.System.now(),
+                    ),
+                ),
+            ),
+            onNewIngredient = {},
+            onDismissEditor = {},
+            onFormLabelInfoChange = {},
+            onFormNameChange = {},
+            onFormBrandChange = {},
+            onFormDescriptionChange = {},
+            onToggleAllergen = {},
+            onSaveIngredient = {},
+            onDeleteIngredient = {},
+            onSearchQueryChange = {},
+            onEditIngredient = {},
+            onToggleAllergenFilter = {},
+            onClearAllergenFilters = {},
+        )
+    }
+}

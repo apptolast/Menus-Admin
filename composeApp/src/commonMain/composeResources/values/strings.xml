@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">AllergenGuard</string>
+    <string name="app_subtitle">Restaurant Allergen Management</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_ingredients">Ingredients</string>
+    <string name="nav_recipes">Recipes</string>
+    <string name="nav_menus">Menus</string>
+    <string name="nav_carta_digital">Digital Menu</string>
+    <string name="nav_sync">Sync</string>
+    <string name="nav_backup">Backup / Restore</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_section_main">MAIN MENU</string>
+    <string name="nav_section_tools">TOOLS</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="dashboard_subtitle">Welcome back, here is a summary of your activity</string>
+    <string name="dashboard_total_ingredients">Total Ingredients</string>
+    <string name="dashboard_active_recipes">Active Recipes</string>
+    <string name="dashboard_total_menus">Menus Created</string>
+    <string name="dashboard_associated_companies">Associated Companies</string>
+    <string name="dashboard_recent_activity">Recent Activity</string>
+    <string name="dashboard_view_all">View All</string>
+    <string name="dashboard_common_allergens">Most Common Allergens</string>
+
+    <!-- Ingredients -->
+    <string name="ingredients_title">Ingredient Master</string>
+    <string name="ingredients_subtitle">Manage ingredients and their allergens</string>
+    <string name="ingredients_new">New Ingredient</string>
+    <string name="ingredients_search">Search ingredients...</string>
+    <string name="ingredients_scan_label">Scan Label (OCR) or Paste Text</string>
+    <string name="ingredients_paste_hint">Paste label text here...</string>
+    <string name="ingredients_upload_photo">Upload Photo</string>
+    <string name="ingredients_analyze">Analyze</string>
+    <string name="ingredients_mark_allergens">Mark Detected Allergens (Click to activate)</string>
+    <string name="ingredients_save">Save Ingredient</string>
+    <string name="ingredients_delete">Delete Ingredient</string>
+
+    <!-- Form fields -->
+    <string name="field_name">Name</string>
+    <string name="field_brand">Brand</string>
+    <string name="field_description">Description</string>
+    <string name="field_category">Category</string>
+    <string name="field_quantity">Quantity</string>
+    <string name="field_unit">Unit</string>
+
+    <!-- Recipes -->
+    <string name="recipes_title">Recipes &amp; Sub-elaborations</string>
+    <string name="recipes_subtitle">Manage your recipes and their ingredients</string>
+    <string name="recipes_new">New Recipe</string>
+    <string name="recipes_search">Search recipes...</string>
+    <string name="recipes_ingredients_count">%d ingredients</string>
+
+    <!-- Menus -->
+    <string name="menus_title">Menus</string>
+    <string name="menus_subtitle">Manage menus and their allergens</string>
+    <string name="menus_new">New Menu</string>
+    <string name="menus_allergen_matrix">Allergen Menu</string>
+    <string name="menus_dishes_count">%d dishes</string>
+    <string name="menus_export_pdf">Export PDF</string>
+    <string name="menus_export_json">Export JSON</string>
+    <string name="menus_generate_adapted">Generate Adapted Menu (Free of...): Select a category and check the allergen table for each dish.</string>
+    <string name="menus_product_dish">PRODUCT / DISH</string>
+    <string name="menus_filter_all">All</string>
+
+    <!-- Carta Digital -->
+    <string name="carta_title">Interactive Digital Menu</string>
+    <string name="carta_subtitle">Filter dishes based on customer allergies</string>
+    <string name="carta_question">What is the customer allergic to?</string>
+    <string name="carta_clear">Clear selection</string>
+    <string name="carta_safe_dishes">Safe Dishes</string>
+    <string name="carta_unsafe_dishes">Dishes with Allergens</string>
+    <string name="carta_safe_count">%1$d Safe Dishes out of %2$d total</string>
+    <string name="carta_all_dishes">All dishes (%d)</string>
+
+    <!-- Allergens -->
+    <string name="allergen_gluten">Gluten</string>
+    <string name="allergen_crustaceans">Crustaceans</string>
+    <string name="allergen_eggs">Eggs</string>
+    <string name="allergen_fish">Fish</string>
+    <string name="allergen_peanuts">Peanuts</string>
+    <string name="allergen_soy">Soy</string>
+    <string name="allergen_dairy">Dairy</string>
+    <string name="allergen_tree_nuts">Tree Nuts</string>
+    <string name="allergen_celery">Celery</string>
+    <string name="allergen_mustard">Mustard</string>
+    <string name="allergen_sesame">Sesame</string>
+    <string name="allergen_sulfites">Sulfites</string>
+    <string name="allergen_lupins">Lupins</string>
+    <string name="allergen_mollusks">Mollusks</string>
+
+    <!-- Dish Categories -->
+    <string name="category_starter">Starter</string>
+    <string name="category_side">Side</string>
+    <string name="category_rice">Rice</string>
+    <string name="category_desserts">Desserts</string>
+    <string name="category_combos">Combos</string>
+    <string name="category_drinks">Drinks</string>
+
+    <!-- Actions -->
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_search">Search</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_back">Back</string>
+    <string name="action_add">Add</string>
+
+    <!-- Time -->
+    <string name="time_minutes_ago">%d min ago</string>
+    <string name="time_hours_ago">%d h ago</string>
+    <string name="time_yesterday">Yesterday</string>
+    <string name="time_days_ago">%d days ago</string>
+
+    <!-- Errors -->
+    <string name="error_loading">Error loading data</string>
+    <string name="error_saving">Error saving</string>
+    <string name="error_deleting">Error deleting</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+
+    <!-- Backup -->
+    <string name="backup_title">Backup / Restore</string>
+    <string name="backup_export">Export Data (JSON)</string>
+    <string name="backup_import">Import Data (JSON)</string>
+    <string name="backup_last_export">Last export</string>
+</resources>
