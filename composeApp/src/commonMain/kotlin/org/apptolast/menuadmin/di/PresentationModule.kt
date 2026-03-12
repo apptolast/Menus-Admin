@@ -8,6 +8,8 @@ import org.apptolast.menuadmin.presentation.screens.ingredients.IngredientsViewM
 import org.apptolast.menuadmin.presentation.screens.menus.MenusViewModel
 import org.apptolast.menuadmin.presentation.screens.profile.ProfileViewModel
 import org.apptolast.menuadmin.presentation.screens.recipes.RecipesViewModel
+import org.apptolast.menuadmin.presentation.screens.restaurants.RestaurantsListViewModel
+import org.apptolast.menuadmin.presentation.screens.restaurants.detail.RestaurantDetailViewModel
 import org.apptolast.menuadmin.presentation.screens.settings.SettingsViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -22,4 +24,6 @@ val presentationModule = module {
     viewModelOf(::BackupViewModel)
     viewModelOf(::SettingsViewModel)
     viewModelOf(::ProfileViewModel)
+    viewModelOf(::RestaurantsListViewModel)
+    viewModelOf(::RestaurantDetailViewModel)
 }

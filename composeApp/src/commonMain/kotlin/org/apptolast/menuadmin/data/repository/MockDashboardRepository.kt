@@ -30,14 +30,14 @@ class MockDashboardRepository(
                 }
             }
 
-            // Count distinct company names
-            val associatedCompanies = menus.map { it.companyName }.distinct().size
+            // Count distinct company names as restaurants
+            val totalRestaurants = menus.map { it.companyName }.distinct().size
 
             DashboardStats(
                 totalIngredients = ingredients.size,
                 activeRecipes = recipes.count { it.isActive },
                 totalMenus = menus.size,
-                associatedCompanies = associatedCompanies,
+                totalRestaurants = totalRestaurants,
                 recentActivity = MockDataProvider.recentActivity.sortedByDescending { it.timestamp },
                 allergenFrequency = allergenFrequency.toMap(),
             )

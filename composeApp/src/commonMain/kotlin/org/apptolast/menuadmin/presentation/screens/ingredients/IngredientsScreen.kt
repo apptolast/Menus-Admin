@@ -81,11 +81,13 @@ fun IngredientsScreen(viewModel: IngredientsViewModel = koinViewModel()) {
         uiState = uiState,
         onNewIngredient = viewModel::onNewIngredient,
         onDismissEditor = viewModel::onDismissEditor,
-        onFormLabelInfoChange = viewModel::onFormLabelInfoChange,
+        onFormOcrRawTextChange = viewModel::onFormOcrRawTextChange,
         onFormNameChange = viewModel::onFormNameChange,
         onFormBrandChange = viewModel::onFormBrandChange,
-        onFormDescriptionChange = viewModel::onFormDescriptionChange,
+        onFormSupplierChange = viewModel::onFormSupplierChange,
+        onFormNotesChange = viewModel::onFormNotesChange,
         onToggleAllergen = viewModel::onToggleAllergen,
+        onToggleTrace = viewModel::onToggleTrace,
         onSaveIngredient = viewModel::onSaveIngredient,
         onDeleteIngredient = viewModel::onDeleteIngredient,
         onSearchQueryChange = viewModel::onSearchQueryChange,
@@ -101,11 +103,13 @@ fun IngredientsContent(
     uiState: IngredientsUiState,
     onNewIngredient: () -> Unit,
     onDismissEditor: () -> Unit,
-    onFormLabelInfoChange: (String) -> Unit,
+    onFormOcrRawTextChange: (String) -> Unit,
     onFormNameChange: (String) -> Unit,
     onFormBrandChange: (String) -> Unit,
-    onFormDescriptionChange: (String) -> Unit,
+    onFormSupplierChange: (String) -> Unit,
+    onFormNotesChange: (String) -> Unit,
     onToggleAllergen: (AllergenType) -> Unit,
+    onToggleTrace: (AllergenType) -> Unit,
     onSaveIngredient: () -> Unit,
     onDeleteIngredient: (String) -> Unit,
     onSearchQueryChange: (String) -> Unit,
@@ -191,7 +195,7 @@ fun IngredientsContent(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                // Label Scanner Section
+                // Label Scanner Section (OCR)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -219,8 +223,8 @@ fun IngredientsContent(
                             verticalAlignment = Alignment.Top,
                         ) {
                             OutlinedTextField(
-                                value = uiState.formLabelInfo,
-                                onValueChange = onFormLabelInfoChange,
+                                value = uiState.formOcrRawText,
+                                onValueChange = onFormOcrRawTextChange,
                                 placeholder = {
                                     Text("Sube una foto o pega aqui el texto de la etiqueta..")
                                 },
@@ -267,7 +271,7 @@ fun IngredientsContent(
                     }
                 }
 
-                // Form Fields - Name and Brand side by side
+                // Form Fields - Name and Brand
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -288,7 +292,7 @@ fun IngredientsContent(
                     OutlinedTextField(
                         value = uiState.formBrand,
                         onValueChange = onFormBrandChange,
-                        label = { Text("Marca / Proveedor") },
+                        label = { Text("Marca") },
                         placeholder = { Text("Ej. Kikkoman") },
                         singleLine = true,
                         modifier = Modifier.weight(1f),
@@ -300,12 +304,27 @@ fun IngredientsContent(
                     )
                 }
 
+                // Supplier
+                OutlinedTextField(
+                    value = uiState.formSupplier,
+                    onValueChange = onFormSupplierChange,
+                    label = { Text("Proveedor") },
+                    placeholder = { Text("Ej. Distribuciones Garcia S.L.") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Blue500,
+                        unfocusedBorderColor = BorderLight,
+                    ),
+                )
+
                 // Allergen Selector
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text(
-                        text = "Marcar Alergenos Contenidos (Click para activar)",
+                        text = "Alergenos Contenidos (Click para activar)",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary,
@@ -315,6 +334,36 @@ fun IngredientsContent(
                         onToggle = onToggleAllergen,
                     )
                 }
+
+                // Traces Selector
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        text = "Trazas (Puede contener)",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextPrimary,
+                    )
+                    AllergenSelector(
+                        selectedAllergens = uiState.formTraces,
+                        onToggle = onToggleTrace,
+                    )
+                }
+
+                // Notes
+                OutlinedTextField(
+                    value = uiState.formNotes,
+                    onValueChange = onFormNotesChange,
+                    label = { Text("Notas") },
+                    placeholder = { Text("Notas adicionales sobre el ingrediente...") },
+                    modifier = Modifier.fillMaxWidth().height(80.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Blue500,
+                        unfocusedBorderColor = BorderLight,
+                    ),
+                )
 
                 // Action Buttons
                 Row(
@@ -352,15 +401,24 @@ fun IngredientsContent(
                     }
                     Button(
                         onClick = onSaveIngredient,
+                        enabled = !uiState.isSaving && uiState.formName.isNotBlank(),
                         colors = ButtonDefaults.buttonColors(containerColor = Blue500),
                         shape = RoundedCornerShape(8.dp),
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.Save,
-                            contentDescription = null,
-                            tint = TextWhite,
-                            modifier = Modifier.size(18.dp),
-                        )
+                        if (uiState.isSaving) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
+                                color = TextWhite,
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Filled.Save,
+                                contentDescription = null,
+                                tint = TextWhite,
+                                modifier = Modifier.size(18.dp),
+                            )
+                        }
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Guardar Ingrediente",
@@ -570,11 +628,13 @@ private fun IngredientsContentPreview() {
             ),
             onNewIngredient = {},
             onDismissEditor = {},
-            onFormLabelInfoChange = {},
+            onFormOcrRawTextChange = {},
             onFormNameChange = {},
             onFormBrandChange = {},
-            onFormDescriptionChange = {},
+            onFormSupplierChange = {},
+            onFormNotesChange = {},
             onToggleAllergen = {},
+            onToggleTrace = {},
             onSaveIngredient = {},
             onDeleteIngredient = {},
             onSearchQueryChange = {},

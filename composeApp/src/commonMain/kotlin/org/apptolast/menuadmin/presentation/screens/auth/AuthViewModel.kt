@@ -27,6 +27,10 @@ class AuthViewModel(
         _uiState.update { it.copy(acceptTerms = accept) }
     }
 
+    fun onRestaurantNameChange(name: String) {
+        _uiState.update { it.copy(restaurantName = name, error = null) }
+    }
+
     fun onToggleMode() {
         _uiState.update { it.copy(isLoginMode = !it.isLoginMode, error = null) }
     }
@@ -59,6 +63,10 @@ class AuthViewModel(
             _uiState.update { it.copy(error = "Introduce email y contraseña") }
             return
         }
+        if (state.restaurantName.isBlank()) {
+            _uiState.update { it.copy(error = "Introduce el nombre de tu restaurante") }
+            return
+        }
         if (state.password.length < 8) {
             _uiState.update { it.copy(error = "La contraseña debe tener al menos 8 caracteres") }
             return
@@ -70,7 +78,12 @@ class AuthViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                authRepository.register(state.email.trim(), state.password, state.acceptTerms)
+                authRepository.registerRestaurant(
+                    state.email.trim(),
+                    state.password,
+                    state.restaurantName.trim(),
+                    state.acceptTerms,
+                )
                 _uiState.update { it.copy(isLoading = false, isAuthenticated = true) }
             } catch (e: Exception) {
                 _uiState.update {

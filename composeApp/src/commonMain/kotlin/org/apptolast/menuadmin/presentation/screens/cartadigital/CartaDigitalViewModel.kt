@@ -1,5 +1,6 @@
 package org.apptolast.menuadmin.presentation.screens.cartadigital
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,12 +14,15 @@ import org.apptolast.menuadmin.domain.repository.MenuRepository
 
 class CartaDigitalViewModel(
     menuRepository: MenuRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+    private val restaurantId: String = savedStateHandle["restaurantId"] ?: ""
+
     private val _selectedAllergens = MutableStateFlow<Set<AllergenType>>(emptySet())
     private val _selectedMenuId = MutableStateFlow<String?>(null)
 
     val uiState: StateFlow<CartaDigitalUiState> = combine(
-        menuRepository.getAllMenus(),
+        menuRepository.getMenusByRestaurant(restaurantId),
         _selectedAllergens,
         _selectedMenuId,
     ) { menus, allergens, menuId ->

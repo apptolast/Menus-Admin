@@ -6,6 +6,7 @@ import kotlin.time.Instant
 @Serializable
 data class Recipe(
     val id: String,
+    val restaurantId: String = "",
     val name: String,
     val description: String = "",
     val ingredients: List<RecipeIngredient> = emptyList(),

@@ -16,6 +16,15 @@ data class RegisterRequestDto(
 )
 
 @Serializable
+data class RegisterRestaurantRequestDto(
+    val email: String,
+    val password: String,
+    val acceptTerms: Boolean = true,
+    val restaurantName: String,
+    val slug: String? = null,
+)
+
+@Serializable
 data class RefreshTokenRequestDto(
     val refreshToken: String,
 )

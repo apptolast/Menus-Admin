@@ -2,6 +2,7 @@ package org.apptolast.menuadmin.data.remote.mapper
 
 import org.apptolast.menuadmin.data.remote.dish.DishAllergenResponseDto
 import org.apptolast.menuadmin.data.remote.dish.DishResponseDto
+import org.apptolast.menuadmin.data.remote.ingredient.IngredientResponseDto
 import org.apptolast.menuadmin.data.remote.menu.MenuResponseDto
 import org.apptolast.menuadmin.data.remote.menu.SectionResponseDto
 import org.apptolast.menuadmin.data.remote.restaurant.RestaurantResponseDto
@@ -9,10 +10,13 @@ import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.ContainmentLevel
 import org.apptolast.menuadmin.domain.model.Dish
 import org.apptolast.menuadmin.domain.model.DishAllergen
+import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.model.Menu
 import org.apptolast.menuadmin.domain.model.Restaurant
 import org.apptolast.menuadmin.domain.model.SafetyLevel
 import org.apptolast.menuadmin.domain.model.Section
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 fun RestaurantResponseDto.toDomain(): Restaurant =
     Restaurant(
@@ -71,4 +75,21 @@ fun DishAllergenResponseDto.toDomain(): DishAllergen =
         allergenType = AllergenType.fromApiCode(code),
         containmentLevel = ContainmentLevel.fromApi(containmentLevel),
         notes = notes,
+    )
+
+@OptIn(kotlin.time.ExperimentalTime::class)
+fun IngredientResponseDto.toDomain(): Ingredient =
+    Ingredient(
+        id = id,
+        name = name,
+        brand = brand,
+        supplier = supplier,
+        allergens = allergens.mapNotNull { AllergenType.fromApiCode(it) }.toSet(),
+        traces = traces.mapNotNull { AllergenType.fromApiCode(it) }.toSet(),
+        ocrRawText = ocrRawText ?: "",
+        notes = notes ?: "",
+        createdAt = createdAt?.let { runCatching { Instant.parse(it) }.getOrNull() }
+            ?: Clock.System.now(),
+        updatedAt = updatedAt?.let { runCatching { Instant.parse(it) }.getOrNull() }
+            ?: Clock.System.now(),
     )

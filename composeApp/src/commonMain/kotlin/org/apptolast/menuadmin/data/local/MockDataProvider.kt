@@ -9,6 +9,7 @@ import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.model.Menu
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
+import org.apptolast.menuadmin.domain.model.Restaurant
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
@@ -16,246 +17,278 @@ import kotlin.time.Instant
 object MockDataProvider {
     private val now: Instant = Clock.System.now()
 
+    // ── Restaurants ────────────────────────────────────────────────────
+
+    val restaurants: List<Restaurant> = listOf(
+        Restaurant(
+            id = "rest-001",
+            name = "Hotel Palace Barcelona",
+            slug = "hotel-palace-barcelona",
+            description = "Hotel de lujo con restaurante gourmet en el centro de Barcelona",
+            address = "Gran Via de les Corts Catalanes, 668, Barcelona",
+            phone = "+34 935 101 130",
+            active = true,
+        ),
+        Restaurant(
+            id = "rest-002",
+            name = "La Brava Piconera",
+            slug = "la-brava-piconera",
+            description = "Taberna de tapas con especialidad en patatas bravas",
+            address = "Carrer de Casanova, 42, Barcelona",
+            phone = "+34 931 234 567",
+            active = true,
+        ),
+        Restaurant(
+            id = "rest-003",
+            name = "Taberna El Serranito",
+            slug = "taberna-el-serranito",
+            description = "Cocina andaluza tradicional en Barcelona",
+            address = "Carrer de Muntaner, 15, Barcelona",
+            phone = "+34 934 567 890",
+            active = true,
+        ),
+    )
+
     // ── Ingredients ──────────────────────────────────────────────────────
 
     val ingredients: List<Ingredient> = listOf(
         Ingredient(
             id = "ing-001",
             name = "Harina de trigo",
-            description = "Harina de trigo refinada para rebozados y masas",
+            notes = "Harina de trigo refinada para rebozados y masas",
             brand = "Harinera La Meta",
             allergens = setOf(AllergenType.GLUTEN),
-            labelInfo = "Contiene gluten",
+            ocrRawText = "Contiene gluten",
             createdAt = now - 30.days,
             updatedAt = now - 2.days,
         ),
         Ingredient(
             id = "ing-002",
             name = "Gambas",
-            description = "Gambas frescas del Mediterráneo",
+            notes = "Gambas frescas del Mediterráneo",
             brand = "",
             allergens = setOf(AllergenType.CRUSTACEANS),
-            labelInfo = "Contiene crustáceos",
+            ocrRawText = "Contiene crustáceos",
             createdAt = now - 28.days,
             updatedAt = now - 5.days,
         ),
         Ingredient(
             id = "ing-003",
             name = "Leche entera",
-            description = "Leche entera pasteurizada",
+            notes = "Leche entera pasteurizada",
             brand = "Central Lechera",
             allergens = setOf(AllergenType.DAIRY),
-            labelInfo = "Contiene lácteos",
+            ocrRawText = "Contiene lácteos",
             createdAt = now - 30.days,
             updatedAt = now - 1.days,
         ),
         Ingredient(
             id = "ing-004",
             name = "Huevos frescos",
-            description = "Huevos camperos de gallinas en libertad",
+            notes = "Huevos camperos de gallinas en libertad",
             brand = "Granja El Roble",
             allergens = setOf(AllergenType.EGGS),
-            labelInfo = "Contiene huevo",
+            ocrRawText = "Contiene huevo",
             createdAt = now - 30.days,
             updatedAt = now - 3.days,
         ),
         Ingredient(
             id = "ing-005",
             name = "Aceite de cacahuete",
-            description = "Aceite de cacahuete refinado para frituras",
+            notes = "Aceite de cacahuete refinado para frituras",
             brand = "",
             allergens = setOf(AllergenType.PEANUTS),
-            labelInfo = "Contiene cacahuetes",
+            ocrRawText = "Contiene cacahuetes",
             createdAt = now - 25.days,
             updatedAt = now - 10.days,
         ),
         Ingredient(
             id = "ing-006",
             name = "Salsa de soja",
-            description = "Salsa de soja fermentada naturalmente",
+            notes = "Salsa de soja fermentada naturalmente",
             brand = "Kikkoman",
             allergens = setOf(AllergenType.SOY),
-            labelInfo = "Contiene soja",
+            ocrRawText = "Contiene soja",
             createdAt = now - 20.days,
             updatedAt = now - 8.days,
         ),
         Ingredient(
             id = "ing-007",
             name = "Almendras",
-            description = "Almendras marcona peladas",
+            notes = "Almendras marcona peladas",
             brand = "",
             allergens = setOf(AllergenType.TREE_NUTS),
-            labelInfo = "Contiene frutos secos",
+            ocrRawText = "Contiene frutos secos",
             createdAt = now - 30.days,
             updatedAt = now - 4.days,
         ),
         Ingredient(
             id = "ing-008",
             name = "Anchoas",
-            description = "Filetes de anchoa del Cantábrico en aceite de oliva",
+            notes = "Filetes de anchoa del Cantábrico en aceite de oliva",
             brand = "Conservas Ortiz",
             allergens = setOf(AllergenType.FISH),
-            labelInfo = "Contiene pescado",
+            ocrRawText = "Contiene pescado",
             createdAt = now - 22.days,
             updatedAt = now - 7.days,
         ),
         Ingredient(
             id = "ing-009",
             name = "Apio fresco",
-            description = "Apio fresco de huerta",
+            notes = "Apio fresco de huerta",
             brand = "",
             allergens = setOf(AllergenType.CELERY),
-            labelInfo = "Contiene apio",
+            ocrRawText = "Contiene apio",
             createdAt = now - 18.days,
             updatedAt = now - 6.days,
         ),
         Ingredient(
             id = "ing-010",
             name = "Mostaza Dijon",
-            description = "Mostaza de Dijon tradicional",
+            notes = "Mostaza de Dijon tradicional",
             brand = "Maille",
             allergens = setOf(AllergenType.MUSTARD),
-            labelInfo = "Contiene mostaza",
+            ocrRawText = "Contiene mostaza",
             createdAt = now - 15.days,
             updatedAt = now - 5.days,
         ),
         Ingredient(
             id = "ing-011",
             name = "Semillas de sésamo",
-            description = "Semillas de sésamo tostadas",
+            notes = "Semillas de sésamo tostadas",
             brand = "",
             allergens = setOf(AllergenType.SESAME),
-            labelInfo = "Contiene sésamo",
+            ocrRawText = "Contiene sésamo",
             createdAt = now - 14.days,
             updatedAt = now - 3.days,
         ),
         Ingredient(
             id = "ing-012",
             name = "Vino blanco",
-            description = "Vino blanco para cocinar, D.O. Penedés",
+            notes = "Vino blanco para cocinar, D.O. Penedés",
             brand = "Torres",
             allergens = setOf(AllergenType.SULFITES),
-            labelInfo = "Contiene sulfitos",
+            ocrRawText = "Contiene sulfitos",
             createdAt = now - 30.days,
             updatedAt = now - 2.days,
         ),
         Ingredient(
             id = "ing-013",
             name = "Harina de altramuz",
-            description = "Harina de altramuz para rebozados especiales",
+            notes = "Harina de altramuz para rebozados especiales",
             brand = "",
             allergens = setOf(AllergenType.LUPINS),
-            labelInfo = "Contiene altramuces",
+            ocrRawText = "Contiene altramuces",
             createdAt = now - 12.days,
             updatedAt = now - 6.days,
         ),
         Ingredient(
             id = "ing-014",
             name = "Calamares",
-            description = "Calamares frescos de lonja",
+            notes = "Calamares frescos de lonja",
             brand = "",
             allergens = setOf(AllergenType.MOLLUSKS),
-            labelInfo = "Contiene moluscos",
+            ocrRawText = "Contiene moluscos",
             createdAt = now - 28.days,
             updatedAt = now - 4.days,
         ),
         Ingredient(
             id = "ing-015",
             name = "Patatas",
-            description = "Patatas gallegas para freír y cocer",
+            notes = "Patatas gallegas para freír y cocer",
             brand = "",
             allergens = emptySet(),
-            labelInfo = "",
+            ocrRawText = "",
             createdAt = now - 30.days,
             updatedAt = now - 1.days,
         ),
         Ingredient(
             id = "ing-016",
             name = "Tomates",
-            description = "Tomates pera maduros de temporada",
+            notes = "Tomates pera maduros de temporada",
             brand = "",
             allergens = emptySet(),
-            labelInfo = "",
+            ocrRawText = "",
             createdAt = now - 30.days,
             updatedAt = now - 2.days,
         ),
         Ingredient(
             id = "ing-017",
             name = "Cebolla",
-            description = "Cebolla dulce para sofritos",
+            notes = "Cebolla dulce para sofritos",
             brand = "",
             allergens = emptySet(),
-            labelInfo = "",
+            ocrRawText = "",
             createdAt = now - 30.days,
             updatedAt = now - 3.days,
         ),
         Ingredient(
             id = "ing-018",
             name = "Aceite de oliva",
-            description = "Aceite de oliva virgen extra, D.O. Priego de Córdoba",
+            notes = "Aceite de oliva virgen extra, D.O. Priego de Córdoba",
             brand = "Castillo de Canena",
             allergens = emptySet(),
-            labelInfo = "",
+            ocrRawText = "",
             createdAt = now - 30.days,
             updatedAt = now - 1.days,
         ),
         Ingredient(
             id = "ing-019",
             name = "Arroz",
-            description = "Arroz bomba D.O. Valencia",
+            notes = "Arroz bomba D.O. Valencia",
             brand = "La Fallera",
             allergens = emptySet(),
-            labelInfo = "",
+            ocrRawText = "",
             createdAt = now - 30.days,
             updatedAt = now - 5.days,
         ),
         Ingredient(
             id = "ing-020",
             name = "Pollo",
-            description = "Pollo campero entero o troceado",
+            notes = "Pollo campero entero o troceado",
             brand = "",
             allergens = emptySet(),
-            labelInfo = "",
+            ocrRawText = "",
             createdAt = now - 26.days,
             updatedAt = now - 2.days,
         ),
         Ingredient(
             id = "ing-021",
             name = "Carne de ternera",
-            description = "Ternera gallega IGP",
+            notes = "Ternera gallega IGP",
             brand = "",
             allergens = emptySet(),
-            labelInfo = "",
+            ocrRawText = "",
             createdAt = now - 24.days,
             updatedAt = now - 3.days,
         ),
         Ingredient(
             id = "ing-022",
             name = "Butifarra",
-            description = "Butifarra fresca artesana catalana",
+            notes = "Butifarra fresca artesana catalana",
             brand = "Can Duran",
             allergens = emptySet(),
-            labelInfo = "",
+            ocrRawText = "",
             createdAt = now - 20.days,
             updatedAt = now - 4.days,
         ),
         Ingredient(
             id = "ing-023",
             name = "Pimientos",
-            description = "Pimientos del piquillo asados",
+            notes = "Pimientos del piquillo asados",
             brand = "",
             allergens = emptySet(),
-            labelInfo = "",
+            ocrRawText = "",
             createdAt = now - 18.days,
             updatedAt = now - 6.days,
         ),
         Ingredient(
             id = "ing-024",
             name = "Alioli",
-            description = "Alioli casero (ajo, aceite de oliva y huevo)",
+            notes = "Alioli casero (ajo, aceite de oliva y huevo)",
             brand = "",
             allergens = setOf(AllergenType.EGGS),
-            labelInfo = "Contiene huevo",
+            ocrRawText = "Contiene huevo",
             createdAt = now - 16.days,
             updatedAt = now - 2.days,
         ),
@@ -266,6 +299,7 @@ object MockDataProvider {
     val recipes: List<Recipe> = listOf(
         Recipe(
             id = "rec-001",
+            restaurantId = "rest-001",
             name = "Croquetas Ibericas del Puchero",
             description = "Croquetas cremosas con jamon iberico de cebo",
             ingredients = listOf(
@@ -281,6 +315,7 @@ object MockDataProvider {
         ),
         Recipe(
             id = "rec-002",
+            restaurantId = "rest-002",
             name = "Patatas Bravas",
             description = "Patatas fritas con salsa brava picante y alioli casero",
             ingredients = listOf(
@@ -296,6 +331,7 @@ object MockDataProvider {
         ),
         Recipe(
             id = "rec-003",
+            restaurantId = "rest-002",
             name = "Butifarra a la Brasa sobre Papas",
             description = "Butifarra artesana a la brasa con patatas panaderas",
             ingredients = listOf(
@@ -311,6 +347,7 @@ object MockDataProvider {
         ),
         Recipe(
             id = "rec-004",
+            restaurantId = "rest-001",
             name = "Salmorejo de Tomates",
             description = "Salmorejo cordobes tradicional con guarnicion de jamon y huevo",
             ingredients = listOf(
@@ -325,6 +362,7 @@ object MockDataProvider {
         ),
         Recipe(
             id = "rec-005",
+            restaurantId = "rest-002",
             name = "Berenjenas en Tempura",
             description = "Berenjenas crujientes en tempura con miel de cana",
             ingredients = listOf(
@@ -339,6 +377,7 @@ object MockDataProvider {
         ),
         Recipe(
             id = "rec-006",
+            restaurantId = "rest-003",
             name = "Alcachofa Confitada",
             description = "Alcachofas confitadas en aceite de oliva con ajo y perejil",
             ingredients = listOf(
@@ -351,6 +390,7 @@ object MockDataProvider {
         ),
         Recipe(
             id = "rec-007",
+            restaurantId = "rest-001",
             name = "Arroz Caldoso Marinero",
             description = "Arroz caldoso con gambas, calamares y fumet de pescado",
             ingredients = listOf(
@@ -367,6 +407,7 @@ object MockDataProvider {
         ),
         Recipe(
             id = "rec-008",
+            restaurantId = "rest-003",
             name = "Pollo al Ajillo",
             description = "Pollo campero al ajillo con pimientos y vino blanco",
             ingredients = listOf(
@@ -381,6 +422,7 @@ object MockDataProvider {
         ),
         Recipe(
             id = "rec-009",
+            restaurantId = "rest-002",
             name = "Tarta de Almendras",
             description = "Tarta de almendras marcona con toque de limon",
             ingredients = listOf(
@@ -394,6 +436,7 @@ object MockDataProvider {
         ),
         Recipe(
             id = "rec-010",
+            restaurantId = "rest-003",
             name = "Crema Catalana",
             description = "Crema catalana tradicional con costra de caramelo",
             ingredients = listOf(
@@ -412,6 +455,7 @@ object MockDataProvider {
     val menus: List<Menu> = listOf(
         Menu(
             id = "menu-001",
+            restaurantId = "rest-001",
             name = "MENU DE ALMUERZOS",
             companyName = "Hotel Palace Barcelona",
             dishes = listOf(
@@ -462,6 +506,7 @@ object MockDataProvider {
         ),
         Menu(
             id = "menu-002",
+            restaurantId = "rest-002",
             name = "Carta",
             companyName = "La Brava Piconera",
             dishes = listOf(
@@ -512,6 +557,7 @@ object MockDataProvider {
         ),
         Menu(
             id = "menu-003",
+            restaurantId = "rest-003",
             name = "Menu del Dia",
             companyName = "Taberna El Serranito",
             dishes = listOf(

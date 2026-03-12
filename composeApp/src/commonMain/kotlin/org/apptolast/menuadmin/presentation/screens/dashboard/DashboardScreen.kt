@@ -111,8 +111,8 @@ fun DashboardContent(
                 modifier = Modifier.weight(1f),
             )
             StatCard(
-                label = "Mi Restaurante",
-                value = (stats?.associatedCompanies ?: 0).toString(),
+                label = "Restaurantes",
+                value = (stats?.totalRestaurants ?: 0).toString(),
                 icon = Icons.Outlined.Business,
                 iconTint = Red500,
                 modifier = Modifier.weight(1f),
@@ -186,7 +186,7 @@ private fun DashboardContentPreview() {
                     totalIngredients = 127,
                     activeRecipes = 45,
                     totalMenus = 8,
-                    associatedCompanies = 3,
+                    totalRestaurants = 3,
                     recentActivity = emptyList(),
                     allergenFrequency = mapOf(
                         AllergenType.GLUTEN to 42,

@@ -16,7 +16,6 @@ class ProfileViewModel(
     private val consumerService: ConsumerService,
     private val authService: AuthService,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 

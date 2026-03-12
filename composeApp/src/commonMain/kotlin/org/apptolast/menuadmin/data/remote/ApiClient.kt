@@ -34,6 +34,8 @@ fun createHttpClient(
 
         install(Auth) {
             bearer {
+                sendWithoutRequest { true }
+
                 loadTokens {
                     val access = tokenManager.accessToken
                     val refresh = tokenManager.refreshToken

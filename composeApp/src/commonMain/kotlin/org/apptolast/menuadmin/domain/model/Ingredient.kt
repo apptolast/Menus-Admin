@@ -7,10 +7,12 @@ import kotlin.time.Instant
 data class Ingredient(
     val id: String,
     val name: String,
-    val description: String = "",
     val brand: String = "",
+    val supplier: String = "",
     val allergens: Set<AllergenType> = emptySet(),
-    val labelInfo: String = "",
+    val traces: Set<AllergenType> = emptySet(),
+    val ocrRawText: String = "",
+    val notes: String = "",
     val createdAt: Instant,
     val updatedAt: Instant,
 )

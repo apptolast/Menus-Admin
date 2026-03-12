@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import org.apptolast.menuadmin.data.remote.dish.DishService
 import org.apptolast.menuadmin.data.remote.mapper.toDomain
@@ -32,6 +33,21 @@ class RemoteMenuRepository(
                 }
             }
             emitAll(_menus)
+        }
+
+    override fun getMenusByRestaurant(restaurantId: String): Flow<List<Menu>> =
+        flow {
+            if (!hasLoaded) {
+                try {
+                    refreshMenus()
+                } catch (_: Exception) {
+                }
+            }
+            emitAll(
+                _menus.map { menus ->
+                    menus.filter { it.restaurantId == restaurantId }
+                },
+            )
         }
 
     suspend fun refreshMenus() {

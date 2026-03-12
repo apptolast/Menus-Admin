@@ -60,4 +60,30 @@ class MenuService(
     ) {
         client.delete("${ApiConstants.ADMIN_MENUS}/$menuId/sections/$sectionId")
     }
+
+    // Publish
+    suspend fun publishMenu(
+        id: String,
+        request: MenuPublishRequestDto,
+    ): MenuResponseDto =
+        client.put("${ApiConstants.ADMIN_MENUS}/$id/publish") {
+            setBody(request)
+        }.body()
+
+    // Menu-Recipe associations
+    suspend fun addRecipeToMenu(
+        menuId: String,
+        request: MenuRecipeRequestDto,
+    ) {
+        client.post("${ApiConstants.ADMIN_MENUS}/$menuId/recipes") {
+            setBody(request)
+        }
+    }
+
+    suspend fun removeRecipeFromMenu(
+        menuId: String,
+        recipeId: String,
+    ) {
+        client.delete("${ApiConstants.ADMIN_MENUS}/$menuId/recipes/$recipeId")
+    }
 }

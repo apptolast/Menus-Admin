@@ -76,9 +76,12 @@ class IngredientsViewModel(
             editingIngredient = null,
             formName = "",
             formBrand = "",
-            formDescription = "",
-            formLabelInfo = "",
+            formSupplier = "",
+            formOcrRawText = "",
+            formNotes = "",
             formAllergens = emptySet(),
+            formTraces = emptySet(),
+            error = null,
         )
     }
 
@@ -88,21 +91,28 @@ class IngredientsViewModel(
             editingIngredient = ingredient,
             formName = ingredient.name,
             formBrand = ingredient.brand,
-            formDescription = ingredient.description,
-            formLabelInfo = ingredient.labelInfo,
+            formSupplier = ingredient.supplier,
+            formOcrRawText = ingredient.ocrRawText,
+            formNotes = ingredient.notes,
             formAllergens = ingredient.allergens,
+            formTraces = ingredient.traces,
+            error = null,
         )
     }
 
     fun onDismissEditor() {
         _formState.value = _formState.value.copy(
             isEditing = false,
+            isSaving = false,
             editingIngredient = null,
             formName = "",
             formBrand = "",
-            formDescription = "",
-            formLabelInfo = "",
+            formSupplier = "",
+            formOcrRawText = "",
+            formNotes = "",
             formAllergens = emptySet(),
+            formTraces = emptySet(),
+            error = null,
         )
     }
 
@@ -114,12 +124,16 @@ class IngredientsViewModel(
         _formState.value = _formState.value.copy(formBrand = value)
     }
 
-    fun onFormDescriptionChange(value: String) {
-        _formState.value = _formState.value.copy(formDescription = value)
+    fun onFormSupplierChange(value: String) {
+        _formState.value = _formState.value.copy(formSupplier = value)
     }
 
-    fun onFormLabelInfoChange(value: String) {
-        _formState.value = _formState.value.copy(formLabelInfo = value)
+    fun onFormOcrRawTextChange(value: String) {
+        _formState.value = _formState.value.copy(formOcrRawText = value)
+    }
+
+    fun onFormNotesChange(value: String) {
+        _formState.value = _formState.value.copy(formNotes = value)
     }
 
     fun onToggleAllergen(allergen: AllergenType) {
@@ -128,9 +142,16 @@ class IngredientsViewModel(
         _formState.value = _formState.value.copy(formAllergens = updated)
     }
 
+    fun onToggleTrace(allergen: AllergenType) {
+        val current = _formState.value.formTraces
+        val updated = if (allergen in current) current - allergen else current + allergen
+        _formState.value = _formState.value.copy(formTraces = updated)
+    }
+
     @OptIn(ExperimentalUuidApi::class)
     fun onSaveIngredient() {
         viewModelScope.launch {
+            _formState.value = _formState.value.copy(isSaving = true, error = null)
             try {
                 val state = _formState.value
                 val now = Clock.System.now()
@@ -141,9 +162,11 @@ class IngredientsViewModel(
                         existing.copy(
                             name = state.formName,
                             brand = state.formBrand,
-                            description = state.formDescription,
-                            labelInfo = state.formLabelInfo,
+                            supplier = state.formSupplier,
+                            ocrRawText = state.formOcrRawText,
+                            notes = state.formNotes,
                             allergens = state.formAllergens,
+                            traces = state.formTraces,
                             updatedAt = now,
                         ),
                     )
@@ -153,9 +176,11 @@ class IngredientsViewModel(
                             id = Uuid.random().toString(),
                             name = state.formName,
                             brand = state.formBrand,
-                            description = state.formDescription,
-                            labelInfo = state.formLabelInfo,
+                            supplier = state.formSupplier,
+                            ocrRawText = state.formOcrRawText,
+                            notes = state.formNotes,
                             allergens = state.formAllergens,
+                            traces = state.formTraces,
                             createdAt = now,
                             updatedAt = now,
                         ),
@@ -164,6 +189,7 @@ class IngredientsViewModel(
                 onDismissEditor()
             } catch (e: Exception) {
                 _formState.value = _formState.value.copy(
+                    isSaving = false,
                     error = e.message ?: "Error al guardar ingrediente",
                 )
             }
@@ -181,5 +207,9 @@ class IngredientsViewModel(
                 )
             }
         }
+    }
+
+    fun onDismissError() {
+        _formState.value = _formState.value.copy(error = null)
     }
 }

@@ -34,10 +34,9 @@ class MockIngredientRepositoryTest {
             val newIngredient = Ingredient(
                 id = "ing-new",
                 name = "Pimienta negra",
-                description = "Pimienta negra molida",
+                notes = "Pimienta negra molida",
                 brand = "Especias del Sur",
                 allergens = emptySet(),
-                labelInfo = "",
                 createdAt = now,
                 updatedAt = now,
             )

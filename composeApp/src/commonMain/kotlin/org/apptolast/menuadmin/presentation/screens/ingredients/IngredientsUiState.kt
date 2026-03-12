@@ -10,11 +10,14 @@ data class IngredientsUiState(
     val filterAllergens: Set<AllergenType> = emptySet(),
     val isEditing: Boolean = false,
     val editingIngredient: Ingredient? = null,
+    val isSaving: Boolean = false,
     // Form fields
     val formName: String = "",
     val formBrand: String = "",
-    val formDescription: String = "",
-    val formLabelInfo: String = "",
+    val formSupplier: String = "",
+    val formOcrRawText: String = "",
+    val formNotes: String = "",
     val formAllergens: Set<AllergenType> = emptySet(),
+    val formTraces: Set<AllergenType> = emptySet(),
     val error: String? = null,
 )

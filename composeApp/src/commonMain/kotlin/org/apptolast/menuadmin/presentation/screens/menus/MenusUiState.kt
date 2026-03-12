@@ -10,4 +10,8 @@ data class MenusUiState(
     val selectedCategory: DishCategory? = null,
     val searchQuery: String = "",
     val error: String? = null,
+    val isFormVisible: Boolean = false,
+    val formName: String = "",
+    val formDescription: String = "",
+    val isSaving: Boolean = false,
 )

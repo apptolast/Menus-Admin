@@ -32,3 +32,15 @@ data class SectionRequestDto(
     val name: String,
     val displayOrder: Int? = null,
 )
+
+@Serializable
+data class MenuPublishRequestDto(
+    val published: Boolean,
+)
+
+@Serializable
+data class MenuRecipeRequestDto(
+    val recipeId: String,
+    val section: String? = null,
+    val sortOrder: Int? = null,
+)

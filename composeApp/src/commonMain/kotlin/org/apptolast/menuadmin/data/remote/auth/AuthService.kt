@@ -27,6 +27,23 @@ class AuthService(
             setBody(RegisterRequestDto(email = email, password = password, acceptTerms = acceptTerms))
         }.body()
 
+    suspend fun registerRestaurant(
+        email: String,
+        password: String,
+        restaurantName: String,
+        acceptTerms: Boolean = true,
+    ): AuthResponseDto =
+        client.post(ApiConstants.AUTH_REGISTER_RESTAURANT) {
+            setBody(
+                RegisterRestaurantRequestDto(
+                    email = email,
+                    password = password,
+                    restaurantName = restaurantName,
+                    acceptTerms = acceptTerms,
+                ),
+            )
+        }.body()
+
     suspend fun refreshToken(refreshToken: String): AuthResponseDto =
         client.post(ApiConstants.AUTH_REFRESH) {
             setBody(RefreshTokenRequestDto(refreshToken = refreshToken))

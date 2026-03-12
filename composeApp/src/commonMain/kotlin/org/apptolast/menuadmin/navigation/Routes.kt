@@ -12,10 +12,22 @@ object DashboardRoute
 object IngredientsRoute
 
 @Serializable
-object RecipesRoute
+object RestaurantsRoute
 
 @Serializable
-object MenusRoute
+data class RestaurantDetailRoute(
+    val restaurantId: String,
+)
+
+@Serializable
+data class RecipesRoute(
+    val restaurantId: String,
+)
+
+@Serializable
+data class MenusRoute(
+    val restaurantId: String,
+)
 
 @Serializable
 data class AllergenMatrixRoute(
@@ -23,7 +35,9 @@ data class AllergenMatrixRoute(
 )
 
 @Serializable
-object CartaDigitalRoute
+data class CartaDigitalRoute(
+    val restaurantId: String,
+)
 
 @Serializable
 object SettingsRoute

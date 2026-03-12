@@ -77,6 +77,7 @@ fun AuthScreen(
         uiState = uiState,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
+        onRestaurantNameChange = viewModel::onRestaurantNameChange,
         onAcceptTermsChange = viewModel::onAcceptTermsChange,
         onToggleMode = viewModel::onToggleMode,
         onLogin = viewModel::onLogin,
@@ -89,6 +90,7 @@ fun AuthContent(
     uiState: AuthUiState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onRestaurantNameChange: (String) -> Unit,
     onAcceptTermsChange: (Boolean) -> Unit,
     onToggleMode: () -> Unit,
     onLogin: () -> Unit,
@@ -203,6 +205,18 @@ fun AuthContent(
                 shape = RoundedCornerShape(12.dp),
             )
 
+            // Restaurant name (register only)
+            if (!uiState.isLoginMode) {
+                OutlinedTextField(
+                    value = uiState.restaurantName,
+                    onValueChange = onRestaurantNameChange,
+                    label = { Text("Nombre del restaurante") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                )
+            }
+
             // Accept terms (register only)
             if (!uiState.isLoginMode) {
                 Row(
@@ -293,6 +307,7 @@ private fun PreviewAuthScreenLogin() {
             uiState = AuthUiState(isLoginMode = true),
             onEmailChange = {},
             onPasswordChange = {},
+            onRestaurantNameChange = {},
             onAcceptTermsChange = {},
             onToggleMode = {},
             onLogin = {},
@@ -309,6 +324,7 @@ private fun PreviewAuthScreenRegister() {
             uiState = AuthUiState(isLoginMode = false, email = "test@example.com"),
             onEmailChange = {},
             onPasswordChange = {},
+            onRestaurantNameChange = {},
             onAcceptTermsChange = {},
             onToggleMode = {},
             onLogin = {},
@@ -329,6 +345,7 @@ private fun PreviewAuthScreenError() {
             ),
             onEmailChange = {},
             onPasswordChange = {},
+            onRestaurantNameChange = {},
             onAcceptTermsChange = {},
             onToggleMode = {},
             onLogin = {},

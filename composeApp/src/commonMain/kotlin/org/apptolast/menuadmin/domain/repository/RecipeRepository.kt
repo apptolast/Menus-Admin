@@ -6,6 +6,8 @@ import org.apptolast.menuadmin.domain.model.Recipe
 interface RecipeRepository {
     fun getAllRecipes(): Flow<List<Recipe>>
 
+    fun getRecipesByRestaurant(restaurantId: String): Flow<List<Recipe>>
+
     suspend fun getRecipeById(id: String): Recipe?
 
     suspend fun addRecipe(recipe: Recipe): Recipe

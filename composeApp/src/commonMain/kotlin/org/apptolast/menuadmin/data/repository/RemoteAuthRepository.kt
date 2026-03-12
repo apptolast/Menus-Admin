@@ -30,6 +30,17 @@ class RemoteAuthRepository(
         return response
     }
 
+    override suspend fun registerRestaurant(
+        email: String,
+        password: String,
+        restaurantName: String,
+        acceptTerms: Boolean,
+    ): AuthResponseDto {
+        val response = authService.registerRestaurant(email, password, restaurantName, acceptTerms)
+        tokenManager.saveTokens(response.accessToken, response.refreshToken, response.expiresIn)
+        return response
+    }
+
     override suspend fun googleAuth(idToken: String): AuthResponseDto {
         val response = authService.googleCallback(idToken)
         tokenManager.saveTokens(response.accessToken, response.refreshToken, response.expiresIn)

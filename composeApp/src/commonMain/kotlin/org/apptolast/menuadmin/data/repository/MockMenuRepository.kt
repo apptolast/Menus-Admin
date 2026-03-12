@@ -3,6 +3,7 @@ package org.apptolast.menuadmin.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.Json
 import org.apptolast.menuadmin.data.local.MockDataProvider
@@ -15,6 +16,9 @@ class MockMenuRepository(
     private val _menus = MutableStateFlow(MockDataProvider.menus)
 
     override fun getAllMenus(): Flow<List<Menu>> = _menus.asStateFlow()
+
+    override fun getMenusByRestaurant(restaurantId: String): Flow<List<Menu>> =
+        _menus.map { menus -> menus.filter { it.restaurantId == restaurantId } }
 
     override suspend fun getMenuById(id: String): Menu? {
         return _menus.value.find { it.id == id }

@@ -6,6 +6,8 @@ import org.apptolast.menuadmin.domain.model.Menu
 interface MenuRepository {
     fun getAllMenus(): Flow<List<Menu>>
 
+    fun getMenusByRestaurant(restaurantId: String): Flow<List<Menu>>
+
     suspend fun getMenuById(id: String): Menu?
 
     suspend fun addMenu(menu: Menu): Menu

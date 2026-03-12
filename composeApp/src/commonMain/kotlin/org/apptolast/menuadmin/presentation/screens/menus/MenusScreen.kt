@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.PictureAsPdf
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,7 +28,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -65,6 +68,11 @@ fun MenusScreen(viewModel: MenusViewModel = koinViewModel()) {
         onBack = viewModel::clearMenuSelection,
         onFilterCategory = viewModel::filterByCategory,
         onExportPdf = viewModel::exportPdf,
+        onNewMenu = viewModel::onNewMenu,
+        onFormNameChange = viewModel::onFormNameChange,
+        onFormDescriptionChange = viewModel::onFormDescriptionChange,
+        onDismissForm = viewModel::onDismissForm,
+        onSaveMenu = viewModel::onSaveMenu,
     )
 }
 
@@ -75,6 +83,11 @@ fun MenusContent(
     onBack: () -> Unit,
     onFilterCategory: (DishCategory?) -> Unit,
     onExportPdf: () -> Unit,
+    onNewMenu: () -> Unit,
+    onFormNameChange: (String) -> Unit,
+    onFormDescriptionChange: (String) -> Unit,
+    onDismissForm: () -> Unit,
+    onSaveMenu: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (uiState.isLoading) {
@@ -88,6 +101,7 @@ fun MenusContent(
         MenuListView(
             uiState = uiState,
             onSelectMenu = onSelectMenu,
+            onNewMenu = onNewMenu,
         )
     } else {
         AllergenMatrixView(
@@ -95,6 +109,7 @@ fun MenusContent(
             onBack = onBack,
             onFilterCategory = onFilterCategory,
             onExportPdf = onExportPdf,
+            onNewMenu = onNewMenu,
         )
     }
 
@@ -106,12 +121,94 @@ fun MenusContent(
             style = MaterialTheme.typography.bodyMedium,
         )
     }
+
+    // New Menu Dialog
+    if (uiState.isFormVisible) {
+        NewMenuDialog(
+            uiState = uiState,
+            onNameChange = onFormNameChange,
+            onDescriptionChange = onFormDescriptionChange,
+            onDismiss = onDismissForm,
+            onSave = onSaveMenu,
+        )
+    }
+}
+
+@Composable
+private fun NewMenuDialog(
+    uiState: MenusUiState,
+    onNameChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onSave: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Nuevo Menu",
+                fontWeight = FontWeight.Bold,
+                color = TextPrimary,
+            )
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                OutlinedTextField(
+                    value = uiState.formName,
+                    onValueChange = onNameChange,
+                    label = { Text("Nombre") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                )
+                OutlinedTextField(
+                    value = uiState.formDescription,
+                    onValueChange = onDescriptionChange,
+                    label = { Text("Descripcion") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    minLines = 2,
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onSave,
+                enabled = !uiState.isSaving && uiState.formName.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(containerColor = Blue500),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                if (uiState.isSaving) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        color = TextWhite,
+                        strokeWidth = 2.dp,
+                    )
+                } else {
+                    Text("Guardar", color = TextWhite)
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                enabled = !uiState.isSaving,
+            ) {
+                Text("Cancelar")
+            }
+        },
+        shape = RoundedCornerShape(16.dp),
+        containerColor = BgCard,
+    )
 }
 
 @Composable
 private fun MenuListView(
     uiState: MenusUiState,
     onSelectMenu: (Menu) -> Unit,
+    onNewMenu: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -140,7 +237,7 @@ private fun MenuListView(
                 )
             }
             Button(
-                onClick = { /* New menu action */ },
+                onClick = onNewMenu,
                 colors = ButtonDefaults.buttonColors(containerColor = Blue500),
                 shape = RoundedCornerShape(8.dp),
             ) {
@@ -226,6 +323,7 @@ private fun AllergenMatrixView(
     onBack: () -> Unit,
     onFilterCategory: (DishCategory?) -> Unit,
     onExportPdf: () -> Unit,
+    onNewMenu: () -> Unit,
 ) {
     val menu = uiState.selectedMenu ?: return
 
@@ -277,7 +375,7 @@ private fun AllergenMatrixView(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(
-                onClick = { /* New menu */ },
+                onClick = onNewMenu,
                 colors = ButtonDefaults.buttonColors(containerColor = Blue500),
                 shape = RoundedCornerShape(8.dp),
             ) {
@@ -291,11 +389,16 @@ private fun AllergenMatrixView(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
                 .background(Blue500.copy(alpha = 0.05f))
-                .border(width = 1.dp, color = Blue500.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
+                .border(
+                    width = 1.dp,
+                    color = Blue500.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(8.dp),
+                )
                 .padding(16.dp),
         ) {
             Text(
-                text = "Generar Menu Adaptado (Libre de...): Selecciona una categoria y consulta la tabla de alergenos para cada plato.",
+                text = "Generar Menu Adaptado (Libre de...): Selecciona una categoria y consulta " +
+                    "la tabla de alergenos para cada plato.",
                 fontSize = 14.sp,
                 color = TextSecondary,
             )
@@ -348,6 +451,11 @@ private fun MenusContentPreview() {
             onBack = {},
             onFilterCategory = {},
             onExportPdf = {},
+            onNewMenu = {},
+            onFormNameChange = {},
+            onFormDescriptionChange = {},
+            onDismissForm = {},
+            onSaveMenu = {},
         )
     }
 }

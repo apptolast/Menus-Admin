@@ -3,6 +3,7 @@ package org.apptolast.menuadmin.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import org.apptolast.menuadmin.data.local.MockDataProvider
 import org.apptolast.menuadmin.domain.model.Recipe
@@ -13,6 +14,9 @@ class MockRecipeRepository : RecipeRepository {
     private val _recipes = MutableStateFlow(MockDataProvider.recipes)
 
     override fun getAllRecipes(): Flow<List<Recipe>> = _recipes.asStateFlow()
+
+    override fun getRecipesByRestaurant(restaurantId: String): Flow<List<Recipe>> =
+        _recipes.map { recipes -> recipes.filter { it.restaurantId == restaurantId } }
 
     override suspend fun getRecipeById(id: String): Recipe? {
         return _recipes.value.find { it.id == id }

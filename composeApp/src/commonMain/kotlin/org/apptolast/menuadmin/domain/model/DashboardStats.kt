@@ -6,7 +6,7 @@ data class DashboardStats(
     val totalIngredients: Int = 0,
     val activeRecipes: Int = 0,
     val totalMenus: Int = 0,
-    val associatedCompanies: Int = 0,
+    val totalRestaurants: Int = 0,
     val recentActivity: List<ActivityEntry> = emptyList(),
     val allergenFrequency: Map<AllergenType, Int> = emptyMap(),
 )

@@ -16,6 +16,13 @@ interface AuthRepository {
         acceptTerms: Boolean = true,
     ): AuthResponseDto
 
+    suspend fun registerRestaurant(
+        email: String,
+        password: String,
+        restaurantName: String,
+        acceptTerms: Boolean = true,
+    ): AuthResponseDto
+
     suspend fun googleAuth(idToken: String): AuthResponseDto
 
     suspend fun grantConsent()

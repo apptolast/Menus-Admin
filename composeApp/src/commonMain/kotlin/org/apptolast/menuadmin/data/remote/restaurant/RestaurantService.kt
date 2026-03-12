@@ -10,6 +10,7 @@ import org.apptolast.menuadmin.data.remote.ApiConstants
 class RestaurantService(
     private val client: HttpClient,
 ) {
+    // Single-tenant: admin has one restaurant
     suspend fun getRestaurant(): RestaurantResponseDto = client.get(ApiConstants.ADMIN_RESTAURANT).body()
 
     suspend fun updateRestaurant(request: RestaurantRequestDto): RestaurantResponseDto =
