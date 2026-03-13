@@ -10,24 +10,11 @@ interface AuthRepository {
         password: String,
     ): AuthResponseDto
 
-    suspend fun register(
+    suspend fun registerAdmin(
         email: String,
         password: String,
-        acceptTerms: Boolean = true,
+        name: String? = null,
     ): AuthResponseDto
-
-    suspend fun registerRestaurant(
-        email: String,
-        password: String,
-        restaurantName: String,
-        acceptTerms: Boolean = true,
-    ): AuthResponseDto
-
-    suspend fun googleAuth(idToken: String): AuthResponseDto
-
-    suspend fun grantConsent()
-
-    suspend fun revokeConsent()
 
     fun logout()
 }

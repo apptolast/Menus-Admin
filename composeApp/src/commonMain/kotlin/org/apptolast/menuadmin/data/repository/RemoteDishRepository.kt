@@ -1,5 +1,7 @@
 package org.apptolast.menuadmin.data.repository
 
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
@@ -23,8 +25,9 @@ class RemoteDishRepository(
             if (!hasLoaded) {
                 try {
                     refreshDishes()
+                } catch (e: ClientRequestException) {
+                    if (e.response.status != HttpStatusCode.BadRequest) throw e
                 } catch (_: Exception) {
-                    // Emit empty list on failure
                 }
             }
             emitAll(_dishes)

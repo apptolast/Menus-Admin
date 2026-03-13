@@ -22,36 +22,46 @@ class RemoteRestaurantRepository(
                 try {
                     refreshRestaurants()
                 } catch (_: Exception) {
+                    hasLoaded = true
                 }
             }
             emitAll(_restaurants)
         }
 
     private suspend fun refreshRestaurants() {
-        val restaurant = restaurantService.getRestaurant().toDomain()
-        _restaurants.value = listOf(restaurant)
+        val page = restaurantService.getRestaurants()
+        _restaurants.value = page.content.map { it.toDomain() }
         hasLoaded = true
     }
 
     override suspend fun getRestaurantById(id: String): Restaurant? {
-        if (!hasLoaded) refreshRestaurants()
+        if (!hasLoaded) {
+            try {
+                refreshRestaurants()
+            } catch (_: Exception) {
+                hasLoaded = true
+            }
+        }
         return _restaurants.value.find { it.id == id }
     }
 
     override suspend fun createRestaurant(restaurant: Restaurant): Restaurant {
-        error(
-            "La creación de restaurante se realiza durante el registro (register-restaurant). Usa updateRestaurant() para modificar el existente.",
-        )
+        val response = restaurantService.createRestaurant(restaurant.toRequest())
+        val created = response.toDomain()
+        refreshRestaurants()
+        return created
     }
 
     override suspend fun updateRestaurant(restaurant: Restaurant): Restaurant {
-        val updated = restaurantService.updateRestaurant(restaurant.toRequest()).toDomain()
+        val response = restaurantService.updateRestaurant(restaurant.id, restaurant.toRequest())
+        val updated = response.toDomain()
         refreshRestaurants()
         return updated
     }
 
     override suspend fun deleteRestaurant(id: String) {
-        // Not supported in single-tenant mode
+        restaurantService.deleteRestaurant(id)
+        refreshRestaurants()
     }
 
     private fun Restaurant.toRequest() =

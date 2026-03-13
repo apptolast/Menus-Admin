@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.DishCategory
-import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
@@ -69,7 +68,6 @@ import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.apptolast.menuadmin.presentation.theme.TextWhite
 import org.koin.compose.viewmodel.koinViewModel
-import kotlin.time.Clock
 
 @Composable
 fun RecipesScreen(viewModel: RecipesViewModel = koinViewModel()) {
@@ -215,7 +213,6 @@ fun RecipesContent(
                     uiState.recipes.forEach { recipe ->
                         RecipeCard(
                             recipe = recipe,
-                            allIngredients = uiState.allIngredients,
                             onToggleActive = { onToggleRecipeActive(recipe.id) },
                             onClick = { onEditRecipe(recipe) },
                             modifier = Modifier.weight(1f),
@@ -262,7 +259,7 @@ private fun RecipeEditorForm(
     val aggregateAllergens = remember(uiState.formIngredients, uiState.allIngredients) {
         val ingredientMap = uiState.allIngredients.associateBy { it.id }
         uiState.formIngredients.flatMap { ri ->
-            ingredientMap[ri.ingredientId]?.allergens.orEmpty()
+            ingredientMap[ri.ingredientId]?.allergenTypes.orEmpty()
         }.toSet()
     }
 
@@ -356,7 +353,7 @@ private fun RecipeEditorForm(
                     OutlinedTextField(
                         value = ingredientSearchQuery,
                         onValueChange = { ingredientSearchQuery = it },
-                        placeholder = { Text("Buscar ingrediente o receta...") },
+                        placeholder = { Text("Buscar ingrediente...") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(8.dp),
@@ -389,8 +386,6 @@ private fun RecipeEditorForm(
                                                     RecipeIngredient(
                                                         ingredientId = ingredient.id,
                                                         ingredientName = ingredient.name,
-                                                        quantity = 0.0,
-                                                        unit = "",
                                                     ),
                                                 )
                                                 ingredientSearchQuery = ""
@@ -449,7 +444,7 @@ private fun RecipeEditorForm(
                             val ingredientAllergens =
                                 uiState.allIngredients
                                     .find { it.id == ri.ingredientId }
-                                    ?.allergens.orEmpty()
+                                    ?.allergenTypes.orEmpty()
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -549,15 +544,24 @@ private fun RecipeEditorForm(
             }
             Button(
                 onClick = onSaveRecipe,
+                enabled = !uiState.isSaving,
                 colors = ButtonDefaults.buttonColors(containerColor = Blue500),
                 shape = RoundedCornerShape(8.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Save,
-                    contentDescription = null,
-                    tint = TextWhite,
-                    modifier = Modifier.size(18.dp),
-                )
+                if (uiState.isSaving) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        color = TextWhite,
+                        strokeWidth = 2.dp,
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.Save,
+                        contentDescription = null,
+                        tint = TextWhite,
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Guardar Cambios",
@@ -631,23 +635,11 @@ private fun RecipesContentPreview() {
                     Recipe(
                         id = "rec-1",
                         name = "Croquetas Ibericas",
-                        category = DishCategory.ENTRANTE,
-                        ingredients = listOf(
-                            RecipeIngredient("ing-1", "Harina de trigo", 200.0, "g"),
-                            RecipeIngredient("ing-2", "Leche entera", 500.0, "ml"),
-                        ),
+                        category = DishCategory.ENTRANTE.name,
                         isActive = true,
-                        createdAt = Clock.System.now(),
-                        updatedAt = Clock.System.now(),
-                    ),
-                ),
-                allIngredients = listOf(
-                    Ingredient(
-                        id = "ing-1",
-                        name = "Harina de trigo",
-                        allergens = setOf(AllergenType.GLUTEN),
-                        createdAt = Clock.System.now(),
-                        updatedAt = Clock.System.now(),
+                        ingredientCount = 5,
+                        allergenCount = 2,
+                        computedAllergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
                     ),
                 ),
             ),

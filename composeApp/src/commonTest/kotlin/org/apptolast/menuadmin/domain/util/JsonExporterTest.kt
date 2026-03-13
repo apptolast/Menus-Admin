@@ -6,6 +6,7 @@ import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Dish
 import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Ingredient
+import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.domain.model.Menu
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
@@ -32,7 +33,7 @@ class JsonExporterTest {
                 name = "Croquetas Ibericas",
                 description = "Croquetas cremosas",
                 price = 12.50,
-                category = DishCategory.ENTRANTE,
+                category = DishCategory.ENTRANTE.name,
                 ingredients = listOf("ing-001", "ing-003"),
                 allergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
                 isAvailable = true,
@@ -57,20 +58,24 @@ class JsonExporterTest {
         Ingredient(
             id = "ing-001",
             name = "Harina de trigo",
-            notes = "Harina refinada",
+            description = "Harina refinada",
             brand = "Harinera La Meta",
-            allergens = setOf(AllergenType.GLUTEN),
-            ocrRawText = "Contiene gluten",
+            allergens = listOf(
+                IngredientAllergen(allergenCode = "GLUTEN", allergenName = "Gluten"),
+            ),
+            labelInfo = "Contiene gluten",
             createdAt = now,
             updatedAt = now,
         ),
         Ingredient(
             id = "ing-003",
             name = "Leche entera",
-            notes = "Leche pasteurizada",
+            description = "Leche pasteurizada",
             brand = "Central Lechera",
-            allergens = setOf(AllergenType.DAIRY),
-            ocrRawText = "Contiene lacteos",
+            allergens = listOf(
+                IngredientAllergen(allergenCode = "MILK", allergenName = "Lácteos"),
+            ),
+            labelInfo = "Contiene lacteos",
             createdAt = now,
             updatedAt = now,
         ),
@@ -86,7 +91,7 @@ class JsonExporterTest {
                 RecipeIngredient("ing-003", "Leche entera", 500.0, "ml"),
             ),
             isActive = true,
-            category = DishCategory.ENTRANTE,
+            category = DishCategory.ENTRANTE.name,
             createdAt = now,
             updatedAt = now,
         ),
@@ -146,8 +151,8 @@ class JsonExporterTest {
         assertEquals(2, result.ingredients.size)
         assertEquals(1, result.recipes.size)
         assertEquals("Harina de trigo", result.ingredients[0].name)
-        assertEquals(setOf(AllergenType.GLUTEN), result.ingredients[0].allergens)
-        assertEquals(setOf(AllergenType.DAIRY), result.ingredients[1].allergens)
+        assertEquals(setOf(AllergenType.GLUTEN), result.ingredients[0].allergenTypes)
+        assertEquals(setOf(AllergenType.DAIRY), result.ingredients[1].allergenTypes)
         assertEquals("Croquetas", result.recipes[0].name)
         assertEquals(2, result.recipes[0].ingredients.size)
     }

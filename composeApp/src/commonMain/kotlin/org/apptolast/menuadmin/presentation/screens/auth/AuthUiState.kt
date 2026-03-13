@@ -6,7 +6,6 @@ data class AuthUiState(
     val isLoginMode: Boolean = true,
     val email: String = "",
     val password: String = "",
-    val restaurantName: String = "",
-    val acceptTerms: Boolean = false,
+    val name: String = "",
     val error: String? = null,
 )

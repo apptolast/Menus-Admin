@@ -23,12 +23,8 @@ class AuthViewModel(
         _uiState.update { it.copy(password = password, error = null) }
     }
 
-    fun onAcceptTermsChange(accept: Boolean) {
-        _uiState.update { it.copy(acceptTerms = accept) }
-    }
-
-    fun onRestaurantNameChange(name: String) {
-        _uiState.update { it.copy(restaurantName = name, error = null) }
+    fun onNameChange(name: String) {
+        _uiState.update { it.copy(name = name, error = null) }
     }
 
     fun onToggleMode() {
@@ -63,26 +59,17 @@ class AuthViewModel(
             _uiState.update { it.copy(error = "Introduce email y contraseña") }
             return
         }
-        if (state.restaurantName.isBlank()) {
-            _uiState.update { it.copy(error = "Introduce el nombre de tu restaurante") }
-            return
-        }
         if (state.password.length < 8) {
             _uiState.update { it.copy(error = "La contraseña debe tener al menos 8 caracteres") }
-            return
-        }
-        if (!state.acceptTerms) {
-            _uiState.update { it.copy(error = "Debes aceptar los términos") }
             return
         }
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                authRepository.registerRestaurant(
+                authRepository.registerAdmin(
                     state.email.trim(),
                     state.password,
-                    state.restaurantName.trim(),
-                    state.acceptTerms,
+                    state.name.trim().ifEmpty { null },
                 )
                 _uiState.update { it.copy(isLoading = false, isAuthenticated = true) }
             } catch (e: Exception) {
@@ -90,23 +77,6 @@ class AuthViewModel(
                     it.copy(
                         isLoading = false,
                         error = "Error al registrarse: ${e.message ?: "Error desconocido"}",
-                    )
-                }
-            }
-        }
-    }
-
-    fun onGoogleAuth(idToken: String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
-            try {
-                authRepository.googleAuth(idToken)
-                _uiState.update { it.copy(isLoading = false, isAuthenticated = true) }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "Error con Google: ${e.message ?: "Error desconocido"}",
                     )
                 }
             }

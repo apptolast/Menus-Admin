@@ -40,8 +40,11 @@ class IngredientService(
             parameter("name", name)
         }.body()
 
-    suspend fun analyzeText(text: String): AnalyzeTextResponseDto =
-        client.post("${ApiConstants.ADMIN_INGREDIENTS}/analyze-text") {
-            setBody(AnalyzeTextRequestDto(text = text))
+    suspend fun updateIngredientAllergens(
+        id: String,
+        request: UpdateIngredientAllergensRequestDto,
+    ): List<IngredientAllergenResponseDto> =
+        client.put("${ApiConstants.ADMIN_INGREDIENTS}/$id/allergens") {
+            setBody(request)
         }.body()
 }

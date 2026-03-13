@@ -29,7 +29,7 @@ class ImportMapperTest {
         assertEquals("Harina de trigo", ingredient.name)
         assertEquals(
             setOf(AllergenType.GLUTEN, AllergenType.DAIRY, AllergenType.TREE_NUTS),
-            ingredient.allergens,
+            ingredient.allergenTypes,
         )
     }
 
@@ -43,7 +43,7 @@ class ImportMapperTest {
 
         val ingredient = ImportMapper.mapIngredient(dto, now)
 
-        assertEquals(setOf(AllergenType.GLUTEN, AllergenType.EGGS), ingredient.allergens)
+        assertEquals(setOf(AllergenType.GLUTEN, AllergenType.EGGS), ingredient.allergenTypes)
     }
 
     @Test
@@ -56,7 +56,7 @@ class ImportMapperTest {
 
         val ingredient = ImportMapper.mapIngredient(dto, now)
 
-        assertEquals(setOf(AllergenType.SULFITES, AllergenType.MOLLUSKS), ingredient.allergens)
+        assertEquals(setOf(AllergenType.SULFITES, AllergenType.MOLLUSKS), ingredient.allergenTypes)
     }
 
     @Test
@@ -122,7 +122,6 @@ class ImportMapperTest {
         assertEquals(1, recipe.ingredients.size)
         assertEquals("100", recipe.ingredients[0].ingredientId)
         assertEquals("Ingredient A", recipe.ingredients[0].ingredientName)
-        assertEquals(listOf("200"), recipe.subRecipeIds)
     }
 
     @Test

@@ -18,16 +18,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -56,7 +54,6 @@ import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red500
 import org.apptolast.menuadmin.presentation.theme.TextMuted
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.apptolast.menuadmin.presentation.theme.TextWhite
 import org.koin.compose.viewmodel.koinViewModel
@@ -77,8 +74,7 @@ fun AuthScreen(
         uiState = uiState,
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
-        onRestaurantNameChange = viewModel::onRestaurantNameChange,
-        onAcceptTermsChange = viewModel::onAcceptTermsChange,
+        onNameChange = viewModel::onNameChange,
         onToggleMode = viewModel::onToggleMode,
         onLogin = viewModel::onLogin,
         onRegister = viewModel::onRegister,
@@ -90,8 +86,7 @@ fun AuthContent(
     uiState: AuthUiState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onRestaurantNameChange: (String) -> Unit,
-    onAcceptTermsChange: (Boolean) -> Unit,
+    onNameChange: (String) -> Unit,
     onToggleMode: () -> Unit,
     onLogin: () -> Unit,
     onRegister: () -> Unit,
@@ -124,7 +119,7 @@ fun AuthContent(
                 color = Blue500,
             )
             Text(
-                text = "Gestión de alérgenos para restaurantes",
+                text = "Panel de administración",
                 fontSize = 14.sp,
                 color = TextSecondary,
                 textAlign = TextAlign.Center,
@@ -198,41 +193,33 @@ fun AuthContent(
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done,
+                    imeAction = if (uiState.isLoginMode) ImeAction.Done else ImeAction.Next,
                 ),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
             )
 
-            // Restaurant name (register only)
+            // Name field (register only, optional)
             if (!uiState.isLoginMode) {
                 OutlinedTextField(
-                    value = uiState.restaurantName,
-                    onValueChange = onRestaurantNameChange,
-                    label = { Text("Nombre del restaurante") },
+                    value = uiState.name,
+                    onValueChange = onNameChange,
+                    label = { Text("Nombre (opcional)") },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Filled.Person,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                    ),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                 )
-            }
-
-            // Accept terms (register only)
-            if (!uiState.isLoginMode) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Checkbox(
-                        checked = uiState.acceptTerms,
-                        onCheckedChange = onAcceptTermsChange,
-                    )
-                    Text(
-                        text = "Acepto los términos y condiciones",
-                        fontSize = 13.sp,
-                        color = TextSecondary,
-                    )
-                }
             }
 
             // Error message
@@ -268,33 +255,6 @@ fun AuthContent(
                     )
                 }
             }
-
-            // Divider
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                HorizontalDivider(modifier = Modifier.weight(1f), color = BorderLight)
-                Text(
-                    text = "  o  ",
-                    fontSize = 12.sp,
-                    color = TextMuted,
-                )
-                HorizontalDivider(modifier = Modifier.weight(1f), color = BorderLight)
-            }
-
-            // Google button (placeholder - needs platform-specific Google Sign-In)
-            OutlinedButton(
-                onClick = { /* Google Sign-In will be wired per-platform */ },
-                modifier = Modifier.fillMaxWidth().height(48.dp),
-                shape = RoundedCornerShape(12.dp),
-            ) {
-                Text(
-                    text = "Continuar con Google",
-                    fontWeight = FontWeight.Medium,
-                    color = TextPrimary,
-                )
-            }
         }
     }
 }
@@ -307,8 +267,7 @@ private fun PreviewAuthScreenLogin() {
             uiState = AuthUiState(isLoginMode = true),
             onEmailChange = {},
             onPasswordChange = {},
-            onRestaurantNameChange = {},
-            onAcceptTermsChange = {},
+            onNameChange = {},
             onToggleMode = {},
             onLogin = {},
             onRegister = {},
@@ -321,11 +280,10 @@ private fun PreviewAuthScreenLogin() {
 private fun PreviewAuthScreenRegister() {
     MenuAdminTheme {
         AuthContent(
-            uiState = AuthUiState(isLoginMode = false, email = "test@example.com"),
+            uiState = AuthUiState(isLoginMode = false, email = "admin@example.com"),
             onEmailChange = {},
             onPasswordChange = {},
-            onRestaurantNameChange = {},
-            onAcceptTermsChange = {},
+            onNameChange = {},
             onToggleMode = {},
             onLogin = {},
             onRegister = {},
@@ -340,13 +298,12 @@ private fun PreviewAuthScreenError() {
         AuthContent(
             uiState = AuthUiState(
                 isLoginMode = true,
-                email = "test@example.com",
+                email = "admin@example.com",
                 error = "Credenciales inválidas",
             ),
             onEmailChange = {},
             onPasswordChange = {},
-            onRestaurantNameChange = {},
-            onAcceptTermsChange = {},
+            onNameChange = {},
             onToggleMode = {},
             onLogin = {},
             onRegister = {},

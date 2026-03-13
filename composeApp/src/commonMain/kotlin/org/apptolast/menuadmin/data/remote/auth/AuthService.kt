@@ -2,7 +2,6 @@ package org.apptolast.menuadmin.data.remote.auth
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.delete
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import org.apptolast.menuadmin.data.remote.ApiConstants
@@ -18,28 +17,17 @@ class AuthService(
             setBody(LoginRequestDto(email = email, password = password))
         }.body()
 
-    suspend fun register(
+    suspend fun registerAdmin(
         email: String,
         password: String,
-        acceptTerms: Boolean = true,
+        name: String? = null,
     ): AuthResponseDto =
-        client.post(ApiConstants.AUTH_REGISTER) {
-            setBody(RegisterRequestDto(email = email, password = password, acceptTerms = acceptTerms))
-        }.body()
-
-    suspend fun registerRestaurant(
-        email: String,
-        password: String,
-        restaurantName: String,
-        acceptTerms: Boolean = true,
-    ): AuthResponseDto =
-        client.post(ApiConstants.AUTH_REGISTER_RESTAURANT) {
+        client.post(ApiConstants.AUTH_REGISTER_ADMIN) {
             setBody(
-                RegisterRestaurantRequestDto(
+                RegisterAdminRequestDto(
                     email = email,
                     password = password,
-                    restaurantName = restaurantName,
-                    acceptTerms = acceptTerms,
+                    name = name,
                 ),
             )
         }.body()
@@ -48,17 +36,4 @@ class AuthService(
         client.post(ApiConstants.AUTH_REFRESH) {
             setBody(RefreshTokenRequestDto(refreshToken = refreshToken))
         }.body()
-
-    suspend fun googleCallback(idToken: String): AuthResponseDto =
-        client.post(ApiConstants.AUTH_GOOGLE_CALLBACK) {
-            setBody(GoogleCallbackRequestDto(idToken = idToken))
-        }.body()
-
-    suspend fun grantConsent() {
-        client.post(ApiConstants.AUTH_CONSENT)
-    }
-
-    suspend fun revokeConsent() {
-        client.delete(ApiConstants.AUTH_CONSENT)
-    }
 }

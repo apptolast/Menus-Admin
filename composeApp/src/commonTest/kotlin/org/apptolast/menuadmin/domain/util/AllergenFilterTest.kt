@@ -4,16 +4,14 @@ import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Dish
 import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Ingredient
+import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.time.Clock
 
 class AllergenFilterTest {
-    private val now = Clock.System.now()
-
     private val dishNoAllergens = Dish(
         id = "dish-safe",
         name = "Butifarra a la Brasa",
@@ -84,23 +82,20 @@ class AllergenFilterTest {
         val flour = Ingredient(
             id = "ing-001",
             name = "Harina de trigo",
-            allergens = setOf(AllergenType.GLUTEN),
-            createdAt = now,
-            updatedAt = now,
+            allergens = listOf(
+                IngredientAllergen(allergenCode = "GLUTEN", allergenName = "Gluten"),
+            ),
         )
         val milk = Ingredient(
             id = "ing-003",
             name = "Leche entera",
-            allergens = setOf(AllergenType.DAIRY),
-            createdAt = now,
-            updatedAt = now,
+            allergens = listOf(
+                IngredientAllergen(allergenCode = "MILK", allergenName = "Lácteos"),
+            ),
         )
         val oliveOil = Ingredient(
             id = "ing-018",
             name = "Aceite de oliva",
-            allergens = emptySet(),
-            createdAt = now,
-            updatedAt = now,
         )
 
         val recipe = Recipe(
@@ -111,8 +106,6 @@ class AllergenFilterTest {
                 RecipeIngredient("ing-003", "Leche entera", 500.0, "ml"),
                 RecipeIngredient("ing-018", "Aceite de oliva", 50.0, "ml"),
             ),
-            createdAt = now,
-            updatedAt = now,
         )
 
         val lookup = mapOf(
@@ -135,8 +128,6 @@ class AllergenFilterTest {
                 RecipeIngredient("ing-999", "Unknown A", 100.0, "g"),
                 RecipeIngredient("ing-998", "Unknown B", 200.0, "ml"),
             ),
-            createdAt = now,
-            updatedAt = now,
         )
 
         val emptyLookup = emptyMap<String, Ingredient>()

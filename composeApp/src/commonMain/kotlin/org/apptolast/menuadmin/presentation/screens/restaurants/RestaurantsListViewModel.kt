@@ -41,6 +41,20 @@ class RestaurantsListViewModel(
             initialValue = RestaurantsListUiState(),
         )
 
+    fun onNewRestaurant() {
+        _formState.update {
+            it.copy(
+                isFormVisible = true,
+                editingRestaurant = null,
+                formName = "",
+                formSlug = "",
+                formDescription = "",
+                formAddress = "",
+                formPhone = "",
+            )
+        }
+    }
+
     fun onEditRestaurant(restaurant: Restaurant) {
         _formState.update {
             it.copy(
@@ -56,11 +70,15 @@ class RestaurantsListViewModel(
     }
 
     fun onFormNameChange(name: String) {
-        val slug = name.lowercase()
-            .replace(" ", "-")
-            .replace(Regex("[^a-z0-9-]"), "")
-        _formState.update {
-            it.copy(formName = name, formSlug = slug)
+        _formState.update { state ->
+            val slug = if (state.editingRestaurant == null) {
+                name.lowercase()
+                    .replace(" ", "-")
+                    .replace(Regex("[^a-z0-9-]"), "")
+            } else {
+                state.formSlug
+            }
+            state.copy(formName = name, formSlug = slug)
         }
     }
 
@@ -82,26 +100,43 @@ class RestaurantsListViewModel(
 
     fun onSaveRestaurant() {
         val state = _formState.value
-        val existing = state.editingRestaurant ?: return
+        if (state.formName.isBlank()) return
 
         viewModelScope.launch {
             _formState.update { it.copy(isSaving = true, error = null) }
             try {
-                restaurantRepository.updateRestaurant(
-                    existing.copy(
-                        name = state.formName,
-                        slug = state.formSlug,
-                        description = state.formDescription,
-                        address = state.formAddress,
-                        phone = state.formPhone,
-                    ),
-                )
+                val existing = state.editingRestaurant
+                if (existing != null) {
+                    restaurantRepository.updateRestaurant(
+                        existing.copy(
+                            name = state.formName,
+                            slug = state.formSlug,
+                            description = state.formDescription,
+                            address = state.formAddress,
+                            phone = state.formPhone,
+                        ),
+                    )
+                } else {
+                    restaurantRepository.createRestaurant(
+                        Restaurant(
+                            name = state.formName,
+                            slug = state.formSlug,
+                            description = state.formDescription,
+                            address = state.formAddress,
+                            phone = state.formPhone,
+                        ),
+                    )
+                }
                 _formState.update {
                     it.copy(
                         isSaving = false,
                         isFormVisible = false,
                         editingRestaurant = null,
-                        successMessage = "Restaurante actualizado correctamente",
+                        successMessage = if (existing != null) {
+                            "Restaurante actualizado"
+                        } else {
+                            "Restaurante creado"
+                        },
                     )
                 }
             } catch (e: Exception) {
@@ -110,6 +145,20 @@ class RestaurantsListViewModel(
                         isSaving = false,
                         error = "Error al guardar: ${e.message ?: "Error desconocido"}",
                     )
+                }
+            }
+        }
+    }
+
+    fun onDeleteRestaurant(id: String) {
+        viewModelScope.launch {
+            _formState.update { it.copy(error = null) }
+            try {
+                restaurantRepository.deleteRestaurant(id)
+                _formState.update { it.copy(successMessage = "Restaurante eliminado") }
+            } catch (e: Exception) {
+                _formState.update {
+                    it.copy(error = "Error al eliminar: ${e.message ?: "Error desconocido"}")
                 }
             }
         }

@@ -10,11 +10,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.apptolast.menuadmin.domain.model.AllergenType
+import org.apptolast.menuadmin.domain.model.ContainmentLevel
 import org.apptolast.menuadmin.domain.model.Ingredient
+import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.domain.repository.IngredientRepository
-import kotlin.time.Clock
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 class IngredientsViewModel(
     private val ingredientRepository: IngredientRepository,
@@ -34,7 +33,7 @@ class IngredientsViewModel(
         }
         if (formState.filterAllergens.isNotEmpty()) {
             filtered = filtered.filter { ingredient ->
-                ingredient.allergens.any { it in formState.filterAllergens }
+                ingredient.allergenTypes.any { it in formState.filterAllergens }
             }
         }
         formState.copy(
@@ -75,12 +74,10 @@ class IngredientsViewModel(
             isEditing = true,
             editingIngredient = null,
             formName = "",
+            formDescription = "",
             formBrand = "",
-            formSupplier = "",
-            formOcrRawText = "",
-            formNotes = "",
-            formAllergens = emptySet(),
-            formTraces = emptySet(),
+            formLabelInfo = "",
+            formAllergens = emptyMap(),
             error = null,
         )
     }
@@ -90,12 +87,14 @@ class IngredientsViewModel(
             isEditing = true,
             editingIngredient = ingredient,
             formName = ingredient.name,
+            formDescription = ingredient.description,
             formBrand = ingredient.brand,
-            formSupplier = ingredient.supplier,
-            formOcrRawText = ingredient.ocrRawText,
-            formNotes = ingredient.notes,
-            formAllergens = ingredient.allergens,
-            formTraces = ingredient.traces,
+            formLabelInfo = ingredient.labelInfo,
+            formAllergens = ingredient.allergens.mapNotNull { allergen ->
+                AllergenType.fromApiCode(allergen.allergenCode)?.let { type ->
+                    type to allergen.containmentLevel
+                }
+            }.toMap(),
             error = null,
         )
     }
@@ -106,12 +105,10 @@ class IngredientsViewModel(
             isSaving = false,
             editingIngredient = null,
             formName = "",
+            formDescription = "",
             formBrand = "",
-            formSupplier = "",
-            formOcrRawText = "",
-            formNotes = "",
-            formAllergens = emptySet(),
-            formTraces = emptySet(),
+            formLabelInfo = "",
+            formAllergens = emptyMap(),
             error = null,
         )
     }
@@ -120,69 +117,70 @@ class IngredientsViewModel(
         _formState.value = _formState.value.copy(formName = value)
     }
 
+    fun onFormDescriptionChange(value: String) {
+        _formState.value = _formState.value.copy(formDescription = value)
+    }
+
     fun onFormBrandChange(value: String) {
         _formState.value = _formState.value.copy(formBrand = value)
     }
 
-    fun onFormSupplierChange(value: String) {
-        _formState.value = _formState.value.copy(formSupplier = value)
-    }
-
-    fun onFormOcrRawTextChange(value: String) {
-        _formState.value = _formState.value.copy(formOcrRawText = value)
-    }
-
-    fun onFormNotesChange(value: String) {
-        _formState.value = _formState.value.copy(formNotes = value)
+    fun onFormLabelInfoChange(value: String) {
+        _formState.value = _formState.value.copy(formLabelInfo = value)
     }
 
     fun onToggleAllergen(allergen: AllergenType) {
         val current = _formState.value.formAllergens
-        val updated = if (allergen in current) current - allergen else current + allergen
+        val updated = if (allergen in current) {
+            current - allergen
+        } else {
+            current + (allergen to ContainmentLevel.CONTAINS)
+        }
         _formState.value = _formState.value.copy(formAllergens = updated)
     }
 
-    fun onToggleTrace(allergen: AllergenType) {
-        val current = _formState.value.formTraces
-        val updated = if (allergen in current) current - allergen else current + allergen
-        _formState.value = _formState.value.copy(formTraces = updated)
+    fun onAllergenLevelChange(
+        allergen: AllergenType,
+        level: ContainmentLevel,
+    ) {
+        val current = _formState.value.formAllergens
+        if (allergen in current) {
+            _formState.value = _formState.value.copy(formAllergens = current + (allergen to level))
+        }
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     fun onSaveIngredient() {
         viewModelScope.launch {
             _formState.value = _formState.value.copy(isSaving = true, error = null)
             try {
                 val state = _formState.value
-                val now = Clock.System.now()
                 val existing = state.editingIngredient
+                val allergenList = state.formAllergens.map { (type, level) ->
+                    IngredientAllergen(
+                        allergenCode = type.apiCode,
+                        allergenName = type.nameEs,
+                        containmentLevel = level,
+                    )
+                }
 
                 if (existing != null) {
                     ingredientRepository.updateIngredient(
                         existing.copy(
                             name = state.formName,
+                            description = state.formDescription,
                             brand = state.formBrand,
-                            supplier = state.formSupplier,
-                            ocrRawText = state.formOcrRawText,
-                            notes = state.formNotes,
-                            allergens = state.formAllergens,
-                            traces = state.formTraces,
-                            updatedAt = now,
+                            labelInfo = state.formLabelInfo,
+                            allergens = allergenList,
                         ),
                     )
                 } else {
                     ingredientRepository.addIngredient(
                         Ingredient(
-                            id = Uuid.random().toString(),
                             name = state.formName,
+                            description = state.formDescription,
                             brand = state.formBrand,
-                            supplier = state.formSupplier,
-                            ocrRawText = state.formOcrRawText,
-                            notes = state.formNotes,
-                            allergens = state.formAllergens,
-                            traces = state.formTraces,
-                            createdAt = now,
-                            updatedAt = now,
+                            labelInfo = state.formLabelInfo,
+                            allergens = allergenList,
                         ),
                     )
                 }

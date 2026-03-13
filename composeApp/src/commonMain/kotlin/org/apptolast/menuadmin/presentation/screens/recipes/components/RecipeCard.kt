@@ -26,9 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.DishCategory
-import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.model.Recipe
-import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
 import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
@@ -38,30 +36,17 @@ import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.apptolast.menuadmin.presentation.theme.TextWhite
-import kotlin.time.Clock
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RecipeCard(
     recipe: Recipe,
-    allIngredients: List<Ingredient>,
     onToggleActive: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Aggregate allergens from all ingredients in the recipe
-    val aggregatedAllergens: Set<AllergenType> = recipe.ingredients
-        .mapNotNull { recipeIngredient ->
-            allIngredients.find { it.id == recipeIngredient.ingredientId }
-        }
-        .flatMap { it.allergens }
-        .toSet()
-
-    // Build compact ingredient text
-    val ingredientText = recipe.ingredients.joinToString(", ") { ingredient ->
-        val qty = if (ingredient.quantity > 0) "${ingredient.quantity} ${ingredient.unit} " else ""
-        "$qty${ingredient.ingredientName}"
-    }
+    val categoryLabel = DishCategory.entries.find { it.name == recipe.category }?.labelEs
+        ?: recipe.category
 
     Box(
         modifier = modifier
@@ -102,49 +87,55 @@ fun RecipeCard(
             }
 
             // Category Badge
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Blue500.copy(alpha = 0.1f))
-                    .padding(horizontal = 10.dp, vertical = 4.dp),
-            ) {
-                Text(
-                    text = recipe.category.labelEs,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Blue500,
-                )
+            if (categoryLabel.isNotBlank()) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Blue500.copy(alpha = 0.1f))
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                ) {
+                    Text(
+                        text = categoryLabel,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Blue500,
+                    )
+                }
             }
 
-            // Allergen Badges
-            if (aggregatedAllergens.isNotEmpty()) {
+            // Allergen Badges (when full data is available)
+            if (recipe.computedAllergens.isNotEmpty()) {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    aggregatedAllergens.forEach { allergen ->
+                    recipe.computedAllergens.forEach { allergen ->
                         AllergenBadge(
                             allergenType = allergen,
                             isActive = true,
                         )
                     }
                 }
-            }
-
-            // Ingredient list (compact)
-            if (ingredientText.isNotBlank()) {
-                Text(
-                    text = ingredientText,
-                    fontSize = 12.sp,
-                    color = TextSecondary,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
+            } else if (recipe.allergenCount > 0) {
+                // Summary data only — show count badge
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Blue500.copy(alpha = 0.08f))
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                ) {
+                    Text(
+                        text = "${recipe.allergenCount} alergenos",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Blue500,
+                    )
+                }
             }
 
             // Ingredient count
             Text(
-                text = "${recipe.ingredients.size} ingredientes",
+                text = "${recipe.ingredientCount} ingredientes",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Medium,
                 color = TextSecondary,
@@ -161,30 +152,11 @@ private fun RecipeCardPreview() {
             recipe = Recipe(
                 id = "rec-1",
                 name = "Croquetas Ibericas del Puchero",
-                category = DishCategory.ENTRANTE,
-                ingredients = listOf(
-                    RecipeIngredient("ing-1", "Harina de trigo", 200.0, "g"),
-                    RecipeIngredient("ing-2", "Leche entera", 500.0, "ml"),
-                ),
+                category = DishCategory.ENTRANTE.name,
                 isActive = true,
-                createdAt = Clock.System.now(),
-                updatedAt = Clock.System.now(),
-            ),
-            allIngredients = listOf(
-                Ingredient(
-                    id = "ing-1",
-                    name = "Harina de trigo",
-                    allergens = setOf(AllergenType.GLUTEN),
-                    createdAt = Clock.System.now(),
-                    updatedAt = Clock.System.now(),
-                ),
-                Ingredient(
-                    id = "ing-2",
-                    name = "Leche entera",
-                    allergens = setOf(AllergenType.DAIRY),
-                    createdAt = Clock.System.now(),
-                    updatedAt = Clock.System.now(),
-                ),
+                ingredientCount = 5,
+                allergenCount = 2,
+                computedAllergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
             ),
             onToggleActive = {},
             onClick = {},

@@ -1,6 +1,7 @@
 package org.apptolast.menuadmin.presentation.screens.ingredients
 
 import org.apptolast.menuadmin.domain.model.AllergenType
+import org.apptolast.menuadmin.domain.model.ContainmentLevel
 import org.apptolast.menuadmin.domain.model.Ingredient
 
 data class IngredientsUiState(
@@ -13,11 +14,9 @@ data class IngredientsUiState(
     val isSaving: Boolean = false,
     // Form fields
     val formName: String = "",
+    val formDescription: String = "",
     val formBrand: String = "",
-    val formSupplier: String = "",
-    val formOcrRawText: String = "",
-    val formNotes: String = "",
-    val formAllergens: Set<AllergenType> = emptySet(),
-    val formTraces: Set<AllergenType> = emptySet(),
+    val formLabelInfo: String = "",
+    val formAllergens: Map<AllergenType, ContainmentLevel> = emptyMap(),
     val error: String? = null,
 )

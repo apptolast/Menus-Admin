@@ -15,9 +15,6 @@ import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import org.apptolast.menuadmin.domain.repository.IngredientRepository
 import org.apptolast.menuadmin.domain.repository.RecipeRepository
-import kotlin.time.Clock
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 class RecipesViewModel(
     private val recipeRepository: RecipeRepository,
@@ -73,33 +70,37 @@ class RecipesViewModel(
             formDescription = "",
             formCategory = DishCategory.ENTRANTE,
             formIngredients = emptyList(),
-            formSubRecipeIds = emptyList(),
             formIsActive = true,
         )
     }
 
     fun onEditRecipe(recipe: Recipe) {
-        _formState.value = _formState.value.copy(
-            isEditing = true,
-            editingRecipe = recipe,
-            formName = recipe.name,
-            formDescription = recipe.description,
-            formCategory = recipe.category,
-            formIngredients = recipe.ingredients,
-            formSubRecipeIds = recipe.subRecipeIds,
-            formIsActive = recipe.isActive,
-        )
+        viewModelScope.launch {
+            // Fetch full recipe to get ingredients
+            val fullRecipe = recipeRepository.getRecipeById(recipe.id) ?: recipe
+            val category = DishCategory.entries.find { it.name == fullRecipe.category }
+                ?: DishCategory.ENTRANTE
+            _formState.value = _formState.value.copy(
+                isEditing = true,
+                editingRecipe = fullRecipe,
+                formName = fullRecipe.name,
+                formDescription = fullRecipe.description,
+                formCategory = category,
+                formIngredients = fullRecipe.ingredients,
+                formIsActive = fullRecipe.isActive,
+            )
+        }
     }
 
     fun onDismissEditor() {
         _formState.value = _formState.value.copy(
             isEditing = false,
+            isSaving = false,
             editingRecipe = null,
             formName = "",
             formDescription = "",
             formCategory = DishCategory.ENTRANTE,
             formIngredients = emptyList(),
-            formSubRecipeIds = emptyList(),
             formIsActive = true,
         )
     }
@@ -132,12 +133,11 @@ class RecipesViewModel(
         )
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     fun onSaveRecipe() {
         viewModelScope.launch {
+            _formState.value = _formState.value.copy(isSaving = true, error = null)
             try {
                 val state = _formState.value
-                val now = Clock.System.now()
                 val existing = state.editingRecipe
 
                 if (existing != null) {
@@ -145,32 +145,27 @@ class RecipesViewModel(
                         existing.copy(
                             name = state.formName,
                             description = state.formDescription,
-                            category = state.formCategory,
+                            category = state.formCategory.name,
                             ingredients = state.formIngredients,
-                            subRecipeIds = state.formSubRecipeIds,
                             isActive = state.formIsActive,
-                            updatedAt = now,
                         ),
                     )
                 } else {
                     recipeRepository.addRecipe(
                         Recipe(
-                            id = Uuid.random().toString(),
                             restaurantId = restaurantId,
                             name = state.formName,
                             description = state.formDescription,
-                            category = state.formCategory,
+                            category = state.formCategory.name,
                             ingredients = state.formIngredients,
-                            subRecipeIds = state.formSubRecipeIds,
                             isActive = state.formIsActive,
-                            createdAt = now,
-                            updatedAt = now,
                         ),
                     )
                 }
                 onDismissEditor()
             } catch (e: Exception) {
                 _formState.value = _formState.value.copy(
+                    isSaving = false,
                     error = e.message ?: "Error al guardar receta",
                 )
             }

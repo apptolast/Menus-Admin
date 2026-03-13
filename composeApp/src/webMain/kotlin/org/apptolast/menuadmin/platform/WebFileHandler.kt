@@ -7,7 +7,9 @@ import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.files.FileReader
 import kotlin.coroutines.resume
+import kotlin.js.ExperimentalWasmJsInterop
 
+@OptIn(ExperimentalWasmJsInterop::class)
 class WebFileHandler : FileHandler {
     override suspend fun pickAndReadFile(): String? =
         suspendCancellableCoroutine { cont ->

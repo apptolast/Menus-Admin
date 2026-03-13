@@ -3,8 +3,6 @@ package org.apptolast.menuadmin.domain.util
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import org.apptolast.menuadmin.data.dto.ImportDataDto
 import org.apptolast.menuadmin.data.dto.ImportIngredientDto
 import org.apptolast.menuadmin.data.dto.ImportRecipeDto
@@ -73,7 +71,7 @@ object JsonExporter {
                 ImportIngredientDto(
                     id = ingredient.id.toLongOrNull() ?: 0L,
                     name = ingredient.name,
-                    contains = ingredient.allergens.map { it.jsonKey },
+                    contains = ingredient.allergenTypes.map { it.jsonKey },
                 )
             },
             recipes = recipes.map { recipe ->
@@ -82,11 +80,6 @@ object JsonExporter {
                     name = recipe.name,
                     ingredientIds = recipe.ingredients.map { ri ->
                         JsonPrimitive(ri.ingredientId.toLongOrNull() ?: 0L)
-                    } + recipe.subRecipeIds.map { subId ->
-                        buildJsonObject {
-                            put("id", subId.toLongOrNull() ?: 0L)
-                            put("type", "recipe")
-                        }
                     },
                     active = recipe.isActive,
                 )

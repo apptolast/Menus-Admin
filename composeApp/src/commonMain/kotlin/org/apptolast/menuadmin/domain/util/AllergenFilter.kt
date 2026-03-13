@@ -30,6 +30,6 @@ object AllergenFilter {
         ingredientLookup: Map<String, Ingredient>,
     ): Set<AllergenType> =
         ingredientIds.flatMapTo(mutableSetOf()) { id ->
-            ingredientLookup[id]?.allergens.orEmpty()
+            ingredientLookup[id]?.allergenTypes.orEmpty()
         }
 }

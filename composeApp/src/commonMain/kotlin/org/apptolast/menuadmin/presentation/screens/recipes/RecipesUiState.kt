@@ -16,7 +16,7 @@ data class RecipesUiState(
     val formDescription: String = "",
     val formCategory: DishCategory = DishCategory.ENTRANTE,
     val formIngredients: List<RecipeIngredient> = emptyList(),
-    val formSubRecipeIds: List<String> = emptyList(),
     val formIsActive: Boolean = true,
+    val isSaving: Boolean = false,
     val error: String? = null,
 )

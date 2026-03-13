@@ -20,39 +20,14 @@ class RemoteAuthRepository(
         return response
     }
 
-    override suspend fun register(
+    override suspend fun registerAdmin(
         email: String,
         password: String,
-        acceptTerms: Boolean,
+        name: String?,
     ): AuthResponseDto {
-        val response = authService.register(email, password, acceptTerms)
+        val response = authService.registerAdmin(email, password, name)
         tokenManager.saveTokens(response.accessToken, response.refreshToken, response.expiresIn)
         return response
-    }
-
-    override suspend fun registerRestaurant(
-        email: String,
-        password: String,
-        restaurantName: String,
-        acceptTerms: Boolean,
-    ): AuthResponseDto {
-        val response = authService.registerRestaurant(email, password, restaurantName, acceptTerms)
-        tokenManager.saveTokens(response.accessToken, response.refreshToken, response.expiresIn)
-        return response
-    }
-
-    override suspend fun googleAuth(idToken: String): AuthResponseDto {
-        val response = authService.googleCallback(idToken)
-        tokenManager.saveTokens(response.accessToken, response.refreshToken, response.expiresIn)
-        return response
-    }
-
-    override suspend fun grantConsent() {
-        authService.grantConsent()
-    }
-
-    override suspend fun revokeConsent() {
-        authService.revokeConsent()
     }
 
     override fun logout() {

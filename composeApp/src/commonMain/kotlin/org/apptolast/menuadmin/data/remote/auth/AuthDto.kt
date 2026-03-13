@@ -9,29 +9,15 @@ data class LoginRequestDto(
 )
 
 @Serializable
-data class RegisterRequestDto(
+data class RegisterAdminRequestDto(
     val email: String,
     val password: String,
-    val acceptTerms: Boolean = true,
-)
-
-@Serializable
-data class RegisterRestaurantRequestDto(
-    val email: String,
-    val password: String,
-    val acceptTerms: Boolean = true,
-    val restaurantName: String,
-    val slug: String? = null,
+    val name: String? = null,
 )
 
 @Serializable
 data class RefreshTokenRequestDto(
     val refreshToken: String,
-)
-
-@Serializable
-data class GoogleCallbackRequestDto(
-    val idToken: String,
 )
 
 @Serializable

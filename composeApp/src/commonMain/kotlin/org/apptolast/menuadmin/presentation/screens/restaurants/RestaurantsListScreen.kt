@@ -63,6 +63,7 @@ fun RestaurantsListScreen(
     RestaurantsListContent(
         uiState = uiState,
         onNavigateToRestaurant = onNavigateToRestaurant,
+        onNewRestaurant = viewModel::onNewRestaurant,
         onEditRestaurant = viewModel::onEditRestaurant,
         onFormNameChange = viewModel::onFormNameChange,
         onFormSlugChange = viewModel::onFormSlugChange,
@@ -80,6 +81,7 @@ fun RestaurantsListScreen(
 fun RestaurantsListContent(
     uiState: RestaurantsListUiState,
     onNavigateToRestaurant: (String) -> Unit,
+    onNewRestaurant: () -> Unit,
     onEditRestaurant: (Restaurant) -> Unit,
     onFormNameChange: (String) -> Unit,
     onFormSlugChange: (String) -> Unit,
@@ -99,18 +101,31 @@ fun RestaurantsListContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // Header
-        Column {
-            Text(
-                text = "Restaurantes",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-            )
-            Text(
-                text = "Gestiona tu restaurante",
-                fontSize = 14.sp,
-                color = TextSecondary,
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column {
+                Text(
+                    text = "Restaurantes",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
+                )
+                Text(
+                    text = "Gestiona tus restaurantes",
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                )
+            }
+            Button(
+                onClick = onNewRestaurant,
+                colors = ButtonDefaults.buttonColors(containerColor = Blue500),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Text("Nuevo Restaurante", color = TextWhite)
+            }
         }
 
         // Error message
@@ -137,7 +152,7 @@ fun RestaurantsListContent(
             }
         } else if (uiState.restaurants.isEmpty()) {
             Text(
-                text = "No tienes restaurante asociado. El restaurante se crea durante el registro.",
+                text = "No tienes restaurantes. Crea uno con el boton superior.",
                 fontSize = 14.sp,
                 color = TextMuted,
                 modifier = Modifier.padding(vertical = 24.dp),
@@ -320,7 +335,7 @@ private fun RestaurantFormDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Editar Restaurante",
+                text = if (uiState.editingRestaurant != null) "Editar Restaurante" else "Nuevo Restaurante",
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
             )
@@ -412,6 +427,7 @@ private fun PreviewRestaurantsListContentEmpty() {
                 restaurants = emptyList(),
             ),
             onNavigateToRestaurant = {},
+            onNewRestaurant = {},
             onEditRestaurant = {},
             onFormNameChange = {},
             onFormSlugChange = {},
@@ -445,6 +461,7 @@ private fun PreviewRestaurantsListContentWithData() {
                 ),
             ),
             onNavigateToRestaurant = {},
+            onNewRestaurant = {},
             onEditRestaurant = {},
             onFormNameChange = {},
             onFormSlugChange = {},
