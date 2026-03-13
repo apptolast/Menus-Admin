@@ -8,9 +8,10 @@ data class MenuResponseDto(
     val name: String,
     val description: String = "",
     val displayOrder: Int = 0,
+    val published: Boolean = false,
+    val archived: Boolean = false,
     val sections: List<SectionResponseDto> = emptyList(),
     val updatedAt: String? = null,
-    val archived: Boolean = false,
 )
 
 @Serializable

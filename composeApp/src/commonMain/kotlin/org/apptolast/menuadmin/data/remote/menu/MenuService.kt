@@ -13,14 +13,20 @@ import org.apptolast.menuadmin.data.remote.ApiConstants
 class MenuService(
     private val client: HttpClient,
 ) {
-    // Menus
-    suspend fun getMenus(archived: Boolean = false): List<MenuResponseDto> =
-        client.get(ApiConstants.ADMIN_MENUS) {
+    // Menus (scoped to restaurant)
+    suspend fun getMenus(
+        restaurantId: String,
+        archived: Boolean = false,
+    ): List<MenuResponseDto> =
+        client.get("${ApiConstants.ADMIN_RESTAURANTS}/$restaurantId/menus") {
             parameter("archived", archived)
         }.body()
 
-    suspend fun createMenu(request: MenuRequestDto): MenuResponseDto =
-        client.post(ApiConstants.ADMIN_MENUS) {
+    suspend fun createMenu(
+        restaurantId: String,
+        request: MenuRequestDto,
+    ): MenuResponseDto =
+        client.post("${ApiConstants.ADMIN_RESTAURANTS}/$restaurantId/menus") {
             setBody(request)
         }.body()
 

@@ -46,6 +46,7 @@ fun MenuResponseDto.toDomain(): Menu {
         description = description,
         displayOrder = displayOrder,
         sections = domainSections,
+        published = published,
         archived = archived,
         dishes = allDishes,
     )

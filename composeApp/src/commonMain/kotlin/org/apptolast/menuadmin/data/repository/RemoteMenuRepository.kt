@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import org.apptolast.menuadmin.data.remote.dish.DishService
 import org.apptolast.menuadmin.data.remote.mapper.toDomain
@@ -16,20 +15,23 @@ import org.apptolast.menuadmin.data.remote.menu.SectionRequestDto
 import org.apptolast.menuadmin.domain.model.Menu
 import org.apptolast.menuadmin.domain.model.Section
 import org.apptolast.menuadmin.domain.repository.MenuRepository
+import org.apptolast.menuadmin.presentation.SelectedRestaurantHolder
 
 class RemoteMenuRepository(
     private val menuService: MenuService,
     private val dishService: DishService,
+    private val selectedRestaurantHolder: SelectedRestaurantHolder,
     private val json: Json,
 ) : MenuRepository {
     private val _menus = MutableStateFlow<List<Menu>>(emptyList())
-    private var hasLoaded = false
+    private var loadedRestaurantId: String? = null
 
     override fun getAllMenus(): Flow<List<Menu>> =
         flow {
-            if (!hasLoaded) {
+            val restaurantId = selectedRestaurantHolder.selected.value?.id
+            if (restaurantId != null && loadedRestaurantId != restaurantId) {
                 try {
-                    refreshMenus()
+                    refreshMenus(restaurantId)
                 } catch (e: ClientRequestException) {
                     if (e.response.status != HttpStatusCode.BadRequest) throw e
                 } catch (_: Exception) {
@@ -40,24 +42,20 @@ class RemoteMenuRepository(
 
     override fun getMenusByRestaurant(restaurantId: String): Flow<List<Menu>> =
         flow {
-            if (!hasLoaded) {
+            if (loadedRestaurantId != restaurantId) {
                 try {
-                    refreshMenus()
+                    refreshMenus(restaurantId)
                 } catch (e: ClientRequestException) {
                     if (e.response.status != HttpStatusCode.BadRequest) throw e
                 } catch (_: Exception) {
                 }
             }
-            emitAll(
-                _menus.map { menus ->
-                    menus.filter { it.restaurantId == restaurantId }
-                },
-            )
+            emitAll(_menus)
         }
 
-    suspend fun refreshMenus() {
-        val menuDtos = menuService.getMenus()
-        val dishDtos = dishService.getDishes()
+    private suspend fun refreshMenus(restaurantId: String) {
+        val menuDtos = menuService.getMenus(restaurantId)
+        val dishDtos = dishService.getDishes(restaurantId)
 
         // Group dishes by sectionId
         val domainDishes = dishDtos.map { it.toDomain() }
@@ -76,24 +74,34 @@ class RemoteMenuRepository(
             val allDishes = sections.flatMap { it.dishes }
             Menu(
                 id = menuDto.id,
+                restaurantId = restaurantId,
                 name = menuDto.name,
                 description = menuDto.description,
                 displayOrder = menuDto.displayOrder,
                 sections = sections,
+                published = menuDto.published,
                 archived = menuDto.archived,
                 dishes = allDishes,
             )
         }
-        hasLoaded = true
+        loadedRestaurantId = restaurantId
     }
 
     override suspend fun getMenuById(id: String): Menu? {
-        if (!hasLoaded) refreshMenus()
+        if (loadedRestaurantId == null) {
+            val restaurantId = selectedRestaurantHolder.selected.value?.id ?: return null
+            refreshMenus(restaurantId)
+        }
         return _menus.value.find { it.id == id }
     }
 
     override suspend fun addMenu(menu: Menu): Menu {
+        val restaurantId = menu.restaurantId.ifEmpty {
+            selectedRestaurantHolder.selected.value?.id ?: loadedRestaurantId
+        } ?: throw IllegalStateException("No restaurant selected")
+
         val response = menuService.createMenu(
+            restaurantId,
             MenuRequestDto(
                 name = menu.name,
                 description = menu.description.ifEmpty { null },
@@ -101,7 +109,7 @@ class RemoteMenuRepository(
             ),
         )
         val created = response.toDomain()
-        refreshMenus()
+        refreshMenus(restaurantId)
         return created
     }
 
@@ -115,13 +123,13 @@ class RemoteMenuRepository(
             ),
         )
         val updated = response.toDomain()
-        refreshMenus()
+        loadedRestaurantId?.let { refreshMenus(it) }
         return updated
     }
 
     override suspend fun deleteMenu(id: String) {
         menuService.archiveMenu(id)
-        refreshMenus()
+        loadedRestaurantId?.let { refreshMenus(it) }
     }
 
     // Sections
@@ -134,7 +142,7 @@ class RemoteMenuRepository(
             menuId,
             SectionRequestDto(name = name, displayOrder = displayOrder),
         )
-        refreshMenus()
+        loadedRestaurantId?.let { refreshMenus(it) }
         return response.toDomain()
     }
 
@@ -149,7 +157,7 @@ class RemoteMenuRepository(
             sectionId,
             SectionRequestDto(name = name, displayOrder = displayOrder),
         )
-        refreshMenus()
+        loadedRestaurantId?.let { refreshMenus(it) }
         return response.toDomain()
     }
 
@@ -158,7 +166,7 @@ class RemoteMenuRepository(
         sectionId: String,
     ) {
         menuService.deleteSection(menuId, sectionId)
-        refreshMenus()
+        loadedRestaurantId?.let { refreshMenus(it) }
     }
 
     override suspend fun exportMenuToJson(id: String): String {

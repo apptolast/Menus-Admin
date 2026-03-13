@@ -23,20 +23,25 @@ data class IngredientAllergenResponseDto(
 )
 
 @Serializable
-data class IngredientRequestDto(
+data class CreateIngredientRequestDto(
     val name: String,
     val description: String? = null,
     val brand: String? = null,
     val labelInfo: String? = null,
+    val allergens: List<IngredientAllergenRequestDto> = emptyList(),
 )
 
 @Serializable
-data class UpdateIngredientAllergensRequestDto(
-    val allergens: List<IngredientAllergenRequestDto>,
+data class UpdateIngredientRequestDto(
+    val name: String? = null,
+    val description: String? = null,
+    val brand: String? = null,
+    val labelInfo: String? = null,
+    val allergens: List<IngredientAllergenRequestDto>? = null,
 )
 
 @Serializable
 data class IngredientAllergenRequestDto(
     val allergenCode: String,
-    val containmentLevel: String = "CONTAINS",
+    val containmentLevel: String,
 )

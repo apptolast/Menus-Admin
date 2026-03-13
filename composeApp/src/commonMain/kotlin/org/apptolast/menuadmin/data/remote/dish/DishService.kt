@@ -12,7 +12,8 @@ import org.apptolast.menuadmin.data.remote.ApiConstants
 class DishService(
     private val client: HttpClient,
 ) {
-    suspend fun getDishes(): List<DishResponseDto> = client.get(ApiConstants.ADMIN_DISHES).body()
+    suspend fun getDishes(restaurantId: String): List<DishResponseDto> =
+        client.get("${ApiConstants.ADMIN_RESTAURANTS}/$restaurantId/dishes").body()
 
     suspend fun createDish(request: DishRequestDto): DishResponseDto =
         client.post(ApiConstants.ADMIN_DISHES) {

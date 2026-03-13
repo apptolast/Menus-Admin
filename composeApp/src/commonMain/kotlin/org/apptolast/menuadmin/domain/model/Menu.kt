@@ -11,6 +11,7 @@ data class Menu(
     val description: String = "",
     val displayOrder: Int = 0,
     val sections: List<Section> = emptyList(),
+    val published: Boolean = false,
     val archived: Boolean = false,
     // Flattened dishes from all sections (for backward compatibility)
     val dishes: List<Dish> = emptyList(),

@@ -13,18 +13,21 @@ import org.apptolast.menuadmin.data.remote.mapper.toDomain
 import org.apptolast.menuadmin.domain.model.ContainmentLevel
 import org.apptolast.menuadmin.domain.model.Dish
 import org.apptolast.menuadmin.domain.repository.DishRepository
+import org.apptolast.menuadmin.presentation.SelectedRestaurantHolder
 
 class RemoteDishRepository(
     private val dishService: DishService,
+    private val selectedRestaurantHolder: SelectedRestaurantHolder,
 ) : DishRepository {
     private val _dishes = MutableStateFlow<List<Dish>>(emptyList())
-    private var hasLoaded = false
+    private var loadedRestaurantId: String? = null
 
     override fun getAllDishes(): Flow<List<Dish>> =
         flow {
-            if (!hasLoaded) {
+            val restaurantId = selectedRestaurantHolder.selected.value?.id
+            if (restaurantId != null && loadedRestaurantId != restaurantId) {
                 try {
-                    refreshDishes()
+                    refreshDishes(restaurantId)
                 } catch (e: ClientRequestException) {
                     if (e.response.status != HttpStatusCode.BadRequest) throw e
                 } catch (_: Exception) {
@@ -33,9 +36,9 @@ class RemoteDishRepository(
             emitAll(_dishes)
         }
 
-    suspend fun refreshDishes() {
-        _dishes.value = dishService.getDishes().map { it.toDomain() }
-        hasLoaded = true
+    private suspend fun refreshDishes(restaurantId: String) {
+        _dishes.value = dishService.getDishes(restaurantId).map { it.toDomain() }
+        loadedRestaurantId = restaurantId
     }
 
     override suspend fun createDish(
@@ -61,7 +64,7 @@ class RemoteDishRepository(
                 }.ifEmpty { null },
             ),
         )
-        refreshDishes()
+        loadedRestaurantId?.let { refreshDishes(it) }
         return response.toDomain()
     }
 
@@ -90,13 +93,13 @@ class RemoteDishRepository(
                 }.ifEmpty { null },
             ),
         )
-        refreshDishes()
+        loadedRestaurantId?.let { refreshDishes(it) }
         return response.toDomain()
     }
 
     override suspend fun deleteDish(id: String) {
         dishService.deleteDish(id)
-        refreshDishes()
+        loadedRestaurantId?.let { refreshDishes(it) }
     }
 
     override suspend fun addAllergen(
@@ -113,7 +116,7 @@ class RemoteDishRepository(
                 notes = notes.ifEmpty { null },
             ),
         )
-        refreshDishes()
+        loadedRestaurantId?.let { refreshDishes(it) }
         return response.toDomain()
     }
 
@@ -122,6 +125,6 @@ class RemoteDishRepository(
         allergenId: Int,
     ) {
         dishService.removeAllergen(dishId, allergenId)
-        refreshDishes()
+        loadedRestaurantId?.let { refreshDishes(it) }
     }
 }

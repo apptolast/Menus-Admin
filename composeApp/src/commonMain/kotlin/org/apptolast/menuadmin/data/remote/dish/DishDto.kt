@@ -33,6 +33,8 @@ data class DishRequestDto(
     val description: String? = null,
     val price: Double? = null,
     val imageUrl: String? = null,
+    val available: Boolean? = null,
+    val displayOrder: Int? = null,
     val allergens: List<DishAllergenRequestDto>? = null,
 )
 

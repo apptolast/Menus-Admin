@@ -38,7 +38,7 @@ class IngredientsViewModel(
         }
         formState.copy(
             isLoading = false,
-            ingredients = filtered,
+            ingredients = filtered.sortedBy { it.name.lowercase() },
         )
     }
         .catch { throwable ->
@@ -131,10 +131,11 @@ class IngredientsViewModel(
 
     fun onToggleAllergen(allergen: AllergenType) {
         val current = _formState.value.formAllergens
-        val updated = if (allergen in current) {
-            current - allergen
-        } else {
-            current + (allergen to ContainmentLevel.CONTAINS)
+        val currentLevel = current[allergen]
+        val updated = when (currentLevel) {
+            null -> current + (allergen to ContainmentLevel.CONTAINS)
+            ContainmentLevel.CONTAINS -> current + (allergen to ContainmentLevel.MAY_CONTAIN)
+            else -> current - allergen
         }
         _formState.value = _formState.value.copy(formAllergens = updated)
     }

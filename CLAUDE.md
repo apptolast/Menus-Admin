@@ -12,33 +12,35 @@
 
 All admin endpoints require Bearer JWT. Prefix: `/api/v1`
 
-| Module              | Endpoints                                                                                                                                                                        | Notes                                    |
-|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------|
-| Auth                | `/auth/login`, `/auth/register`, `/auth/refresh`, `/auth/register-restaurant`, `/auth/oauth2/google/callback`, `/auth/consent`                                                   | JWT-based                                |
-| Admin Restaurant    | `GET/PUT /admin/restaurant`                                                                                                                                                      | Single-tenant (one restaurant per admin) |
-| Admin Ingredients   | `GET/POST /admin/ingredients`, `GET/PUT/DELETE /admin/ingredients/{id}`, `GET /admin/ingredients/search?name=`, `POST /admin/ingredients/analyze-text`                           | Global catalog                           |
-| Admin Recipes       | `GET/POST /admin/recipes`, `GET/PUT/DELETE /admin/recipes/{id}`, `GET /admin/recipes/{id}/allergen-breakdown`                                                                    | Per restaurant                           |
-| Admin Menus         | `GET/POST /admin/menus`, `PUT/DELETE /admin/menus/{id}`, `PUT /admin/menus/{id}/publish`, `GET /admin/menus/{id}/allergen-matrix`, `GET /admin/menus/{id}/export-pdf`            | Per restaurant                           |
-| Menu Sections       | `POST /admin/menus/{menuId}/sections`, `PUT/DELETE /admin/menus/{menuId}/sections/{sectionId}`                                                                                   | Nested under menu                        |
-| Menu Recipes        | `POST /admin/menus/{menuId}/recipes`, `DELETE /admin/menus/{menuId}/recipes/{recipeId}`                                                                                          | Associate recipe to menu                 |
-| Admin Dishes        | `GET/POST /admin/dishes`, `PUT/DELETE /admin/dishes/{id}`, `POST /admin/dishes/{id}/allergens`, `DELETE /admin/dishes/{id}/allergens/{allergenId}`                               | Per section                              |
-| Admin Digital Cards | `GET/POST /admin/digital-cards`, `PUT/DELETE /admin/digital-cards/{id}`, `POST /admin/digital-cards/{id}/generate-qr`                                                            | Carta digital                            |
-| Dashboard           | `GET /admin/dashboard/stats`                                                                                                                                                     | Stats aggregation                        |
-| Allergens           | `GET /allergens`, `GET /allergens/{code}`                                                                                                                                        | Public, 14 EU allergens                  |
-| Public              | `GET /restaurants`, `GET /restaurants/{id}`, `GET /restaurants/{restaurantId}/menu`, `GET /restaurants/{restaurantId}/sections/{sectionId}/dishes`                               | Consumer-facing                          |
-| Public Cards        | `GET /public/cards/{slug}`, `GET /public/cards/{slug}/dishes`                                                                                                                    | Digital card view                        |
-| Users               | `GET/PUT/DELETE /users/me/allergen-profile`, `PUT /users/me/data-rectification`, `GET /users/me/data-export`, `DELETE /users/me/data-delete`, `POST /users/me/create-restaurant` | GDPR + profile                           |
+| Module            | Endpoints                                                                                                                                                                                      | Notes                               |
+|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| Auth              | `POST /auth/register`, `POST /auth/register-admin`, `POST /auth/login`, `POST /auth/refresh`, `POST /auth/oauth2/google/callback`                                                              | JWT-based, register-admin whitelist |
+| Admin Restaurants | `GET/POST /admin/restaurants`, `GET/PUT/DELETE /admin/restaurants/{id}`                                                                                                                        | Multi-tenant, paginated GET         |
+| Admin Whitelist   | `GET/POST /admin/whitelist`, `DELETE /admin/whitelist/{email}`                                                                                                                                 | Admin registration whitelist        |
+| Admin Ingredients | `GET/POST /admin/ingredients`, `GET/PUT/DELETE /admin/ingredients/{id}`, `GET /admin/ingredients/search`, `GET/PUT /admin/ingredients/{id}/allergens`                                          | Global catalog                      |
+| Admin Recipes     | `GET/POST /admin/restaurants/{restaurantId}/recipes`, `GET/PUT/DELETE /admin/recipes/{id}`, `GET /admin/recipes/{id}/allergens`                                                                | List/create scoped to restaurant    |
+| Admin Menus       | `GET/POST /admin/restaurants/{restaurantId}/menus`, `PUT/DELETE /admin/menus/{id}`, `PUT /admin/menus/{id}/publish`                                                                            | List/create scoped to restaurant    |
+| Menu Sections     | `POST /admin/menus/{menuId}/sections`, `PUT/DELETE /admin/menus/{menuId}/sections/{sectionId}`                                                                                                 | Nested under menu                   |
+| Admin Dishes      | `GET /admin/restaurants/{restaurantId}/dishes`, `POST /admin/dishes`, `PUT/DELETE /admin/dishes/{id}`, `POST /admin/dishes/{id}/allergens`, `DELETE /admin/dishes/{id}/allergens/{allergenId}` | GET scoped to restaurant, POST flat |
+| Allergens         | `GET /allergens`, `GET /allergens/{code}`                                                                                                                                                      | Public, 14 EU allergens             |
+| Public            | `GET /restaurants`, `GET /restaurants/{id}`, `GET /restaurants/{restaurantId}/menu`, `GET /restaurants/{restaurantId}/sections/{sectionId}/dishes`                                             | Consumer-facing                     |
+| Users             | `GET/PUT/DELETE /users/me/allergen-profile`, `GET/POST/DELETE /users/me/favorites/{restaurantId}`                                                                                              | Profile + favorites                 |
+
+**Not yet in API**: Dashboard stats, Digital Cards, Menu-Recipe associations, GDPR endpoints.
 
 ### Key API Schemas
 
-- **IngredientRequest**: `{name, brand, supplier, allergens[], traces[], ocrRawText, notes}`
-- **RecipeRequest**: `{name, description, category, price, components[], subElaboration}`
-- **RecipeComponent**: `{ingredientId, subRecipeId, quantity, unit, notes, sortOrder}`
-- **MenuRequest**: `{name, description, displayOrder}`
-- **DishRequest**: `{name, sectionId, description, price, imageUrl, allergens[]}`
-- **DigitalCardRequest**: `{menuId, slug}` (create), `{slug, customCss, active}` (update)
-- **DashboardStats**:
-  `{totalIngredients, activeRecipes, totalMenus, publishedMenus, totalDigitalCards, commonAllergens[]}`
+- **IngredientRequest (create)**:
+  `{name, description?, brand?, labelInfo?, allergens[{allergenCode, containmentLevel}]}`
+- **IngredientRequest (update)**:
+  `{name?, description?, brand?, labelInfo?, allergens?[{allergenCode, containmentLevel}]}`
+- **RecipeRequest (create)**:
+  `{restaurantId, name, description?, category?, ingredients[{ingredientId, quantity?, unit?}]}`
+- **RecipeRequest (update)**:
+  `{name?, description?, category?, active?, ingredients?[{ingredientId, quantity?, unit?}]}`
+- **MenuRequest**: `{name, description?, displayOrder?}`
+- **DishRequest**:
+  `{name, sectionId, description?, price?, imageUrl?, available?, displayOrder?, allergens?[{allergenCode, containmentLevel?, notes?}]}`
 
 ## Build & Run
 

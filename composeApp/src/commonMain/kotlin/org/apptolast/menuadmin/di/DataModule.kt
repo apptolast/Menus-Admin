@@ -3,6 +3,7 @@ package org.apptolast.menuadmin.di
 import kotlinx.serialization.json.Json
 import org.apptolast.menuadmin.data.remote.auth.AuthService
 import org.apptolast.menuadmin.data.remote.auth.TokenManager
+import org.apptolast.menuadmin.data.remote.createAuthHttpClient
 import org.apptolast.menuadmin.data.remote.createHttpClient
 import org.apptolast.menuadmin.data.remote.dish.DishService
 import org.apptolast.menuadmin.data.remote.ingredient.IngredientService
@@ -25,6 +26,7 @@ import org.apptolast.menuadmin.domain.repository.RecipeRepository
 import org.apptolast.menuadmin.domain.repository.RestaurantRepository
 import org.apptolast.menuadmin.presentation.SelectedRestaurantHolder
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -39,10 +41,11 @@ val dataModule = module {
 
     // Network infrastructure
     single { TokenManager() }
+    single(named("auth")) { createAuthHttpClient(get()) }
     single { createHttpClient(get(), get()) }
 
     // API Services
-    singleOf(::AuthService)
+    single { AuthService(get(named("auth"))) }
     singleOf(::RestaurantService)
     singleOf(::MenuService)
     singleOf(::DishService)

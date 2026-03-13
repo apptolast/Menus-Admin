@@ -18,14 +18,14 @@ class IngredientService(
     suspend fun getIngredientById(id: String): IngredientResponseDto =
         client.get("${ApiConstants.ADMIN_INGREDIENTS}/$id").body()
 
-    suspend fun createIngredient(request: IngredientRequestDto): IngredientResponseDto =
+    suspend fun createIngredient(request: CreateIngredientRequestDto): IngredientResponseDto =
         client.post(ApiConstants.ADMIN_INGREDIENTS) {
             setBody(request)
         }.body()
 
     suspend fun updateIngredient(
         id: String,
-        request: IngredientRequestDto,
+        request: UpdateIngredientRequestDto,
     ): IngredientResponseDto =
         client.put("${ApiConstants.ADMIN_INGREDIENTS}/$id") {
             setBody(request)
@@ -40,11 +40,14 @@ class IngredientService(
             parameter("name", name)
         }.body()
 
+    suspend fun getIngredientAllergens(id: String): List<IngredientAllergenResponseDto> =
+        client.get("${ApiConstants.ADMIN_INGREDIENTS}/$id/allergens").body()
+
     suspend fun updateIngredientAllergens(
         id: String,
-        request: UpdateIngredientAllergensRequestDto,
-    ): List<IngredientAllergenResponseDto> =
+        allergens: List<IngredientAllergenRequestDto>,
+    ): IngredientResponseDto =
         client.put("${ApiConstants.ADMIN_INGREDIENTS}/$id/allergens") {
-            setBody(request)
+            setBody(allergens)
         }.body()
 }

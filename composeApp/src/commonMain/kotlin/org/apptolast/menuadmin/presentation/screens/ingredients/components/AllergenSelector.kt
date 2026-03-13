@@ -21,17 +21,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
+import org.apptolast.menuadmin.domain.model.ContainmentLevel
 import org.apptolast.menuadmin.presentation.components.LucideIcon
+import org.apptolast.menuadmin.presentation.theme.Amber500
 import org.apptolast.menuadmin.presentation.theme.Blue100
 import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
+/**
+ * Allergen selector with containment level support.
+ * Click cycle: inactive -> CONTAINS -> MAY_CONTAIN -> inactive
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AllergenSelector(
-    selectedAllergens: Set<AllergenType>,
+    allergens: Map<AllergenType, ContainmentLevel>,
     onToggle: (AllergenType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -43,7 +49,7 @@ fun AllergenSelector(
         AllergenType.entries.forEach { allergen ->
             AllergenCard(
                 allergenType = allergen,
-                isActive = allergen in selectedAllergens,
+                containmentLevel = allergens[allergen],
                 onClick = { onToggle(allergen) },
             )
         }
@@ -53,17 +59,20 @@ fun AllergenSelector(
 @Composable
 private fun AllergenCard(
     allergenType: AllergenType,
-    isActive: Boolean,
+    containmentLevel: ContainmentLevel?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isActive = containmentLevel != null
+    val isMayContain = containmentLevel == ContainmentLevel.MAY_CONTAIN
+    val accentColor = if (isMayContain) Amber500 else allergenType.color
     val backgroundColor = if (isActive) {
-        allergenType.color.copy(alpha = 0.12f)
+        accentColor.copy(alpha = 0.12f)
     } else {
         Blue100.copy(alpha = 0.3f)
     }
-    val borderColor = if (isActive) allergenType.color else BorderLight
-    val textColor = if (isActive) allergenType.color else TextSecondary
+    val borderColor = if (isActive) accentColor else BorderLight
+    val textColor = if (isActive) accentColor else TextSecondary
     val shape = RoundedCornerShape(12.dp)
 
     Column(
@@ -77,14 +86,14 @@ private fun AllergenCard(
             )
             .background(backgroundColor)
             .clickable(onClick = onClick)
-            .padding(vertical = 16.dp, horizontal = 12.dp),
+            .padding(vertical = 12.dp, horizontal = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         LucideIcon(
             codepoint = allergenType.icon,
             size = 28.sp,
-            color = if (isActive) allergenType.color else TextSecondary.copy(alpha = 0.5f),
+            color = if (isActive) accentColor else TextSecondary.copy(alpha = 0.5f),
         )
         Text(
             text = allergenType.nameEs,
@@ -94,6 +103,16 @@ private fun AllergenCard(
             textAlign = TextAlign.Center,
             maxLines = 1,
         )
+        if (isActive && containmentLevel != null) {
+            Text(
+                text = containmentLevel.labelEs,
+                color = accentColor,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+            )
+        }
     }
 }
 
@@ -102,7 +121,10 @@ private fun AllergenCard(
 private fun PreviewAllergenSelector() {
     MenuAdminTheme {
         AllergenSelector(
-            selectedAllergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
+            allergens = mapOf(
+                AllergenType.GLUTEN to ContainmentLevel.CONTAINS,
+                AllergenType.DAIRY to ContainmentLevel.MAY_CONTAIN,
+            ),
             onToggle = {},
         )
     }
@@ -110,11 +132,23 @@ private fun PreviewAllergenSelector() {
 
 @Preview
 @Composable
-private fun PreviewAllergenCardActive() {
+private fun PreviewAllergenCardContains() {
     MenuAdminTheme {
         AllergenCard(
             allergenType = AllergenType.GLUTEN,
-            isActive = true,
+            containmentLevel = ContainmentLevel.CONTAINS,
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewAllergenCardMayContain() {
+    MenuAdminTheme {
+        AllergenCard(
+            allergenType = AllergenType.EGGS,
+            containmentLevel = ContainmentLevel.MAY_CONTAIN,
             onClick = {},
         )
     }
@@ -126,7 +160,7 @@ private fun PreviewAllergenCardInactive() {
     MenuAdminTheme {
         AllergenCard(
             allergenType = AllergenType.DAIRY,
-            isActive = false,
+            containmentLevel = null,
             onClick = {},
         )
     }

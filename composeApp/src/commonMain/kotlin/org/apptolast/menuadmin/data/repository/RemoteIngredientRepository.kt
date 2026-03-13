@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import org.apptolast.menuadmin.data.remote.ingredient.CreateIngredientRequestDto
 import org.apptolast.menuadmin.data.remote.ingredient.IngredientAllergenRequestDto
-import org.apptolast.menuadmin.data.remote.ingredient.IngredientRequestDto
 import org.apptolast.menuadmin.data.remote.ingredient.IngredientService
-import org.apptolast.menuadmin.data.remote.ingredient.UpdateIngredientAllergensRequestDto
+import org.apptolast.menuadmin.data.remote.ingredient.UpdateIngredientRequestDto
 import org.apptolast.menuadmin.data.remote.mapper.toDomain
 import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.repository.IngredientRepository
@@ -48,48 +48,34 @@ class RemoteIngredientRepository(
     }
 
     override suspend fun addIngredient(ingredient: Ingredient): Ingredient {
-        // Step 1: Create the ingredient (without allergens)
-        val response = ingredientService.createIngredient(ingredient.toRequest())
+        val response = ingredientService.createIngredient(
+            CreateIngredientRequestDto(
+                name = ingredient.name,
+                description = ingredient.description.ifEmpty { null },
+                brand = ingredient.brand.ifEmpty { null },
+                labelInfo = ingredient.labelInfo.ifEmpty { null },
+                allergens = ingredient.allergens.map { it.toRequest() },
+            ),
+        )
         val created = response.toDomain()
-
-        // Step 2: Update allergens if any
-        if (ingredient.allergens.isNotEmpty()) {
-            ingredientService.updateIngredientAllergens(
-                created.id,
-                UpdateIngredientAllergensRequestDto(
-                    allergens = ingredient.allergens.map {
-                        IngredientAllergenRequestDto(
-                            allergenCode = it.allergenCode,
-                            containmentLevel = it.containmentLevel.apiValue,
-                        )
-                    },
-                ),
-            )
-        }
-
         refreshIngredients()
         return _ingredients.value.find { it.id == created.id } ?: created
     }
 
     override suspend fun updateIngredient(ingredient: Ingredient): Ingredient {
-        // Step 1: Update ingredient data
-        ingredientService.updateIngredient(ingredient.id, ingredient.toRequest())
-
-        // Step 2: Update allergens
-        ingredientService.updateIngredientAllergens(
+        val response = ingredientService.updateIngredient(
             ingredient.id,
-            UpdateIngredientAllergensRequestDto(
-                allergens = ingredient.allergens.map {
-                    IngredientAllergenRequestDto(
-                        allergenCode = it.allergenCode,
-                        containmentLevel = it.containmentLevel.apiValue,
-                    )
-                },
+            UpdateIngredientRequestDto(
+                name = ingredient.name,
+                description = ingredient.description.ifEmpty { null },
+                brand = ingredient.brand.ifEmpty { null },
+                labelInfo = ingredient.labelInfo.ifEmpty { null },
+                allergens = ingredient.allergens.map { it.toRequest() },
             ),
         )
-
+        val updated = response.toDomain()
         refreshIngredients()
-        return _ingredients.value.find { it.id == ingredient.id } ?: ingredient
+        return _ingredients.value.find { it.id == updated.id } ?: updated
     }
 
     override suspend fun deleteIngredient(id: String) {
@@ -106,11 +92,9 @@ class RemoteIngredientRepository(
         refreshIngredients()
     }
 
-    private fun Ingredient.toRequest() =
-        IngredientRequestDto(
-            name = name,
-            description = description.ifEmpty { null },
-            brand = brand.ifEmpty { null },
-            labelInfo = labelInfo.ifEmpty { null },
+    private fun org.apptolast.menuadmin.domain.model.IngredientAllergen.toRequest() =
+        IngredientAllergenRequestDto(
+            allergenCode = allergenCode,
+            containmentLevel = containmentLevel.apiValue,
         )
 }

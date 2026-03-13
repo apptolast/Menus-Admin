@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -319,13 +320,13 @@ fun IngredientsContent(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text(
-                        text = "Alergenos (Click para activar/desactivar)",
+                        text = "Alergenos (Click: Contiene / Puede contener / Desactivar)",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary,
                     )
                     AllergenSelector(
-                        selectedAllergens = uiState.formAllergens.keys,
+                        allergens = uiState.formAllergens,
                         onToggle = onToggleAllergen,
                     )
                 }
@@ -523,6 +524,7 @@ private fun IngredientCard(
             .border(width = 1.dp, color = BorderLight, shape = shape)
             .background(BgCard)
             .clickable(onClick = onClick)
+            .defaultMinSize(minHeight = 120.dp)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
