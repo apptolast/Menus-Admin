@@ -4,6 +4,7 @@ import org.apptolast.menuadmin.data.remote.dish.DishAllergenResponseDto
 import org.apptolast.menuadmin.data.remote.dish.DishResponseDto
 import org.apptolast.menuadmin.data.remote.ingredient.IngredientAllergenResponseDto
 import org.apptolast.menuadmin.data.remote.ingredient.IngredientResponseDto
+import org.apptolast.menuadmin.data.remote.menu.MenuRecipeResponseDto
 import org.apptolast.menuadmin.data.remote.menu.MenuResponseDto
 import org.apptolast.menuadmin.data.remote.menu.SectionResponseDto
 import org.apptolast.menuadmin.data.remote.recipe.RecipeIngredientResponseDto
@@ -17,6 +18,7 @@ import org.apptolast.menuadmin.domain.model.DishAllergen
 import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.domain.model.Menu
+import org.apptolast.menuadmin.domain.model.MenuRecipeSummary
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import org.apptolast.menuadmin.domain.model.Restaurant
@@ -48,9 +50,14 @@ fun MenuResponseDto.toDomain(): Menu {
         sections = domainSections,
         published = published,
         archived = archived,
+        restaurantLogoUrl = restaurantLogoUrl,
+        companyLogoUrl = companyLogoUrl,
+        recipes = recipes.map { it.toDomain() },
         dishes = allDishes,
     )
 }
+
+fun MenuRecipeResponseDto.toDomain(): MenuRecipeSummary = MenuRecipeSummary(id = id, name = name)
 
 fun SectionResponseDto.toDomain(): Section =
     Section(

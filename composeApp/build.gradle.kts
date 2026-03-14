@@ -1,5 +1,7 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -8,6 +10,17 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.buildkonfig)
+}
+
+// Load local.properties for BuildKonfig
+val localProperties: Properties by lazy {
+    Properties().apply {
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { load(it) }
+        }
+    }
 }
 
 kotlin {
@@ -131,4 +144,11 @@ dependencies {
 ktlint {
     android.set(true)
     outputToConsole.set(true)
+}
+
+buildkonfig {
+    packageName = "org.apptolast.menuadmin"
+    defaultConfigs {
+        buildConfigField(STRING, "API_BASE_URL", localProperties.getProperty("API_BASE_URL", ""))
+    }
 }

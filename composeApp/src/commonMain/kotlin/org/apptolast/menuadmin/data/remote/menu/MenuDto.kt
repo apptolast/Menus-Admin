@@ -10,8 +10,17 @@ data class MenuResponseDto(
     val displayOrder: Int = 0,
     val published: Boolean = false,
     val archived: Boolean = false,
+    val restaurantLogoUrl: String? = null,
+    val companyLogoUrl: String? = null,
     val sections: List<SectionResponseDto> = emptyList(),
+    val recipes: List<MenuRecipeResponseDto> = emptyList(),
     val updatedAt: String? = null,
+)
+
+@Serializable
+data class MenuRecipeResponseDto(
+    val id: String,
+    val name: String,
 )
 
 @Serializable
@@ -26,6 +35,9 @@ data class MenuRequestDto(
     val name: String,
     val description: String? = null,
     val displayOrder: Int? = null,
+    val restaurantLogoUrl: String? = null,
+    val companyLogoUrl: String? = null,
+    val recipeIds: List<String>? = null,
 )
 
 @Serializable
@@ -40,8 +52,6 @@ data class MenuPublishRequestDto(
 )
 
 @Serializable
-data class MenuRecipeRequestDto(
-    val recipeId: String,
-    val section: String? = null,
-    val sortOrder: Int? = null,
+data class UpdateMenuRecipesRequestDto(
+    val recipeIds: List<String>,
 )

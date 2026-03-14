@@ -105,7 +105,9 @@ class RemoteMenuRepository(
             MenuRequestDto(
                 name = menu.name,
                 description = menu.description.ifEmpty { null },
-                displayOrder = menu.displayOrder,
+                restaurantLogoUrl = menu.restaurantLogoUrl,
+                companyLogoUrl = menu.companyLogoUrl,
+                recipeIds = menu.recipes.map { it.id }.ifEmpty { null },
             ),
         )
         val created = response.toDomain()
@@ -120,6 +122,9 @@ class RemoteMenuRepository(
                 name = menu.name,
                 description = menu.description.ifEmpty { null },
                 displayOrder = menu.displayOrder,
+                restaurantLogoUrl = menu.restaurantLogoUrl,
+                companyLogoUrl = menu.companyLogoUrl,
+                recipeIds = menu.recipes.map { it.id }.ifEmpty { null },
             ),
         )
         val updated = response.toDomain()

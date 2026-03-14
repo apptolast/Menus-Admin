@@ -1,7 +1,9 @@
 package org.apptolast.menuadmin.data.remote
 
+import org.apptolast.menuadmin.BuildKonfig
+
 object ApiConstants {
-    const val BASE_URL = "https://menus-api-dev.apptolast.com"
+    val BASE_URL: String = BuildKonfig.API_BASE_URL
 
     // Auth (no bearer token required)
     const val AUTH_LOGIN = "/api/v1/auth/login"

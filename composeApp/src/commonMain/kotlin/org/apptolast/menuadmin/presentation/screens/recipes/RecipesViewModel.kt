@@ -184,16 +184,4 @@ class RecipesViewModel(
             }
         }
     }
-
-    fun onToggleRecipeActive(id: String) {
-        viewModelScope.launch {
-            try {
-                recipeRepository.toggleRecipeActive(id)
-            } catch (e: Exception) {
-                _formState.value = _formState.value.copy(
-                    error = e.message ?: "Error al cambiar estado de la receta",
-                )
-            }
-        }
-    }
 }

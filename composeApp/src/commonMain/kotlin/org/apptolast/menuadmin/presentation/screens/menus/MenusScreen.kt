@@ -19,8 +19,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.outlined.PictureAsPdf
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,8 +31,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +48,7 @@ import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Dish
 import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Menu
+import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.presentation.screens.menus.components.AllergenMatrixTable
 import org.apptolast.menuadmin.presentation.screens.menus.components.AllergenTableLegend
 import org.apptolast.menuadmin.presentation.screens.menus.components.CategoryFilterRow
@@ -71,6 +75,9 @@ fun MenusScreen(viewModel: MenusViewModel = koinViewModel()) {
         onNewMenu = viewModel::onNewMenu,
         onFormNameChange = viewModel::onFormNameChange,
         onFormDescriptionChange = viewModel::onFormDescriptionChange,
+        onFormRestaurantLogoUrlChange = viewModel::onFormRestaurantLogoUrlChange,
+        onFormCompanyLogoUrlChange = viewModel::onFormCompanyLogoUrlChange,
+        onToggleRecipeSelection = viewModel::onToggleRecipeSelection,
         onDismissForm = viewModel::onDismissForm,
         onSaveMenu = viewModel::onSaveMenu,
     )
@@ -86,6 +93,9 @@ fun MenusContent(
     onNewMenu: () -> Unit,
     onFormNameChange: (String) -> Unit,
     onFormDescriptionChange: (String) -> Unit,
+    onFormRestaurantLogoUrlChange: (String) -> Unit,
+    onFormCompanyLogoUrlChange: (String) -> Unit,
+    onToggleRecipeSelection: (String) -> Unit,
     onDismissForm: () -> Unit,
     onSaveMenu: () -> Unit,
     modifier: Modifier = Modifier,
@@ -95,20 +105,30 @@ fun MenusContent(
         return
     }
 
-    val selectedMenu = uiState.selectedMenu
-
-    if (selectedMenu == null) {
-        MenuListView(
+    when {
+        uiState.isFormVisible -> MenuEditorForm(
             uiState = uiState,
-            onSelectMenu = onSelectMenu,
-            onNewMenu = onNewMenu,
+            onFormNameChange = onFormNameChange,
+            onFormDescriptionChange = onFormDescriptionChange,
+            onFormRestaurantLogoUrlChange = onFormRestaurantLogoUrlChange,
+            onFormCompanyLogoUrlChange = onFormCompanyLogoUrlChange,
+            onToggleRecipeSelection = onToggleRecipeSelection,
+            onDismiss = onDismissForm,
+            onSave = onSaveMenu,
+            modifier = modifier,
         )
-    } else {
-        AllergenMatrixView(
+
+        uiState.selectedMenu != null -> AllergenMatrixView(
             uiState = uiState,
             onBack = onBack,
             onFilterCategory = onFilterCategory,
             onExportPdf = onExportPdf,
+            onNewMenu = onNewMenu,
+        )
+
+        else -> MenuListView(
+            uiState = uiState,
+            onSelectMenu = onSelectMenu,
             onNewMenu = onNewMenu,
         )
     }
@@ -121,59 +141,176 @@ fun MenusContent(
             style = MaterialTheme.typography.bodyMedium,
         )
     }
-
-    // New Menu Dialog
-    if (uiState.isFormVisible) {
-        NewMenuDialog(
-            uiState = uiState,
-            onNameChange = onFormNameChange,
-            onDescriptionChange = onFormDescriptionChange,
-            onDismiss = onDismissForm,
-            onSave = onSaveMenu,
-        )
-    }
 }
 
 @Composable
-private fun NewMenuDialog(
+private fun MenuEditorForm(
     uiState: MenusUiState,
-    onNameChange: (String) -> Unit,
-    onDescriptionChange: (String) -> Unit,
+    onFormNameChange: (String) -> Unit,
+    onFormDescriptionChange: (String) -> Unit,
+    onFormRestaurantLogoUrlChange: (String) -> Unit,
+    onFormCompanyLogoUrlChange: (String) -> Unit,
+    onToggleRecipeSelection: (String) -> Unit,
     onDismiss: () -> Unit,
     onSave: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = "Nuevo Menu",
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-            )
-        },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = "Volver",
+                        tint = TextPrimary,
+                    )
+                }
+                Column {
+                    Text(
+                        text = "Nuevo Menu",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
+                    )
+                    Text(
+                        text = "Configura el menu y selecciona las recetas",
+                        fontSize = 14.sp,
+                        color = TextSecondary,
+                    )
+                }
+            }
+        }
+
+        // Scrollable content
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            // Name & Description
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 OutlinedTextField(
                     value = uiState.formName,
-                    onValueChange = onNameChange,
-                    label = { Text("Nombre") },
+                    onValueChange = onFormNameChange,
+                    label = { Text("Nombre del Menu") },
+                    placeholder = { Text("Ej. Menu Primavera 2026") },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Blue500,
+                        unfocusedBorderColor = BorderLight,
+                    ),
                 )
                 OutlinedTextField(
                     value = uiState.formDescription,
-                    onValueChange = onDescriptionChange,
+                    onValueChange = onFormDescriptionChange,
                     label = { Text("Descripcion") },
-                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("Descripcion del menu...") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
-                    minLines = 2,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Blue500,
+                        unfocusedBorderColor = BorderLight,
+                    ),
                 )
             }
-        },
-        confirmButton = {
+
+            // Logos
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                OutlinedTextField(
+                    value = uiState.formRestaurantLogoUrl,
+                    onValueChange = onFormRestaurantLogoUrlChange,
+                    label = { Text("Logo del Restaurante (URL)") },
+                    placeholder = { Text("https://...") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Blue500,
+                        unfocusedBorderColor = BorderLight,
+                    ),
+                )
+                OutlinedTextField(
+                    value = uiState.formCompanyLogoUrl,
+                    onValueChange = onFormCompanyLogoUrlChange,
+                    label = { Text("Logo de la Empresa (URL)") },
+                    placeholder = { Text("https://...") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Blue500,
+                        unfocusedBorderColor = BorderLight,
+                    ),
+                )
+            }
+
+            // Recipe Selection
+            Text(
+                text = "Recetas del Menu",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary,
+            )
+
+            if (uiState.availableRecipes.isEmpty()) {
+                Text(
+                    text = "No hay recetas disponibles. Crea recetas primero.",
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                )
+            } else {
+                Text(
+                    text = "${uiState.formSelectedRecipeIds.size} de ${uiState.availableRecipes.size} seleccionadas",
+                    fontSize = 13.sp,
+                    color = TextSecondary,
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, BorderLight, RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(BgCard),
+                ) {
+                    uiState.availableRecipes.forEach { recipe ->
+                        val isSelected = recipe.id in uiState.formSelectedRecipeIds
+                        RecipeSelectionRow(
+                            recipe = recipe,
+                            isSelected = isSelected,
+                            onToggle = { onToggleRecipeSelection(recipe.id) },
+                        )
+                    }
+                }
+            }
+        }
+
+        // Save button
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+        ) {
             Button(
                 onClick = onSave,
                 enabled = !uiState.isSaving && uiState.formName.isNotBlank(),
@@ -182,26 +319,76 @@ private fun NewMenuDialog(
             ) {
                 if (uiState.isSaving) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(18.dp),
                         color = TextWhite,
                         strokeWidth = 2.dp,
                     )
                 } else {
-                    Text("Guardar", color = TextWhite)
+                    Icon(
+                        imageVector = Icons.Filled.Save,
+                        contentDescription = null,
+                        tint = TextWhite,
+                        modifier = Modifier.size(18.dp),
+                    )
                 }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Guardar Menu",
+                    color = TextWhite,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                enabled = !uiState.isSaving,
-            ) {
-                Text("Cancelar")
+        }
+    }
+}
+
+@Composable
+private fun RecipeSelectionRow(
+    recipe: Recipe,
+    isSelected: Boolean,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val categoryLabel = DishCategory.entries.find { it.name == recipe.category }?.labelEs
+        ?: recipe.category
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onToggle)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = if (isSelected) Icons.Filled.CheckBox else Icons.Filled.CheckBoxOutlineBlank,
+            contentDescription = if (isSelected) "Seleccionada" else "No seleccionada",
+            tint = if (isSelected) Blue500 else TextSecondary,
+            modifier = Modifier.size(24.dp),
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = recipe.name,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = TextPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (categoryLabel.isNotBlank()) {
+                Text(
+                    text = categoryLabel,
+                    fontSize = 12.sp,
+                    color = TextSecondary,
+                )
             }
-        },
-        shape = RoundedCornerShape(16.dp),
-        containerColor = BgCard,
-    )
+        }
+        Text(
+            text = "${recipe.ingredientCount} ing.",
+            fontSize = 12.sp,
+            color = TextSecondary,
+        )
+    }
 }
 
 @Composable
@@ -290,27 +477,46 @@ private fun MenuCard(
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
             )
-            Text(
-                text = menu.companyName,
-                fontSize = 14.sp,
-                color = TextSecondary,
-            )
+            if (menu.description.isNotBlank()) {
+                Text(
+                    text = menu.description,
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                )
+            }
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Green500.copy(alpha = 0.1f))
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                ) {
-                    Text(
-                        text = "${menu.dishes.size} platos",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Green500,
-                    )
+                if (menu.recipes.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Blue500.copy(alpha = 0.1f))
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                    ) {
+                        Text(
+                            text = "${menu.recipes.size} recetas",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Blue500,
+                        )
+                    }
+                }
+                if (menu.dishes.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Green500.copy(alpha = 0.1f))
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                    ) {
+                        Text(
+                            text = "${menu.dishes.size} platos",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Green500,
+                        )
+                    }
                 }
             }
         }
@@ -350,7 +556,7 @@ private fun AllergenMatrixView(
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = menu.companyName,
+                    text = menu.name,
                     fontSize = 13.sp,
                     color = TextSecondary,
                 )
@@ -432,7 +638,7 @@ private fun MenusContentPreview() {
                     Menu(
                         id = "menu-1",
                         name = "Menu Primavera 2025",
-                        companyName = "Hotel Palace Barcelona",
+                        description = "Menu de temporada",
                         dishes = listOf(
                             Dish(
                                 id = "d1",
@@ -446,6 +652,14 @@ private fun MenusContentPreview() {
                         updatedAt = Clock.System.now(),
                     ),
                 ),
+                availableRecipes = listOf(
+                    Recipe(
+                        id = "rec-1",
+                        name = "Croquetas Ibericas",
+                        category = "ENTRANTE",
+                        ingredientCount = 5,
+                    ),
+                ),
             ),
             onSelectMenu = {},
             onBack = {},
@@ -454,6 +668,9 @@ private fun MenusContentPreview() {
             onNewMenu = {},
             onFormNameChange = {},
             onFormDescriptionChange = {},
+            onFormRestaurantLogoUrlChange = {},
+            onFormCompanyLogoUrlChange = {},
+            onToggleRecipeSelection = {},
             onDismissForm = {},
             onSaveMenu = {},
         )

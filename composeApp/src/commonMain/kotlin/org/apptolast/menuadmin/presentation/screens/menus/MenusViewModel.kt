@@ -12,13 +12,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Menu
+import org.apptolast.menuadmin.domain.model.MenuRecipeSummary
 import org.apptolast.menuadmin.domain.repository.MenuRepository
+import org.apptolast.menuadmin.domain.repository.RecipeRepository
 import kotlin.time.Clock
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class MenusViewModel(
     private val menuRepository: MenuRepository,
+    private val recipeRepository: RecipeRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val restaurantId: String = savedStateHandle["restaurantId"] ?: ""
@@ -27,15 +30,16 @@ class MenusViewModel(
 
     val uiState: StateFlow<MenusUiState> = combine(
         menuRepository.getMenusByRestaurant(restaurantId),
+        recipeRepository.getRecipesByRestaurant(restaurantId),
         _localState,
-    ) { menus, localState ->
-        // Keep selectedMenu in sync if it was updated in the repository
+    ) { menus, recipes, localState ->
         val updatedSelectedMenu = localState.selectedMenu?.let { selected ->
             menus.find { it.id == selected.id }
         }
         localState.copy(
             isLoading = false,
             menus = menus,
+            availableRecipes = recipes,
             selectedMenu = updatedSelectedMenu ?: localState.selectedMenu,
         )
     }
@@ -76,6 +80,9 @@ class MenusViewModel(
             isFormVisible = true,
             formName = "",
             formDescription = "",
+            formRestaurantLogoUrl = "",
+            formCompanyLogoUrl = "",
+            formSelectedRecipeIds = emptySet(),
         )
     }
 
@@ -87,11 +94,28 @@ class MenusViewModel(
         _localState.value = _localState.value.copy(formDescription = desc)
     }
 
+    fun onFormRestaurantLogoUrlChange(url: String) {
+        _localState.value = _localState.value.copy(formRestaurantLogoUrl = url)
+    }
+
+    fun onFormCompanyLogoUrlChange(url: String) {
+        _localState.value = _localState.value.copy(formCompanyLogoUrl = url)
+    }
+
+    fun onToggleRecipeSelection(recipeId: String) {
+        val current = _localState.value.formSelectedRecipeIds
+        val updated = if (recipeId in current) current - recipeId else current + recipeId
+        _localState.value = _localState.value.copy(formSelectedRecipeIds = updated)
+    }
+
     fun onDismissForm() {
         _localState.value = _localState.value.copy(
             isFormVisible = false,
             formName = "",
             formDescription = "",
+            formRestaurantLogoUrl = "",
+            formCompanyLogoUrl = "",
+            formSelectedRecipeIds = emptySet(),
         )
     }
 
@@ -102,12 +126,20 @@ class MenusViewModel(
                 _localState.value = _localState.value.copy(isSaving = true)
                 val state = _localState.value
                 val now = Clock.System.now()
+
+                val selectedRecipes = state.availableRecipes
+                    .filter { it.id in state.formSelectedRecipeIds }
+                    .map { MenuRecipeSummary(id = it.id, name = it.name) }
+
                 menuRepository.addMenu(
                     Menu(
                         id = Uuid.random().toString(),
                         restaurantId = restaurantId,
                         name = state.formName,
                         description = state.formDescription,
+                        restaurantLogoUrl = state.formRestaurantLogoUrl.ifBlank { null },
+                        companyLogoUrl = state.formCompanyLogoUrl.ifBlank { null },
+                        recipes = selectedRecipes,
                         createdAt = now,
                         updatedAt = now,
                     ),
@@ -117,6 +149,9 @@ class MenusViewModel(
                     isFormVisible = false,
                     formName = "",
                     formDescription = "",
+                    formRestaurantLogoUrl = "",
+                    formCompanyLogoUrl = "",
+                    formSelectedRecipeIds = emptySet(),
                 )
             } catch (e: Exception) {
                 _localState.value = _localState.value.copy(
@@ -132,7 +167,6 @@ class MenusViewModel(
             try {
                 val menu = _localState.value.selectedMenu ?: return@launch
                 menuRepository.exportMenuToJson(menu.id)
-                // In a real app, this would trigger a file save dialog or share intent
             } catch (e: Exception) {
                 _localState.value = _localState.value.copy(
                     error = e.message ?: "Error al exportar JSON",
@@ -145,7 +179,6 @@ class MenusViewModel(
         viewModelScope.launch {
             try {
                 // PDF export would be handled by platform-specific code
-                // This is a placeholder for the action
             } catch (e: Exception) {
                 _localState.value = _localState.value.copy(
                     error = e.message ?: "Error al exportar PDF",

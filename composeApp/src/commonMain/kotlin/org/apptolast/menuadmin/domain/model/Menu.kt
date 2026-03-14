@@ -13,6 +13,9 @@ data class Menu(
     val sections: List<Section> = emptyList(),
     val published: Boolean = false,
     val archived: Boolean = false,
+    val restaurantLogoUrl: String? = null,
+    val companyLogoUrl: String? = null,
+    val recipes: List<MenuRecipeSummary> = emptyList(),
     // Flattened dishes from all sections (for backward compatibility)
     val dishes: List<Dish> = emptyList(),
     // Legacy fields (used by mock data)
@@ -20,6 +23,12 @@ data class Menu(
     val isActive: Boolean = true,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
+)
+
+@Serializable
+data class MenuRecipeSummary(
+    val id: String,
+    val name: String,
 )
 
 @Serializable

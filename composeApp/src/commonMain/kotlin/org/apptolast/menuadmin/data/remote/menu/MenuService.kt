@@ -77,19 +77,11 @@ class MenuService(
         }.body()
 
     // Menu-Recipe associations
-    suspend fun addRecipeToMenu(
+    suspend fun updateMenuRecipes(
         menuId: String,
-        request: MenuRecipeRequestDto,
-    ) {
-        client.post("${ApiConstants.ADMIN_MENUS}/$menuId/recipes") {
+        request: UpdateMenuRecipesRequestDto,
+    ): MenuResponseDto =
+        client.put("${ApiConstants.ADMIN_MENUS}/$menuId/recipes") {
             setBody(request)
-        }
-    }
-
-    suspend fun removeRecipeFromMenu(
-        menuId: String,
-        recipeId: String,
-    ) {
-        client.delete("${ApiConstants.ADMIN_MENUS}/$menuId/recipes/$recipeId")
-    }
+        }.body()
 }

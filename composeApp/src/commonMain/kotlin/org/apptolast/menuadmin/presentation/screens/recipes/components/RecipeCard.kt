@@ -8,15 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -31,17 +27,14 @@ import org.apptolast.menuadmin.presentation.components.AllergenBadge
 import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.BorderLight
-import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RecipeCard(
     recipe: Recipe,
-    onToggleActive: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -59,32 +52,16 @@ fun RecipeCard(
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            // Name + Active Toggle
-            Row(
+            // Name
+            Text(
+                text = recipe.name,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextPrimary,
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = recipe.name,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                    modifier = Modifier.weight(1f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Switch(
-                    checked = recipe.isActive,
-                    onCheckedChange = { onToggleActive() },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = TextWhite,
-                        checkedTrackColor = Green500,
-                        uncheckedThumbColor = TextWhite,
-                        uncheckedTrackColor = BorderLight,
-                    ),
-                )
-            }
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
 
             // Category Badge
             if (categoryLabel.isNotBlank()) {
@@ -158,7 +135,6 @@ private fun RecipeCardPreview() {
                 allergenCount = 2,
                 computedAllergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
             ),
-            onToggleActive = {},
             onClick = {},
         )
     }

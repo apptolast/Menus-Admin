@@ -77,7 +77,6 @@ fun RecipesScreen(viewModel: RecipesViewModel = koinViewModel()) {
         onNewRecipe = viewModel::onNewRecipe,
         onDismissEditor = viewModel::onDismissEditor,
         onSearchQueryChange = viewModel::onSearchQueryChange,
-        onToggleRecipeActive = viewModel::onToggleRecipeActive,
         onEditRecipe = viewModel::onEditRecipe,
         onFormNameChange = viewModel::onFormNameChange,
         onFormDescriptionChange = viewModel::onFormDescriptionChange,
@@ -96,7 +95,6 @@ fun RecipesContent(
     onNewRecipe: () -> Unit,
     onDismissEditor: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
-    onToggleRecipeActive: (String) -> Unit,
     onEditRecipe: (Recipe) -> Unit,
     onFormNameChange: (String) -> Unit,
     onFormDescriptionChange: (String) -> Unit,
@@ -213,7 +211,6 @@ fun RecipesContent(
                     uiState.recipes.forEach { recipe ->
                         RecipeCard(
                             recipe = recipe,
-                            onToggleActive = { onToggleRecipeActive(recipe.id) },
                             onClick = { onEditRecipe(recipe) },
                             modifier = Modifier.weight(1f),
                         )
@@ -646,7 +643,6 @@ private fun RecipesContentPreview() {
             onNewRecipe = {},
             onDismissEditor = {},
             onSearchQueryChange = {},
-            onToggleRecipeActive = {},
             onEditRecipe = {},
             onFormNameChange = {},
             onFormDescriptionChange = {},

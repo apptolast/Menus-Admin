@@ -2,6 +2,7 @@ package org.apptolast.menuadmin.presentation.screens.menus
 
 import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Menu
+import org.apptolast.menuadmin.domain.model.Recipe
 
 data class MenusUiState(
     val isLoading: Boolean = true,
@@ -10,8 +11,13 @@ data class MenusUiState(
     val selectedCategory: DishCategory? = null,
     val searchQuery: String = "",
     val error: String? = null,
+    // Form state
     val isFormVisible: Boolean = false,
     val formName: String = "",
     val formDescription: String = "",
+    val formRestaurantLogoUrl: String = "",
+    val formCompanyLogoUrl: String = "",
+    val formSelectedRecipeIds: Set<String> = emptySet(),
+    val availableRecipes: List<Recipe> = emptyList(),
     val isSaving: Boolean = false,
 )
