@@ -15,7 +15,6 @@ import org.apptolast.menuadmin.domain.model.Menu
 import org.apptolast.menuadmin.domain.model.MenuRecipeSummary
 import org.apptolast.menuadmin.domain.repository.MenuRepository
 import org.apptolast.menuadmin.domain.repository.RecipeRepository
-import kotlin.time.Clock
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -61,13 +60,32 @@ class MenusViewModel(
         _localState.value = _localState.value.copy(
             selectedMenu = menu,
             selectedCategory = null,
+            menuRecipes = emptyList(),
+            isLoadingRecipes = true,
         )
+        viewModelScope.launch {
+            try {
+                val fullRecipes = menu.recipes.mapNotNull { recipeSummary ->
+                    recipeRepository.getRecipeById(recipeSummary.id)
+                }
+                _localState.value = _localState.value.copy(
+                    menuRecipes = fullRecipes,
+                    isLoadingRecipes = false,
+                )
+            } catch (e: Exception) {
+                _localState.value = _localState.value.copy(
+                    isLoadingRecipes = false,
+                    error = e.message ?: "Error al cargar recetas del menu",
+                )
+            }
+        }
     }
 
     fun clearMenuSelection() {
         _localState.value = _localState.value.copy(
             selectedMenu = null,
             selectedCategory = null,
+            menuRecipes = emptyList(),
         )
     }
 
@@ -78,11 +96,25 @@ class MenusViewModel(
     fun onNewMenu() {
         _localState.value = _localState.value.copy(
             isFormVisible = true,
+            editingMenu = null,
             formName = "",
             formDescription = "",
             formRestaurantLogoUrl = "",
             formCompanyLogoUrl = "",
             formSelectedRecipeIds = emptySet(),
+        )
+    }
+
+    fun onEditMenu(menu: Menu) {
+        _localState.value = _localState.value.copy(
+            isFormVisible = true,
+            editingMenu = menu,
+            selectedMenu = null,
+            formName = menu.name,
+            formDescription = menu.description,
+            formRestaurantLogoUrl = menu.restaurantLogoUrl ?: "",
+            formCompanyLogoUrl = menu.companyLogoUrl ?: "",
+            formSelectedRecipeIds = menu.recipes.map { it.id }.toSet(),
         )
     }
 
@@ -111,6 +143,8 @@ class MenusViewModel(
     fun onDismissForm() {
         _localState.value = _localState.value.copy(
             isFormVisible = false,
+            isSaving = false,
+            editingMenu = null,
             formName = "",
             formDescription = "",
             formRestaurantLogoUrl = "",
@@ -125,38 +159,71 @@ class MenusViewModel(
             try {
                 _localState.value = _localState.value.copy(isSaving = true)
                 val state = _localState.value
-                val now = Clock.System.now()
+                val editing = state.editingMenu
 
-                val selectedRecipes = state.availableRecipes
+                // availableRecipes lives in the combined uiState, not in _localState
+                val selectedRecipes = uiState.value.availableRecipes
                     .filter { it.id in state.formSelectedRecipeIds }
                     .map { MenuRecipeSummary(id = it.id, name = it.name) }
 
-                menuRepository.addMenu(
-                    Menu(
-                        id = Uuid.random().toString(),
-                        restaurantId = restaurantId,
-                        name = state.formName,
-                        description = state.formDescription,
-                        restaurantLogoUrl = state.formRestaurantLogoUrl.ifBlank { null },
-                        companyLogoUrl = state.formCompanyLogoUrl.ifBlank { null },
-                        recipes = selectedRecipes,
-                        createdAt = now,
-                        updatedAt = now,
-                    ),
-                )
-                _localState.value = _localState.value.copy(
-                    isSaving = false,
-                    isFormVisible = false,
-                    formName = "",
-                    formDescription = "",
-                    formRestaurantLogoUrl = "",
-                    formCompanyLogoUrl = "",
-                    formSelectedRecipeIds = emptySet(),
-                )
+                if (editing != null) {
+                    menuRepository.updateMenu(
+                        editing.copy(
+                            name = state.formName,
+                            description = state.formDescription,
+                            restaurantLogoUrl = state.formRestaurantLogoUrl.ifBlank { null },
+                            companyLogoUrl = state.formCompanyLogoUrl.ifBlank { null },
+                            recipes = selectedRecipes,
+                        ),
+                    )
+                } else {
+                    menuRepository.addMenu(
+                        Menu(
+                            id = Uuid.random().toString(),
+                            restaurantId = restaurantId,
+                            name = state.formName,
+                            description = state.formDescription,
+                            restaurantLogoUrl = state.formRestaurantLogoUrl.ifBlank { null },
+                            companyLogoUrl = state.formCompanyLogoUrl.ifBlank { null },
+                            recipes = selectedRecipes,
+                        ),
+                    )
+                }
+                onDismissForm()
             } catch (e: Exception) {
                 _localState.value = _localState.value.copy(
                     isSaving = false,
-                    error = e.message ?: "Error al crear menu",
+                    error = e.message ?: if (_localState.value.editingMenu != null) {
+                        "Error al actualizar menu"
+                    } else {
+                        "Error al crear menu"
+                    },
+                )
+            }
+        }
+    }
+
+    fun onRequestDeleteMenu(menu: Menu) {
+        _localState.value = _localState.value.copy(menuToDelete = menu)
+    }
+
+    fun onDismissDeleteDialog() {
+        _localState.value = _localState.value.copy(menuToDelete = null)
+    }
+
+    fun onConfirmDeleteMenu() {
+        val menu = _localState.value.menuToDelete ?: return
+        viewModelScope.launch {
+            try {
+                menuRepository.deleteMenu(menu.id)
+                _localState.value = _localState.value.copy(
+                    menuToDelete = null,
+                    selectedMenu = null,
+                )
+            } catch (e: Exception) {
+                _localState.value = _localState.value.copy(
+                    menuToDelete = null,
+                    error = e.message ?: "Error al eliminar menu",
                 )
             }
         }

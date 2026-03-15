@@ -21,6 +21,8 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.outlined.PictureAsPdf
 import androidx.compose.material3.Button
@@ -49,6 +51,7 @@ import org.apptolast.menuadmin.domain.model.Dish
 import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Menu
 import org.apptolast.menuadmin.domain.model.Recipe
+import org.apptolast.menuadmin.presentation.components.ConfirmDialog
 import org.apptolast.menuadmin.presentation.screens.menus.components.AllergenMatrixTable
 import org.apptolast.menuadmin.presentation.screens.menus.components.AllergenTableLegend
 import org.apptolast.menuadmin.presentation.screens.menus.components.CategoryFilterRow
@@ -57,6 +60,7 @@ import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
+import org.apptolast.menuadmin.presentation.theme.Red500
 import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.apptolast.menuadmin.presentation.theme.TextWhite
@@ -73,6 +77,10 @@ fun MenusScreen(viewModel: MenusViewModel = koinViewModel()) {
         onFilterCategory = viewModel::filterByCategory,
         onExportPdf = viewModel::exportPdf,
         onNewMenu = viewModel::onNewMenu,
+        onEditMenu = viewModel::onEditMenu,
+        onRequestDeleteMenu = viewModel::onRequestDeleteMenu,
+        onConfirmDeleteMenu = viewModel::onConfirmDeleteMenu,
+        onDismissDeleteDialog = viewModel::onDismissDeleteDialog,
         onFormNameChange = viewModel::onFormNameChange,
         onFormDescriptionChange = viewModel::onFormDescriptionChange,
         onFormRestaurantLogoUrlChange = viewModel::onFormRestaurantLogoUrlChange,
@@ -91,6 +99,10 @@ fun MenusContent(
     onFilterCategory: (DishCategory?) -> Unit,
     onExportPdf: () -> Unit,
     onNewMenu: () -> Unit,
+    onEditMenu: (Menu) -> Unit,
+    onRequestDeleteMenu: (Menu) -> Unit,
+    onConfirmDeleteMenu: () -> Unit,
+    onDismissDeleteDialog: () -> Unit,
     onFormNameChange: (String) -> Unit,
     onFormDescriptionChange: (String) -> Unit,
     onFormRestaurantLogoUrlChange: (String) -> Unit,
@@ -123,13 +135,28 @@ fun MenusContent(
             onBack = onBack,
             onFilterCategory = onFilterCategory,
             onExportPdf = onExportPdf,
-            onNewMenu = onNewMenu,
+            onEditMenu = onEditMenu,
+            onRequestDeleteMenu = onRequestDeleteMenu,
         )
 
         else -> MenuListView(
             uiState = uiState,
             onSelectMenu = onSelectMenu,
             onNewMenu = onNewMenu,
+            onEditMenu = onEditMenu,
+            onRequestDeleteMenu = onRequestDeleteMenu,
+        )
+    }
+
+    // Delete confirmation dialog
+    uiState.menuToDelete?.let { menu ->
+        ConfirmDialog(
+            title = "Eliminar menu",
+            message = "Se archivara el menu \"${menu.name}\". Esta accion se puede deshacer.",
+            confirmText = "Eliminar",
+            onConfirm = onConfirmDeleteMenu,
+            onDismiss = onDismissDeleteDialog,
+            isDanger = true,
         )
     }
 
@@ -180,7 +207,7 @@ private fun MenuEditorForm(
                 }
                 Column {
                     Text(
-                        text = "Nuevo Menu",
+                        text = if (uiState.editingMenu != null) "Editar Menu" else "Nuevo Menu",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary,
@@ -333,7 +360,7 @@ private fun MenuEditorForm(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Guardar Menu",
+                    text = if (uiState.editingMenu != null) "Guardar Cambios" else "Crear Menu",
                     color = TextWhite,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -396,6 +423,8 @@ private fun MenuListView(
     uiState: MenusUiState,
     onSelectMenu: (Menu) -> Unit,
     onNewMenu: () -> Unit,
+    onEditMenu: (Menu) -> Unit,
+    onRequestDeleteMenu: (Menu) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -448,6 +477,8 @@ private fun MenuListView(
             MenuCard(
                 menu = menu,
                 onClick = { onSelectMenu(menu) },
+                onEdit = { onEditMenu(menu) },
+                onDelete = { onRequestDeleteMenu(menu) },
             )
         }
     }
@@ -457,6 +488,8 @@ private fun MenuListView(
 private fun MenuCard(
     menu: Menu,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -468,58 +501,91 @@ private fun MenuCard(
             .clickable(onClick = onClick)
             .padding(20.dp),
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = menu.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-            )
-            if (menu.description.isNotBlank()) {
-                Text(
-                    text = menu.description,
-                    fontSize = 14.sp,
-                    color = TextSecondary,
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                if (menu.recipes.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Blue500.copy(alpha = 0.1f))
-                            .padding(horizontal = 8.dp, vertical = 2.dp),
-                    ) {
-                        Text(
+                Text(
+                    text = menu.name,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
+                )
+                if (menu.description.isNotBlank()) {
+                    Text(
+                        text = menu.description,
+                        fontSize = 14.sp,
+                        color = TextSecondary,
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (menu.sections.isNotEmpty()) {
+                        Badge(
+                            text = "${menu.sections.size} secciones",
+                            color = TextSecondary,
+                        )
+                    }
+                    if (menu.dishes.isNotEmpty()) {
+                        Badge(
+                            text = "${menu.dishes.size} platos",
+                            color = Green500,
+                        )
+                    }
+                    if (menu.recipes.isNotEmpty()) {
+                        Badge(
                             text = "${menu.recipes.size} recetas",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
                             color = Blue500,
                         )
                     }
                 }
-                if (menu.dishes.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Green500.copy(alpha = 0.1f))
-                            .padding(horizontal = 8.dp, vertical = 2.dp),
-                    ) {
-                        Text(
-                            text = "${menu.dishes.size} platos",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Green500,
-                        )
-                    }
+            }
+            Row {
+                IconButton(onClick = onEdit) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Editar",
+                        tint = TextSecondary,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Eliminar",
+                        tint = Red500,
+                        modifier = Modifier.size(20.dp),
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun Badge(
+    text: String,
+    color: androidx.compose.ui.graphics.Color,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(color.copy(alpha = 0.1f))
+            .padding(horizontal = 8.dp, vertical = 2.dp),
+    ) {
+        Text(
+            text = text,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = color,
+        )
     }
 }
 
@@ -529,7 +595,8 @@ private fun AllergenMatrixView(
     onBack: () -> Unit,
     onFilterCategory: (DishCategory?) -> Unit,
     onExportPdf: () -> Unit,
-    onNewMenu: () -> Unit,
+    onEditMenu: (Menu) -> Unit,
+    onRequestDeleteMenu: (Menu) -> Unit,
 ) {
     val menu = uiState.selectedMenu ?: return
 
@@ -581,11 +648,32 @@ private fun AllergenMatrixView(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(
-                onClick = onNewMenu,
+                onClick = { onEditMenu(menu) },
                 colors = ButtonDefaults.buttonColors(containerColor = Blue500),
                 shape = RoundedCornerShape(8.dp),
             ) {
-                Text("Nuevo Menu", color = TextWhite)
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = null,
+                    tint = TextWhite,
+                    modifier = Modifier.size(16.dp),
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Editar Menu", color = TextWhite)
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            OutlinedButton(
+                onClick = { onRequestDeleteMenu(menu) },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Red500),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "Eliminar",
+                    modifier = Modifier.size(16.dp),
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Eliminar")
             }
         }
 
@@ -616,14 +704,52 @@ private fun AllergenMatrixView(
             onCategorySelected = onFilterCategory,
         )
 
-        // Allergen Matrix Table
-        AllergenMatrixTable(
-            dishes = menu.dishes,
-            selectedCategory = uiState.selectedCategory,
-        )
+        // Allergen Matrix Table (from menu's recipes with computed allergens)
+        if (uiState.isLoadingRecipes) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
+        } else if (uiState.menuRecipes.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(BgCard)
+                    .border(1.dp, BorderLight, RoundedCornerShape(8.dp))
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "Este menu no tiene recetas asociadas. " +
+                        "Edita el menu para seleccionar recetas y ver la tabla de alergenos.",
+                    fontSize = 14.sp,
+                    color = TextSecondary,
+                )
+            }
+        } else {
+            // Convert recipes to Dish format for the allergen matrix table
+            val dishesFromRecipes = uiState.menuRecipes.map { recipe ->
+                Dish(
+                    id = recipe.id,
+                    name = recipe.name,
+                    allergens = recipe.computedAllergens,
+                    category = DishCategory.entries.find { it.name == recipe.category }
+                        ?: DishCategory.ENTRANTE,
+                )
+            }
+            AllergenMatrixTable(
+                dishes = dishesFromRecipes,
+                selectedCategory = uiState.selectedCategory,
+            )
 
-        // Legend footer
-        AllergenTableLegend()
+            // Legend footer
+            AllergenTableLegend()
+        }
     }
 }
 
@@ -666,6 +792,10 @@ private fun MenusContentPreview() {
             onFilterCategory = {},
             onExportPdf = {},
             onNewMenu = {},
+            onEditMenu = {},
+            onRequestDeleteMenu = {},
+            onConfirmDeleteMenu = {},
+            onDismissDeleteDialog = {},
             onFormNameChange = {},
             onFormDescriptionChange = {},
             onFormRestaurantLogoUrlChange = {},

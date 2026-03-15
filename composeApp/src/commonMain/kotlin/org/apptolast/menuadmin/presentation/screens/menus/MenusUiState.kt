@@ -11,6 +11,9 @@ data class MenusUiState(
     val selectedCategory: DishCategory? = null,
     val searchQuery: String = "",
     val error: String? = null,
+    // Full recipes with computedAllergens for the selected menu
+    val menuRecipes: List<Recipe> = emptyList(),
+    val isLoadingRecipes: Boolean = false,
     // Form state
     val isFormVisible: Boolean = false,
     val formName: String = "",
@@ -20,4 +23,7 @@ data class MenusUiState(
     val formSelectedRecipeIds: Set<String> = emptySet(),
     val availableRecipes: List<Recipe> = emptyList(),
     val isSaving: Boolean = false,
+    // Edit / Delete state
+    val editingMenu: Menu? = null,
+    val menuToDelete: Menu? = null,
 )

@@ -81,6 +81,9 @@ class RemoteMenuRepository(
                 sections = sections,
                 published = menuDto.published,
                 archived = menuDto.archived,
+                restaurantLogoUrl = menuDto.restaurantLogoUrl,
+                companyLogoUrl = menuDto.companyLogoUrl,
+                recipes = menuDto.recipes.map { it.toDomain() },
                 dishes = allDishes,
             )
         }
@@ -105,6 +108,7 @@ class RemoteMenuRepository(
             MenuRequestDto(
                 name = menu.name,
                 description = menu.description.ifEmpty { null },
+                displayOrder = menu.displayOrder,
                 restaurantLogoUrl = menu.restaurantLogoUrl,
                 companyLogoUrl = menu.companyLogoUrl,
                 recipeIds = menu.recipes.map { it.id }.ifEmpty { null },
