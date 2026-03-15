@@ -44,20 +44,6 @@ data class Dish(
     val matchedAllergens: List<String> = emptyList(),
     val imageUrl: String? = null,
     val isAvailable: Boolean = true,
-    // Legacy fields (used by mock data)
-    val category: DishCategory = DishCategory.ENTRANTE,
+    val category: String = "",
     val ingredients: List<String> = emptyList(),
 )
-
-@Serializable
-enum class DishCategory(
-    val labelEs: String,
-    val labelEn: String,
-) {
-    ENTRANTE("Entrante", "Starter"),
-    GUARNICION("Guarnición", "Side"),
-    ARROCES("Arroces", "Rice"),
-    POSTRES("Postres", "Desserts"),
-    COMBINADOS("Combinados", "Combos"),
-    BEBIDAS("Bebidas", "Drinks"),
-}

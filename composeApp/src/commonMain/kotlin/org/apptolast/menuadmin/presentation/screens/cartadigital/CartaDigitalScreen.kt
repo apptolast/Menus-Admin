@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Dish
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
 import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.BorderLight
@@ -309,7 +308,7 @@ private fun DishCard(
                         color = TextPrimary,
                     )
                     Text(
-                        text = dish.category.labelEs,
+                        text = dish.category,
                         fontSize = 12.sp,
                         color = TextSecondary,
                     )
@@ -363,7 +362,7 @@ private fun CartaDigitalContentPreview() {
                         name = "Butifarra a la Brasa",
                         description = "Butifarra artesana",
                         price = 14.50,
-                        category = DishCategory.COMBINADOS,
+                        category = "Combinados",
                         allergens = emptySet(),
                     ),
                     Dish(
@@ -371,7 +370,7 @@ private fun CartaDigitalContentPreview() {
                         name = "Croquetas Ibericas",
                         description = "Croquetas cremosas",
                         price = 12.50,
-                        category = DishCategory.ENTRANTE,
+                        category = "Entrantes",
                         allergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
                     ),
                 ),
@@ -381,7 +380,7 @@ private fun CartaDigitalContentPreview() {
                         name = "Butifarra a la Brasa",
                         description = "Butifarra artesana",
                         price = 14.50,
-                        category = DishCategory.COMBINADOS,
+                        category = "Combinados",
                         allergens = emptySet(),
                     ),
                 ),
@@ -391,7 +390,7 @@ private fun CartaDigitalContentPreview() {
                         name = "Croquetas Ibericas",
                         description = "Croquetas cremosas",
                         price = 12.50,
-                        category = DishCategory.ENTRANTE,
+                        category = "Entrantes",
                         allergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
                     ),
                 ),

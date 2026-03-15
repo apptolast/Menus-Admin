@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Menu
 import org.apptolast.menuadmin.domain.model.MenuRecipeSummary
 import org.apptolast.menuadmin.domain.repository.MenuRepository
@@ -89,7 +88,7 @@ class MenusViewModel(
         )
     }
 
-    fun filterByCategory(category: DishCategory?) {
+    fun filterByCategory(category: String?) {
         _localState.value = _localState.value.copy(selectedCategory = category)
     }
 

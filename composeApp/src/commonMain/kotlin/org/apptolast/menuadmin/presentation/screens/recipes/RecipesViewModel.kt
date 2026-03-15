@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import org.apptolast.menuadmin.domain.repository.IngredientRepository
@@ -38,10 +37,16 @@ class RecipesViewModel(
                     recipe.description.contains(formState.searchQuery, ignoreCase = true)
             }
         }
+        val categories = recipes
+            .map { it.category }
+            .filter { it.isNotBlank() }
+            .distinct()
+            .sorted()
         formState.copy(
             isLoading = false,
             recipes = filtered,
             allIngredients = ingredients,
+            availableCategories = categories,
         )
     }
         .catch { throwable ->
@@ -68,7 +73,7 @@ class RecipesViewModel(
             editingRecipe = null,
             formName = "",
             formDescription = "",
-            formCategory = DishCategory.ENTRANTE,
+            formCategory = "",
             formIngredients = emptyList(),
             formIsActive = true,
         )
@@ -76,16 +81,13 @@ class RecipesViewModel(
 
     fun onEditRecipe(recipe: Recipe) {
         viewModelScope.launch {
-            // Fetch full recipe to get ingredients
             val fullRecipe = recipeRepository.getRecipeById(recipe.id) ?: recipe
-            val category = DishCategory.entries.find { it.name == fullRecipe.category }
-                ?: DishCategory.ENTRANTE
             _formState.value = _formState.value.copy(
                 isEditing = true,
                 editingRecipe = fullRecipe,
                 formName = fullRecipe.name,
                 formDescription = fullRecipe.description,
-                formCategory = category,
+                formCategory = fullRecipe.category,
                 formIngredients = fullRecipe.ingredients,
                 formIsActive = fullRecipe.isActive,
             )
@@ -99,7 +101,7 @@ class RecipesViewModel(
             editingRecipe = null,
             formName = "",
             formDescription = "",
-            formCategory = DishCategory.ENTRANTE,
+            formCategory = "",
             formIngredients = emptyList(),
             formIsActive = true,
         )
@@ -113,7 +115,7 @@ class RecipesViewModel(
         _formState.value = _formState.value.copy(formDescription = value)
     }
 
-    fun onFormCategoryChange(category: DishCategory) {
+    fun onFormCategoryChange(category: String) {
         _formState.value = _formState.value.copy(formCategory = category)
     }
 
@@ -145,7 +147,7 @@ class RecipesViewModel(
                         existing.copy(
                             name = state.formName,
                             description = state.formDescription,
-                            category = state.formCategory.name,
+                            category = state.formCategory,
                             ingredients = state.formIngredients,
                             isActive = state.formIsActive,
                         ),
@@ -156,7 +158,7 @@ class RecipesViewModel(
                             restaurantId = restaurantId,
                             name = state.formName,
                             description = state.formDescription,
-                            category = state.formCategory.name,
+                            category = state.formCategory,
                             ingredients = state.formIngredients,
                             isActive = state.formIsActive,
                         ),

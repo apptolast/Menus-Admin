@@ -12,7 +12,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
@@ -21,8 +20,9 @@ import org.apptolast.menuadmin.presentation.theme.TextWhite
 
 @Composable
 fun CategoryFilterRow(
-    selectedCategory: DishCategory?,
-    onCategorySelected: (DishCategory?) -> Unit,
+    categories: List<String>,
+    selectedCategory: String?,
+    onCategorySelected: (String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -54,13 +54,13 @@ fun CategoryFilterRow(
             ),
         )
 
-        DishCategory.entries.forEach { category ->
+        categories.forEach { category ->
             FilterChip(
                 selected = selectedCategory == category,
                 onClick = { onCategorySelected(category) },
                 label = {
                     Text(
-                        text = category.labelEs,
+                        text = category,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                     )
@@ -84,10 +84,11 @@ fun CategoryFilterRow(
 
 @Preview
 @Composable
-private fun CategoryFilterRowPreview() {
+private fun PreviewCategoryFilterRow() {
     MenuAdminTheme {
         CategoryFilterRow(
-            selectedCategory = DishCategory.ENTRANTE,
+            categories = listOf("Entrantes", "Principales", "Postres"),
+            selectedCategory = "Entrantes",
             onCategorySelected = {},
         )
     }

@@ -4,7 +4,6 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Dish
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.domain.model.Menu
@@ -33,7 +32,7 @@ class JsonExporterTest {
                 name = "Croquetas Ibericas",
                 description = "Croquetas cremosas",
                 price = 12.50,
-                category = DishCategory.ENTRANTE.name,
+                category = "Entrantes",
                 ingredients = listOf("ing-001", "ing-003"),
                 allergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
                 isAvailable = true,
@@ -43,7 +42,7 @@ class JsonExporterTest {
                 name = "Pollo al Ajillo",
                 description = "Pollo campero al ajillo",
                 price = 13.90,
-                category = DishCategory.COMBINADOS,
+                category = "Combinados",
                 ingredients = listOf("ing-020"),
                 allergens = emptySet(),
                 isAvailable = true,
@@ -91,7 +90,7 @@ class JsonExporterTest {
                 RecipeIngredient("ing-003", "Leche entera", 500.0, "ml"),
             ),
             isActive = true,
-            category = DishCategory.ENTRANTE.name,
+            category = "Entrantes",
             createdAt = now,
             updatedAt = now,
         ),

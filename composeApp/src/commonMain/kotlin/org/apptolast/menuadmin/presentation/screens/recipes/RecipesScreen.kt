@@ -46,13 +46,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
@@ -98,7 +98,7 @@ fun RecipesContent(
     onEditRecipe: (Recipe) -> Unit,
     onFormNameChange: (String) -> Unit,
     onFormDescriptionChange: (String) -> Unit,
-    onFormCategoryChange: (DishCategory) -> Unit,
+    onFormCategoryChange: (String) -> Unit,
     onAddIngredientToForm: (RecipeIngredient) -> Unit,
     onRemoveIngredientFromForm: (String) -> Unit,
     onSaveRecipe: () -> Unit,
@@ -242,7 +242,7 @@ private fun RecipeEditorForm(
     uiState: RecipesUiState,
     onFormNameChange: (String) -> Unit,
     onFormDescriptionChange: (String) -> Unit,
-    onFormCategoryChange: (DishCategory) -> Unit,
+    onFormCategoryChange: (String) -> Unit,
     onAddIngredientToForm: (RecipeIngredient) -> Unit,
     onRemoveIngredientFromForm: (String) -> Unit,
     onSaveRecipe: () -> Unit,
@@ -250,7 +250,7 @@ private fun RecipeEditorForm(
     modifier: Modifier = Modifier,
 ) {
     var ingredientSearchQuery by remember { mutableStateOf("") }
-    var showCategoryDropdown by remember { mutableStateOf(false) }
+    var categoryFieldFocused by remember { mutableStateOf(false) }
 
     // Compute aggregate allergens from form ingredients
     val aggregateAllergens = remember(uiState.formIngredients, uiState.allIngredients) {
@@ -306,35 +306,43 @@ private fun RecipeEditorForm(
                     ),
                 )
 
-                // Category selector
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(
-                        text = "Categoria",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary,
+                // Category selector with autocomplete
+                Box {
+                    OutlinedTextField(
+                        value = uiState.formCategory,
+                        onValueChange = onFormCategoryChange,
+                        label = { Text("Categoria") },
+                        placeholder = { Text("Ej. Entrantes, Principales, Postres...") },
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { categoryFieldFocused = it.isFocused },
+                        shape = RoundedCornerShape(8.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Blue500,
+                            unfocusedBorderColor = BorderLight,
+                        ),
                     )
-                    Box {
-                        OutlinedButton(
-                            onClick = { showCategoryDropdown = true },
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(uiState.formCategory.labelEs)
+                    val suggestions = if (categoryFieldFocused && uiState.formCategory.isNotBlank()) {
+                        uiState.availableCategories.filter {
+                            it.contains(uiState.formCategory, ignoreCase = true) &&
+                                !it.equals(uiState.formCategory, ignoreCase = true)
                         }
-                        DropdownMenu(
-                            expanded = showCategoryDropdown,
-                            onDismissRequest = { showCategoryDropdown = false },
-                        ) {
-                            DishCategory.entries.forEach { category ->
-                                DropdownMenuItem(
-                                    text = { Text(category.labelEs) },
-                                    onClick = {
-                                        onFormCategoryChange(category)
-                                        showCategoryDropdown = false
-                                    },
-                                )
-                            }
+                    } else {
+                        emptyList()
+                    }
+                    DropdownMenu(
+                        expanded = suggestions.isNotEmpty(),
+                        onDismissRequest = { categoryFieldFocused = false },
+                    ) {
+                        suggestions.forEach { suggestion ->
+                            DropdownMenuItem(
+                                text = { Text(suggestion) },
+                                onClick = {
+                                    onFormCategoryChange(suggestion)
+                                    categoryFieldFocused = false
+                                },
+                            )
                         }
                     }
                 }
@@ -632,7 +640,7 @@ private fun RecipesContentPreview() {
                     Recipe(
                         id = "rec-1",
                         name = "Croquetas Ibericas",
-                        category = DishCategory.ENTRANTE.name,
+                        category = "Entrantes",
                         isActive = true,
                         ingredientCount = 5,
                         allergenCount = 2,

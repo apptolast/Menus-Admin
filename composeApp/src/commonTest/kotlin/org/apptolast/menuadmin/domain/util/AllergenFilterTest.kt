@@ -2,7 +2,6 @@ package org.apptolast.menuadmin.domain.util
 
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Dish
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.domain.model.Recipe
@@ -17,7 +16,7 @@ class AllergenFilterTest {
         name = "Butifarra a la Brasa",
         description = "Butifarra artesana con patatas panaderas",
         price = 14.50,
-        category = DishCategory.COMBINADOS,
+        category = "Combinados",
         ingredients = listOf("ing-022", "ing-015"),
         allergens = emptySet(),
     )
@@ -27,7 +26,7 @@ class AllergenFilterTest {
         name = "Croquetas Ibericas",
         description = "Croquetas cremosas con jamon iberico",
         price = 12.50,
-        category = DishCategory.ENTRANTE,
+        category = "Entrantes",
         ingredients = listOf("ing-001", "ing-003", "ing-004"),
         allergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY, AllergenType.EGGS),
     )
@@ -37,7 +36,7 @@ class AllergenFilterTest {
         name = "Arroz Caldoso Marinero",
         description = "Arroz caldoso con gambas y calamares",
         price = 18.90,
-        category = DishCategory.ARROCES,
+        category = "Arroces",
         ingredients = listOf("ing-019", "ing-002", "ing-014"),
         allergens = setOf(AllergenType.CRUSTACEANS, AllergenType.MOLLUSKS),
     )

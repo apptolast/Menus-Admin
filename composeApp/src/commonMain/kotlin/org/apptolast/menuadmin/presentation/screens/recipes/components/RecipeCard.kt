@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
 import org.apptolast.menuadmin.presentation.theme.BgCard
@@ -38,8 +37,7 @@ fun RecipeCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val categoryLabel = DishCategory.entries.find { it.name == recipe.category }?.labelEs
-        ?: recipe.category
+    val categoryLabel = recipe.category
 
     Box(
         modifier = modifier
@@ -129,7 +127,7 @@ private fun RecipeCardPreview() {
             recipe = Recipe(
                 id = "rec-1",
                 name = "Croquetas Ibericas del Puchero",
-                category = DishCategory.ENTRANTE.name,
+                category = "Entrantes",
                 isActive = true,
                 ingredientCount = 5,
                 allergenCount = 2,

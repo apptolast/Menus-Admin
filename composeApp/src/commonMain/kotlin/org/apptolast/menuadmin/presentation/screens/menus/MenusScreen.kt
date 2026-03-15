@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Dish
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.domain.model.Menu
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.presentation.components.ConfirmDialog
@@ -96,7 +95,7 @@ fun MenusContent(
     uiState: MenusUiState,
     onSelectMenu: (Menu) -> Unit,
     onBack: () -> Unit,
-    onFilterCategory: (DishCategory?) -> Unit,
+    onFilterCategory: (String?) -> Unit,
     onExportPdf: () -> Unit,
     onNewMenu: () -> Unit,
     onEditMenu: (Menu) -> Unit,
@@ -376,8 +375,7 @@ private fun RecipeSelectionRow(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val categoryLabel = DishCategory.entries.find { it.name == recipe.category }?.labelEs
-        ?: recipe.category
+    val categoryLabel = recipe.category
 
     Row(
         modifier = modifier
@@ -593,7 +591,7 @@ private fun Badge(
 private fun AllergenMatrixView(
     uiState: MenusUiState,
     onBack: () -> Unit,
-    onFilterCategory: (DishCategory?) -> Unit,
+    onFilterCategory: (String?) -> Unit,
     onExportPdf: () -> Unit,
     onEditMenu: (Menu) -> Unit,
     onRequestDeleteMenu: (Menu) -> Unit,
@@ -698,8 +696,14 @@ private fun AllergenMatrixView(
             )
         }
 
-        // Category Filter
+        // Category Filter (dynamic from recipe data)
+        val recipeCategories = uiState.menuRecipes
+            .map { it.category }
+            .filter { it.isNotBlank() }
+            .distinct()
+            .sorted()
         CategoryFilterRow(
+            categories = recipeCategories,
             selectedCategory = uiState.selectedCategory,
             onCategorySelected = onFilterCategory,
         )
@@ -738,8 +742,7 @@ private fun AllergenMatrixView(
                     id = recipe.id,
                     name = recipe.name,
                     allergens = recipe.computedAllergens,
-                    category = DishCategory.entries.find { it.name == recipe.category }
-                        ?: DishCategory.ENTRANTE,
+                    category = recipe.category,
                 )
             }
             AllergenMatrixTable(
@@ -770,7 +773,7 @@ private fun MenusContentPreview() {
                                 id = "d1",
                                 name = "Croquetas Ibericas",
                                 price = 12.50,
-                                category = DishCategory.ENTRANTE,
+                                category = "Entrantes",
                                 allergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
                             ),
                         ),

@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Dish
-import org.apptolast.menuadmin.domain.model.DishCategory
 import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.BgSecondary
 import org.apptolast.menuadmin.presentation.theme.BorderLight
@@ -64,7 +63,7 @@ private const val ALLERGEN_CELL_WEIGHT = 1f
 @Composable
 fun AllergenMatrixTable(
     dishes: List<Dish>,
-    selectedCategory: DishCategory?,
+    selectedCategory: String?,
     modifier: Modifier = Modifier,
 ) {
     val filteredDishes = if (selectedCategory != null) {
@@ -328,7 +327,7 @@ private fun AllergenMatrixTablePreview() {
                 Dish(
                     id = "d1",
                     name = "Croquetas Ibericas del Puchero",
-                    category = DishCategory.ENTRANTE,
+                    category = "Entrantes",
                     allergens = setOf(
                         AllergenType.GLUTEN,
                         AllergenType.EGGS,
@@ -339,7 +338,7 @@ private fun AllergenMatrixTablePreview() {
                 Dish(
                     id = "d2",
                     name = "Patatas Rebeldes Bravas Piconera",
-                    category = DishCategory.ENTRANTE,
+                    category = "Entrantes",
                     allergens = setOf(
                         AllergenType.GLUTEN,
                         AllergenType.EGGS,
@@ -350,13 +349,13 @@ private fun AllergenMatrixTablePreview() {
                 Dish(
                     id = "d3",
                     name = "Ensaladilla Ekaterina",
-                    category = DishCategory.ENTRANTE,
+                    category = "Guarnicion",
                     allergens = setOf(AllergenType.EGGS, AllergenType.FISH),
                 ),
                 Dish(
                     id = "d4",
                     name = "Burrata Campana con Granizado",
-                    category = DishCategory.ENTRANTE,
+                    category = "Principales",
                     allergens = setOf(AllergenType.PEANUTS, AllergenType.DAIRY),
                 ),
             ),
