@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -21,12 +24,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
+import org.apptolast.menuadmin.domain.model.Ingredient
+import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.domain.model.Recipe
+import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
+import org.apptolast.menuadmin.presentation.components.LucideIcon
 import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
+import org.apptolast.menuadmin.presentation.theme.TextMuted
 import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
@@ -34,55 +42,56 @@ import org.apptolast.menuadmin.presentation.theme.TextSecondary
 @Composable
 fun RecipeCard(
     recipe: Recipe,
+    ingredientLookup: Map<String, Ingredient>,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val categoryLabel = recipe.category
+    val shape = RoundedCornerShape(12.dp)
 
-    Box(
+    Column(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .border(width = 1.dp, color = BorderLight, shape = RoundedCornerShape(12.dp))
+            .clip(shape)
+            .border(width = 1.dp, color = BorderLight, shape = shape)
             .background(BgCard)
-            .clickable(onClick = onClick)
-            .padding(16.dp),
+            .clickable(onClick = onClick),
     ) {
+        // === Top section: Name + Category + Allergen badges ===
         Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            // Name
-            Text(
-                text = recipe.name,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+            // Name + Category badge
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            // Category Badge
-            if (categoryLabel.isNotBlank()) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Blue500.copy(alpha = 0.1f))
-                        .padding(horizontal = 10.dp, vertical = 4.dp),
-                ) {
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
+            ) {
+                Text(
+                    text = recipe.name,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                    lineHeight = 20.sp,
+                )
+                if (recipe.category.isNotBlank()) {
                     Text(
-                        text = categoryLabel,
-                        fontSize = 12.sp,
+                        text = recipe.category,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Blue500,
+                        modifier = Modifier.padding(start = 12.dp),
                     )
                 }
             }
 
-            // Allergen Badges (when full data is available)
+            // Allergen badges
             if (recipe.computedAllergens.isNotEmpty()) {
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     recipe.computedAllergens.forEach { allergen ->
                         AllergenBadge(
@@ -92,28 +101,99 @@ fun RecipeCard(
                     }
                 }
             } else if (recipe.allergenCount > 0) {
-                // Summary data only — show count badge
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Blue500.copy(alpha = 0.08f))
-                        .padding(horizontal = 10.dp, vertical = 4.dp),
-                ) {
-                    Text(
-                        text = "${recipe.allergenCount} alergenos",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Blue500,
+                Text(
+                    text = "${recipe.allergenCount} alergenos",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Blue500,
+                )
+            }
+        }
+
+        // === Bottom section: Ingredient breakdown ===
+        if (recipe.ingredients.isNotEmpty()) {
+            HorizontalDivider(color = BorderLight, thickness = 1.dp)
+
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                // Section header
+                Text(
+                    text = "${recipe.ingredients.size} ingredientes",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextSecondary,
+                )
+
+                // Ingredient rows
+                recipe.ingredients.forEach { recipeIngredient ->
+                    val ingredient = ingredientLookup[recipeIngredient.ingredientId]
+                    val allergenTypes = ingredient?.allergenTypes ?: emptySet()
+                    IngredientRow(
+                        name = recipeIngredient.ingredientName,
+                        allergenTypes = allergenTypes,
                     )
                 }
             }
+        } else if (recipe.ingredientCount > 0) {
+            HorizontalDivider(color = BorderLight, thickness = 1.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = "${recipe.ingredientCount} ingredientes",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextSecondary,
+                )
+            }
+        }
+    }
+}
 
-            // Ingredient count
+@Composable
+private fun IngredientRow(
+    name: String,
+    allergenTypes: Set<AllergenType>,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = name,
+            fontSize = 13.sp,
+            color = TextPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+        )
+        if (allergenTypes.isNotEmpty()) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(start = 12.dp),
+            ) {
+                allergenTypes.forEach { allergen ->
+                    LucideIcon(
+                        codepoint = allergen.icon,
+                        size = 16.sp,
+                        color = allergen.color,
+                    )
+                }
+            }
+        } else {
             Text(
-                text = "${recipe.ingredientCount} ingredientes",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Medium,
-                color = TextSecondary,
+                text = "–",
+                fontSize = 14.sp,
+                color = TextMuted,
+                modifier = Modifier.padding(start = 12.dp),
             )
         }
     }
@@ -121,18 +201,117 @@ fun RecipeCard(
 
 @Preview
 @Composable
-private fun RecipeCardPreview() {
+private fun PreviewRecipeCard() {
     MenuAdminTheme {
         RecipeCard(
             recipe = Recipe(
                 id = "rec-1",
                 name = "Croquetas Ibericas del Puchero",
-                category = "Entrantes",
+                category = "Principales",
                 isActive = true,
-                ingredientCount = 5,
+                ingredientCount = 2,
                 allergenCount = 2,
-                computedAllergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
+                computedAllergens = setOf(AllergenType.DAIRY, AllergenType.GLUTEN),
+                ingredients = listOf(
+                    RecipeIngredient("ing-1", "Leche entera", 500.0, "ml"),
+                    RecipeIngredient("ing-2", "Pan rallado", 200.0, "g"),
+                ),
             ),
+            ingredientLookup = mapOf(
+                "ing-1" to Ingredient(
+                    id = "ing-1",
+                    name = "Leche entera",
+                    allergens = listOf(
+                        IngredientAllergen(allergenCode = "MILK", allergenName = "Lacteos"),
+                    ),
+                ),
+                "ing-2" to Ingredient(
+                    id = "ing-2",
+                    name = "Pan rallado",
+                    allergens = listOf(
+                        IngredientAllergen(allergenCode = "GLUTEN", allergenName = "Gluten"),
+                    ),
+                ),
+            ),
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewRecipeCardWithManyAllergens() {
+    MenuAdminTheme {
+        RecipeCard(
+            recipe = Recipe(
+                id = "rec-2",
+                name = "Butifarra Cordobesa a la Brasa",
+                category = "Principales",
+                isActive = true,
+                ingredientCount = 3,
+                allergenCount = 2,
+                computedAllergens = setOf(AllergenType.EGGS, AllergenType.MUSTARD),
+                ingredients = listOf(
+                    RecipeIngredient("ing-3", "Huevos frescos", 3.0, "ud"),
+                    RecipeIngredient("ing-4", "Butifarra", 400.0, "g"),
+                    RecipeIngredient("ing-5", "Mostaza Dijon", 20.0, "g"),
+                ),
+            ),
+            ingredientLookup = mapOf(
+                "ing-3" to Ingredient(
+                    id = "ing-3",
+                    name = "Huevos frescos",
+                    allergens = listOf(
+                        IngredientAllergen(allergenCode = "EGGS", allergenName = "Huevos"),
+                    ),
+                ),
+                "ing-4" to Ingredient(id = "ing-4", name = "Butifarra"),
+                "ing-5" to Ingredient(
+                    id = "ing-5",
+                    name = "Mostaza Dijon",
+                    allergens = listOf(
+                        IngredientAllergen(allergenCode = "MUSTARD", allergenName = "Mostaza"),
+                    ),
+                ),
+            ),
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewRecipeCardNoIngredients() {
+    MenuAdminTheme {
+        RecipeCard(
+            recipe = Recipe(
+                id = "rec-3",
+                name = "Ensaladilla Ekaterina",
+                category = "Guarnicion",
+                isActive = true,
+                ingredientCount = 0,
+                allergenCount = 0,
+            ),
+            ingredientLookup = emptyMap(),
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewRecipeCardSummaryOnly() {
+    MenuAdminTheme {
+        RecipeCard(
+            recipe = Recipe(
+                id = "rec-4",
+                name = "Arroz Caldoso Marinero",
+                category = "Arroces",
+                isActive = true,
+                ingredientCount = 4,
+                allergenCount = 3,
+            ),
+            ingredientLookup = emptyMap(),
             onClick = {},
         )
     }

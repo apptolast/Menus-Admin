@@ -196,6 +196,9 @@ fun RecipesContent(
             )
 
             // Recipe Cards Grid
+            val ingredientLookup = remember(uiState.allIngredients) {
+                uiState.allIngredients.associateBy { it.id }
+            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -211,6 +214,7 @@ fun RecipesContent(
                     uiState.recipes.forEach { recipe ->
                         RecipeCard(
                             recipe = recipe,
+                            ingredientLookup = ingredientLookup,
                             onClick = { onEditRecipe(recipe) },
                             modifier = Modifier.weight(1f),
                         )

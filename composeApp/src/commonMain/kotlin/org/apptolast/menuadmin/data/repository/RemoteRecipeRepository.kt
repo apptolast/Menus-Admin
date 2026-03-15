@@ -2,6 +2,9 @@ package org.apptolast.menuadmin.data.repository
 
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
@@ -36,7 +39,19 @@ class RemoteRecipeRepository(
         }
 
     private suspend fun refreshRecipes(restaurantId: String) {
-        _recipes.value = recipeService.getRecipes(restaurantId).map { it.toDomain() }
+        val summaries = recipeService.getRecipes(restaurantId)
+        // Load full details in parallel to get ingredients and computedAllergens
+        _recipes.value = coroutineScope {
+            summaries.map { summary ->
+                async {
+                    try {
+                        recipeService.getRecipeById(summary.id).toDomain()
+                    } catch (_: Exception) {
+                        summary.toDomain()
+                    }
+                }
+            }.awaitAll()
+        }
         loadedRestaurantId = restaurantId
     }
 

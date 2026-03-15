@@ -357,12 +357,12 @@ private fun RestaurantInfoCard(
                     )
                 }
             }
-            Text(
-                text = if (restaurant.active) "Activo" else "Inactivo",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = if (restaurant.active) Green500 else Red500,
-            )
+//            Text(
+//                text = if (restaurant.active) "Activo" else "Inactivo",
+//                fontSize = 12.sp,
+//                fontWeight = FontWeight.SemiBold,
+//                color = if (restaurant.active) Green500 else Red500,
+//            )
         }
     }
 }
@@ -497,7 +497,7 @@ private fun PreviewRestaurantDetailContent() {
     }
 }
 
-@Preview
+@Preview(backgroundColor = 0)
 @Composable
 private fun PreviewRestaurantDetailContentEditing() {
     MenuAdminTheme {
