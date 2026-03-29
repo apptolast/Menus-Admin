@@ -1,6 +1,5 @@
 package org.apptolast.menuadmin.presentation.screens.menus
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +19,8 @@ import kotlin.uuid.Uuid
 class MenusViewModel(
     private val menuRepository: MenuRepository,
     private val recipeRepository: RecipeRepository,
-    savedStateHandle: SavedStateHandle,
+    private val restaurantId: String,
 ) : ViewModel() {
-    private val restaurantId: String = savedStateHandle["restaurantId"] ?: ""
-
     private val _localState = MutableStateFlow(MenusUiState())
 
     val uiState: StateFlow<MenusUiState> = combine(

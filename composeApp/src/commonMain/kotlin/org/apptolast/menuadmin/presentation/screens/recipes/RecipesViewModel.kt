@@ -1,6 +1,5 @@
 package org.apptolast.menuadmin.presentation.screens.recipes
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,10 +17,8 @@ import org.apptolast.menuadmin.domain.repository.RecipeRepository
 class RecipesViewModel(
     private val recipeRepository: RecipeRepository,
     private val ingredientRepository: IngredientRepository,
-    savedStateHandle: SavedStateHandle,
+    private val restaurantId: String,
 ) : ViewModel() {
-    private val restaurantId: String = savedStateHandle["restaurantId"] ?: ""
-
     private val _formState = MutableStateFlow(RecipesUiState())
 
     val uiState: StateFlow<RecipesUiState> = combine(

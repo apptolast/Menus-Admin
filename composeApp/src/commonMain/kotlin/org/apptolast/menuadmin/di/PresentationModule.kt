@@ -11,6 +11,7 @@ import org.apptolast.menuadmin.presentation.screens.recipes.RecipesViewModel
 import org.apptolast.menuadmin.presentation.screens.restaurants.RestaurantsListViewModel
 import org.apptolast.menuadmin.presentation.screens.restaurants.detail.RestaurantDetailViewModel
 import org.apptolast.menuadmin.presentation.screens.settings.SettingsViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -18,9 +19,15 @@ val presentationModule = module {
     viewModelOf(::AuthViewModel)
     viewModelOf(::DashboardViewModel)
     viewModelOf(::IngredientsViewModel)
-    viewModelOf(::RecipesViewModel)
-    viewModelOf(::MenusViewModel)
-    viewModelOf(::CartaDigitalViewModel)
+    viewModel { (restaurantId: String) ->
+        RecipesViewModel(get(), get(), restaurantId)
+    }
+    viewModel { (restaurantId: String) ->
+        MenusViewModel(get(), get(), restaurantId)
+    }
+    viewModel { (restaurantId: String) ->
+        CartaDigitalViewModel(get(), restaurantId)
+    }
     viewModelOf(::BackupViewModel)
     viewModelOf(::SettingsViewModel)
     viewModelOf(::ProfileViewModel)

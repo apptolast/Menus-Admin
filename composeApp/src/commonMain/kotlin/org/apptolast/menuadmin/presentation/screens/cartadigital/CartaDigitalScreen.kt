@@ -45,10 +45,9 @@ import org.apptolast.menuadmin.presentation.theme.Red500
 import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.apptolast.menuadmin.presentation.theme.TextWhite
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun CartaDigitalScreen(viewModel: CartaDigitalViewModel = koinViewModel()) {
+fun CartaDigitalScreen(viewModel: CartaDigitalViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     CartaDigitalContent(
         uiState = uiState,
@@ -332,8 +331,8 @@ private fun DishCard(
 
             if (dish.allergens.isNotEmpty()) {
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     dish.allergens.forEach { allergen ->
                         val isConflict = allergen in userAllergens

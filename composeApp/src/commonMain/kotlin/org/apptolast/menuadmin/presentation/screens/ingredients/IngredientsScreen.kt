@@ -37,8 +37,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedAssistChip
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,7 +59,6 @@ import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
-import org.apptolast.menuadmin.presentation.components.LucideIcon
 import org.apptolast.menuadmin.presentation.components.SearchBar
 import org.apptolast.menuadmin.presentation.screens.ingredients.components.AllergenSelector
 import org.apptolast.menuadmin.presentation.theme.BgCard
@@ -459,7 +456,7 @@ private fun AllergenFilterBar(
                 label = {
                     Text(
                         text = "Limpiar filtros",
-                        fontSize = 12.sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                     )
                 },
@@ -477,34 +474,10 @@ private fun AllergenFilterBar(
             )
         }
         AllergenType.entries.forEach { allergen ->
-            val isSelected = allergen in selectedFilters
-            FilterChip(
-                selected = isSelected,
+            AllergenBadge(
+                allergenType = allergen,
+                isActive = allergen in selectedFilters,
                 onClick = { onToggleFilter(allergen) },
-                label = {
-                    Text(
-                        text = allergen.nameEs,
-                        fontSize = 12.sp,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                    )
-                },
-                leadingIcon = {
-                    LucideIcon(
-                        codepoint = allergen.icon,
-                        size = 16.sp,
-                        color = if (isSelected) allergen.color else TextSecondary,
-                    )
-                },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = allergen.color.copy(alpha = 0.15f),
-                    selectedLabelColor = allergen.color,
-                ),
-                border = FilterChipDefaults.filterChipBorder(
-                    enabled = true,
-                    selected = isSelected,
-                    borderColor = BorderLight,
-                    selectedBorderColor = allergen.color,
-                ),
             )
         }
     }

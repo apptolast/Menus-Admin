@@ -18,29 +18,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Fastfood
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Publish
-import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.Save
-import androidx.compose.material.icons.outlined.Smartphone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -59,42 +52,11 @@ import org.apptolast.menuadmin.presentation.theme.Red500
 import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.apptolast.menuadmin.presentation.theme.TextWhite
-import org.koin.compose.viewmodel.koinViewModel
-
-@Composable
-fun RestaurantDetailScreen(
-    onBack: () -> Unit,
-    onNavigateToRecipes: (String) -> Unit,
-    onNavigateToMenus: (String) -> Unit,
-    onNavigateToCarta: (String) -> Unit,
-    viewModel: RestaurantDetailViewModel = koinViewModel(),
-) {
-    val uiState by viewModel.uiState.collectAsState()
-    RestaurantDetailContent(
-        uiState = uiState,
-        onBack = onBack,
-        onNavigateToRecipes = onNavigateToRecipes,
-        onNavigateToMenus = onNavigateToMenus,
-        onNavigateToCarta = onNavigateToCarta,
-        onStartEditing = viewModel::startEditing,
-        onCancelEditing = viewModel::cancelEditing,
-        onSave = viewModel::saveRestaurant,
-        onNameChange = viewModel::onNameChange,
-        onDescriptionChange = viewModel::onDescriptionChange,
-        onAddressChange = viewModel::onAddressChange,
-        onPhoneChange = viewModel::onPhoneChange,
-        onDismissMessage = viewModel::dismissMessage,
-    )
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun RestaurantDetailContent(
+fun RestaurantOverviewContent(
     uiState: RestaurantDetailUiState,
-    onBack: () -> Unit,
-    onNavigateToRecipes: (String) -> Unit,
-    onNavigateToMenus: (String) -> Unit,
-    onNavigateToCarta: (String) -> Unit,
     onStartEditing: () -> Unit,
     onCancelEditing: () -> Unit,
     onSave: () -> Unit,
@@ -105,22 +67,9 @@ fun RestaurantDetailContent(
     onDismissMessage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (uiState.isLoading) {
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(32.dp),
-                color = Blue500,
-                strokeWidth = 3.dp,
-            )
-        }
-        return
-    }
-
     val restaurant = uiState.restaurant
-    if (restaurant == null) {
+
+    if (restaurant == null && !uiState.isLoading) {
         Box(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
@@ -141,47 +90,6 @@ fun RestaurantDetailContent(
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        // Header with back button
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = "Volver",
-                    tint = TextPrimary,
-                )
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = restaurant.name,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                )
-                Text(
-                    text = restaurant.slug,
-                    fontSize = 14.sp,
-                    color = TextSecondary,
-                )
-            }
-            if (!uiState.isEditing) {
-                OutlinedButton(
-                    onClick = onStartEditing,
-                    shape = RoundedCornerShape(8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Editar",
-                        modifier = Modifier.size(16.dp),
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Editar")
-                }
-            }
-        }
-
         // Messages
         uiState.error?.let { error ->
             Text(text = error, color = Red500, fontSize = 13.sp)
@@ -230,64 +138,8 @@ fun RestaurantDetailContent(
                 onSave = onSave,
                 onCancel = onCancelEditing,
             )
-        } else {
+        } else if (restaurant != null) {
             RestaurantInfoCard(restaurant = restaurant)
-        }
-
-        // Quick navigation buttons
-        Text(
-            text = "Acceso rapido",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = TextPrimary,
-        )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Button(
-                onClick = { onNavigateToRecipes(restaurant.id) },
-                colors = ButtonDefaults.buttonColors(containerColor = Green500),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Restaurant,
-                    contentDescription = null,
-                    tint = TextWhite,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Recetas", color = TextWhite, fontWeight = FontWeight.SemiBold)
-            }
-            Button(
-                onClick = { onNavigateToMenus(restaurant.id) },
-                colors = ButtonDefaults.buttonColors(containerColor = Amber500),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.MenuBook,
-                    contentDescription = null,
-                    tint = TextWhite,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Menus", color = TextWhite, fontWeight = FontWeight.SemiBold)
-            }
-            Button(
-                onClick = { onNavigateToCarta(restaurant.id) },
-                colors = ButtonDefaults.buttonColors(containerColor = Blue500),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Smartphone,
-                    contentDescription = null,
-                    tint = TextWhite,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Carta Digital", color = TextWhite, fontWeight = FontWeight.SemiBold)
-            }
         }
     }
 }
@@ -463,9 +315,9 @@ private fun RestaurantEditCard(
 
 @Preview
 @Composable
-private fun PreviewRestaurantDetailContent() {
+private fun PreviewRestaurantOverviewContent() {
     MenuAdminTheme {
-        RestaurantDetailContent(
+        RestaurantOverviewContent(
             uiState = RestaurantDetailUiState(
                 isLoading = false,
                 restaurant = Restaurant(
@@ -481,10 +333,6 @@ private fun PreviewRestaurantDetailContent() {
                 menusCount = 3,
                 publishedMenusCount = 2,
             ),
-            onBack = {},
-            onNavigateToRecipes = {},
-            onNavigateToMenus = {},
-            onNavigateToCarta = {},
             onStartEditing = {},
             onCancelEditing = {},
             onSave = {},
@@ -497,11 +345,11 @@ private fun PreviewRestaurantDetailContent() {
     }
 }
 
-@Preview(backgroundColor = 0)
+@Preview
 @Composable
-private fun PreviewRestaurantDetailContentEditing() {
+private fun PreviewRestaurantOverviewContentEditing() {
     MenuAdminTheme {
-        RestaurantDetailContent(
+        RestaurantOverviewContent(
             uiState = RestaurantDetailUiState(
                 isLoading = false,
                 isEditing = true,
@@ -522,10 +370,6 @@ private fun PreviewRestaurantDetailContentEditing() {
                 menusCount = 3,
                 publishedMenusCount = 2,
             ),
-            onBack = {},
-            onNavigateToRecipes = {},
-            onNavigateToMenus = {},
-            onNavigateToCarta = {},
             onStartEditing = {},
             onCancelEditing = {},
             onSave = {},

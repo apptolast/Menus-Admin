@@ -48,7 +48,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,7 +55,7 @@ import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
-import org.apptolast.menuadmin.presentation.components.LucideIcon
+import org.apptolast.menuadmin.presentation.components.AllergenSummaryCard
 import org.apptolast.menuadmin.presentation.components.SearchBar
 import org.apptolast.menuadmin.presentation.screens.recipes.components.RecipeCard
 import org.apptolast.menuadmin.presentation.theme.BgCard
@@ -67,10 +66,9 @@ import org.apptolast.menuadmin.presentation.theme.Red500
 import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.apptolast.menuadmin.presentation.theme.TextWhite
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun RecipesScreen(viewModel: RecipesViewModel = koinViewModel()) {
+fun RecipesScreen(viewModel: RecipesViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     RecipesContent(
         uiState = uiState,
@@ -471,8 +469,8 @@ private fun RecipeEditorForm(
                                     )
                                     if (ingredientAllergens.isNotEmpty()) {
                                         FlowRow(
-                                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                            verticalArrangement = Arrangement.spacedBy(6.dp),
                                         ) {
                                             ingredientAllergens.forEach { allergen ->
                                                 AllergenBadge(
@@ -579,57 +577,6 @@ private fun RecipeEditorForm(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun AllergenSummaryCard(
-    allergenType: AllergenType,
-    isPresent: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    val bgColor = if (isPresent) {
-        allergenType.color.copy(alpha = 0.12f)
-    } else {
-        BgCard
-    }
-    val borderColor = if (isPresent) allergenType.color else BorderLight
-    val textColor = if (isPresent) allergenType.color else TextSecondary.copy(alpha = 0.5f)
-    val shape = RoundedCornerShape(12.dp)
-
-    Column(
-        modifier = modifier
-            .width(100.dp)
-            .clip(shape)
-            .border(
-                width = if (isPresent) 2.dp else 1.dp,
-                color = borderColor,
-                shape = shape,
-            )
-            .background(bgColor)
-            .padding(vertical = 12.dp, horizontal = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        LucideIcon(
-            codepoint = allergenType.icon,
-            size = 24.sp,
-            color = textColor,
-        )
-        Text(
-            text = allergenType.nameEs.uppercase(),
-            color = textColor,
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = if (isPresent) "CONTIENE" else "Libre",
-            color = textColor,
-            fontSize = 9.sp,
-            fontWeight = if (isPresent) FontWeight.Bold else FontWeight.Normal,
-        )
     }
 }
 

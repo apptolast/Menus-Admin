@@ -63,11 +63,10 @@ import org.apptolast.menuadmin.presentation.theme.Red500
 import org.apptolast.menuadmin.presentation.theme.TextPrimary
 import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.apptolast.menuadmin.presentation.theme.TextWhite
-import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.Clock
 
 @Composable
-fun MenusScreen(viewModel: MenusViewModel = koinViewModel()) {
+fun MenusScreen(viewModel: MenusViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     MenusContent(
         uiState = uiState,

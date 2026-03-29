@@ -51,19 +51,19 @@ fun AllergenBadge(
                     Modifier
                 },
             )
-            .padding(vertical = 6.dp, horizontal = 12.dp),
+            .padding(vertical = 8.dp, horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         LucideIcon(
             codepoint = allergenType.icon,
-            size = 14.sp,
+            size = 18.sp,
             color = contentColor,
         )
         Text(
             text = allergenType.nameEs,
             color = contentColor,
-            fontSize = 13.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
         )
     }

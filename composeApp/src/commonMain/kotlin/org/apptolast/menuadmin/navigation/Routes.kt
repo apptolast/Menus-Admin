@@ -20,26 +20,6 @@ data class RestaurantDetailRoute(
 )
 
 @Serializable
-data class RecipesRoute(
-    val restaurantId: String,
-)
-
-@Serializable
-data class MenusRoute(
-    val restaurantId: String,
-)
-
-@Serializable
-data class AllergenMatrixRoute(
-    val menuId: String,
-)
-
-@Serializable
-data class CartaDigitalRoute(
-    val restaurantId: String,
-)
-
-@Serializable
 object SettingsRoute
 
 @Serializable

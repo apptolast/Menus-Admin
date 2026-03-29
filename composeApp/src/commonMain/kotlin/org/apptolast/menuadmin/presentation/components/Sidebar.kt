@@ -17,13 +17,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
-import androidx.compose.material.icons.outlined.Book
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Smartphone
 import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material3.HorizontalDivider
@@ -38,14 +36,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.apptolast.menuadmin.domain.model.Restaurant
 import org.apptolast.menuadmin.navigation.BackupRestoreRoute
-import org.apptolast.menuadmin.navigation.CartaDigitalRoute
 import org.apptolast.menuadmin.navigation.DashboardRoute
 import org.apptolast.menuadmin.navigation.IngredientsRoute
-import org.apptolast.menuadmin.navigation.MenusRoute
 import org.apptolast.menuadmin.navigation.ProfileRoute
-import org.apptolast.menuadmin.navigation.RecipesRoute
 import org.apptolast.menuadmin.navigation.RestaurantsRoute
 import org.apptolast.menuadmin.navigation.SettingsRoute
 import org.apptolast.menuadmin.presentation.theme.Blue500
@@ -58,7 +52,6 @@ import org.apptolast.menuadmin.presentation.theme.TextWhite
 @Composable
 fun Sidebar(
     currentRoute: String?,
-    selectedRestaurant: Restaurant?,
     onNavigate: (Any) -> Unit,
     onLogout: () -> Unit,
     modifier: Modifier = Modifier,
@@ -135,36 +128,6 @@ fun Sidebar(
             onClick = { onNavigate(RestaurantsRoute) },
         )
 
-        // Conditional section: selected restaurant
-        if (selectedRestaurant != null) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            SectionHeader(
-                title = selectedRestaurant.name.take(25).uppercase(),
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            NavItem(
-                icon = Icons.Outlined.Restaurant,
-                label = "Recetas",
-                isSelected = currentRoute?.contains("RecipesRoute") == true,
-                onClick = { onNavigate(RecipesRoute(selectedRestaurant.id)) },
-            )
-            NavItem(
-                icon = Icons.Outlined.Book,
-                label = "Menus",
-                isSelected = currentRoute?.contains("MenusRoute") == true,
-                onClick = { onNavigate(MenusRoute(selectedRestaurant.id)) },
-            )
-            NavItem(
-                icon = Icons.Outlined.Smartphone,
-                label = "Carta Digital",
-                isSelected = currentRoute?.contains("CartaDigitalRoute") == true,
-                onClick = { onNavigate(CartaDigitalRoute(selectedRestaurant.id)) },
-            )
-        }
-
         Spacer(modifier = Modifier.height(24.dp))
 
         // Section: HERRAMIENTAS
@@ -235,29 +198,10 @@ private fun SectionHeader(
 
 @Preview
 @Composable
-private fun SidebarPreview() {
+private fun PreviewSidebar() {
     MenuAdminTheme {
         Sidebar(
             currentRoute = null,
-            selectedRestaurant = Restaurant(
-                id = "1",
-                name = "Hotel Palace Barcelona",
-                slug = "hotel-palace-barcelona",
-                active = true,
-            ),
-            onNavigate = {},
-            onLogout = {},
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun SidebarNoRestaurantPreview() {
-    MenuAdminTheme {
-        Sidebar(
-            currentRoute = null,
-            selectedRestaurant = null,
             onNavigate = {},
             onLogout = {},
         )
