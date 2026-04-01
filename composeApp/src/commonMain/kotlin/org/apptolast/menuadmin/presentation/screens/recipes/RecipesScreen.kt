@@ -79,6 +79,7 @@ fun RecipesScreen(viewModel: RecipesViewModel) {
         onFormNameChange = viewModel::onFormNameChange,
         onFormDescriptionChange = viewModel::onFormDescriptionChange,
         onFormCategoryChange = viewModel::onFormCategoryChange,
+        onFormPriceChange = viewModel::onFormPriceChange,
         onAddIngredientToForm = viewModel::onAddIngredientToForm,
         onRemoveIngredientFromForm = viewModel::onRemoveIngredientFromForm,
         onSaveRecipe = viewModel::onSaveRecipe,
@@ -97,6 +98,7 @@ fun RecipesContent(
     onFormNameChange: (String) -> Unit,
     onFormDescriptionChange: (String) -> Unit,
     onFormCategoryChange: (String) -> Unit,
+    onFormPriceChange: (String) -> Unit,
     onAddIngredientToForm: (RecipeIngredient) -> Unit,
     onRemoveIngredientFromForm: (String) -> Unit,
     onSaveRecipe: () -> Unit,
@@ -180,6 +182,7 @@ fun RecipesContent(
                 onFormNameChange = onFormNameChange,
                 onFormDescriptionChange = onFormDescriptionChange,
                 onFormCategoryChange = onFormCategoryChange,
+                onFormPriceChange = onFormPriceChange,
                 onAddIngredientToForm = onAddIngredientToForm,
                 onRemoveIngredientFromForm = onRemoveIngredientFromForm,
                 onSaveRecipe = onSaveRecipe,
@@ -245,6 +248,7 @@ private fun RecipeEditorForm(
     onFormNameChange: (String) -> Unit,
     onFormDescriptionChange: (String) -> Unit,
     onFormCategoryChange: (String) -> Unit,
+    onFormPriceChange: (String) -> Unit,
     onAddIngredientToForm: (RecipeIngredient) -> Unit,
     onRemoveIngredientFromForm: (String) -> Unit,
     onSaveRecipe: () -> Unit,
@@ -299,6 +303,25 @@ private fun RecipeEditorForm(
                     onValueChange = onFormDescriptionChange,
                     label = { Text("Identificador Interno (Opcional)") },
                     placeholder = { Text("Ej. Cliente: Hotel Palace") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Blue500,
+                        unfocusedBorderColor = BorderLight,
+                    ),
+                )
+
+                // Price
+                OutlinedTextField(
+                    value = uiState.formPrice,
+                    onValueChange = { value ->
+                        if (value.isEmpty() || value.matches(Regex("^\\d*\\.?\\d{0,2}$"))) {
+                            onFormPriceChange(value)
+                        }
+                    },
+                    label = { Text("Precio") },
+                    placeholder = { Text("Ej. 12.50") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
@@ -592,6 +615,7 @@ private fun RecipesContentPreview() {
                         id = "rec-1",
                         name = "Croquetas Ibericas",
                         category = "Entrantes",
+                        price = 12.50,
                         isActive = true,
                         ingredientCount = 5,
                         allergenCount = 2,
@@ -606,6 +630,7 @@ private fun RecipesContentPreview() {
             onFormNameChange = {},
             onFormDescriptionChange = {},
             onFormCategoryChange = {},
+            onFormPriceChange = {},
             onAddIngredientToForm = {},
             onRemoveIngredientFromForm = {},
             onSaveRecipe = {},

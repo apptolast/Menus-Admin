@@ -25,6 +25,9 @@ object ApiConstants {
     // Admin - Dishes (scoped to restaurant)
     const val ADMIN_DISHES = "/api/v1/admin/dishes"
 
+    // Admin - Menu Digital Cards
+    const val ADMIN_MENU_DIGITAL_CARDS = "/api/v1/admin/menu-digital-cards"
+
     // Public
     const val ALLERGENS = "/api/v1/allergens"
     const val RESTAURANTS = "/api/v1/restaurants"

@@ -222,7 +222,6 @@ private fun WorkspaceHeader(
     }
 }
 
-
 @Preview
 @Composable
 private fun WorkspaceHeaderPreview() {
@@ -231,7 +230,7 @@ private fun WorkspaceHeaderPreview() {
             restaurantName = "restaurant",
             restaurantSlug = "res",
             isLoading = false,
-            isEditing = false
+            isEditing = false,
         )
     }
 }

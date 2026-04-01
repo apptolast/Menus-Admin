@@ -11,7 +11,6 @@ interface DishRepository {
         name: String,
         sectionId: String,
         description: String = "",
-        price: Double = 0.0,
         imageUrl: String? = null,
         allergens: List<Pair<String, ContainmentLevel>> = emptyList(),
     ): Dish
@@ -21,7 +20,6 @@ interface DishRepository {
         name: String,
         sectionId: String,
         description: String = "",
-        price: Double = 0.0,
         imageUrl: String? = null,
         allergens: List<Pair<String, ContainmentLevel>> = emptyList(),
     ): Dish

@@ -76,14 +76,30 @@ fun RecipeCard(
                     modifier = Modifier.weight(1f),
                     lineHeight = 20.sp,
                 )
-                if (recipe.category.isNotBlank()) {
-                    Text(
-                        text = recipe.category,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Blue500,
-                        modifier = Modifier.padding(start = 12.dp),
-                    )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (recipe.price > 0) {
+                        val priceInt = recipe.price.toInt()
+                        val priceDec = ((recipe.price * 100).toInt() % 100)
+                            .toString().padStart(2, '0')
+                        Text(
+                            text = "$priceInt.${priceDec}\u20AC",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = TextPrimary,
+                            modifier = Modifier.padding(start = 12.dp),
+                        )
+                    }
+                    if (recipe.category.isNotBlank()) {
+                        Text(
+                            text = recipe.category,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Blue500,
+                        )
+                    }
                 }
             }
 
@@ -208,6 +224,7 @@ private fun PreviewRecipeCard() {
                 id = "rec-1",
                 name = "Croquetas Ibericas del Puchero",
                 category = "Principales",
+                price = 12.50,
                 isActive = true,
                 ingredientCount = 2,
                 allergenCount = 2,
@@ -247,6 +264,7 @@ private fun PreviewRecipeCardWithManyAllergens() {
                 id = "rec-2",
                 name = "Butifarra Cordobesa a la Brasa",
                 category = "Principales",
+                price = 16.00,
                 isActive = true,
                 ingredientCount = 3,
                 allergenCount = 2,

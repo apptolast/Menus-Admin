@@ -45,7 +45,6 @@ class RemoteDishRepository(
         name: String,
         sectionId: String,
         description: String,
-        price: Double,
         imageUrl: String?,
         allergens: List<Pair<String, ContainmentLevel>>,
     ): Dish {
@@ -54,7 +53,6 @@ class RemoteDishRepository(
                 name = name,
                 sectionId = sectionId,
                 description = description.ifEmpty { null },
-                price = if (price > 0) price else null,
                 imageUrl = imageUrl,
                 allergens = allergens.map { (code, level) ->
                     DishAllergenRequestDto(
@@ -73,7 +71,6 @@ class RemoteDishRepository(
         name: String,
         sectionId: String,
         description: String,
-        price: Double,
         imageUrl: String?,
         allergens: List<Pair<String, ContainmentLevel>>,
     ): Dish {
@@ -83,7 +80,6 @@ class RemoteDishRepository(
                 name = name,
                 sectionId = sectionId,
                 description = description.ifEmpty { null },
-                price = if (price > 0) price else null,
                 imageUrl = imageUrl,
                 allergens = allergens.map { (code, level) ->
                     DishAllergenRequestDto(

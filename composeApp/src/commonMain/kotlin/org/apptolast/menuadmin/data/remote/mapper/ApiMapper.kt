@@ -7,6 +7,7 @@ import org.apptolast.menuadmin.data.remote.ingredient.IngredientResponseDto
 import org.apptolast.menuadmin.data.remote.menu.MenuRecipeResponseDto
 import org.apptolast.menuadmin.data.remote.menu.MenuResponseDto
 import org.apptolast.menuadmin.data.remote.menu.SectionResponseDto
+import org.apptolast.menuadmin.data.remote.menudigitalcard.MenuDigitalCardResponseDto
 import org.apptolast.menuadmin.data.remote.recipe.RecipeIngredientResponseDto
 import org.apptolast.menuadmin.data.remote.recipe.RecipeResponseDto
 import org.apptolast.menuadmin.data.remote.recipe.RecipeSummaryResponseDto
@@ -18,6 +19,7 @@ import org.apptolast.menuadmin.domain.model.DishAllergen
 import org.apptolast.menuadmin.domain.model.Ingredient
 import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.domain.model.Menu
+import org.apptolast.menuadmin.domain.model.MenuDigitalCard
 import org.apptolast.menuadmin.domain.model.MenuRecipeSummary
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
@@ -124,6 +126,7 @@ fun RecipeResponseDto.toDomain(): Recipe {
         name = name,
         description = description ?: "",
         category = category ?: "",
+        price = price ?: 0.0,
         isActive = active,
         ingredients = ingredients.map { it.toDomain() },
         computedAllergens = allergenTypes,
@@ -141,6 +144,7 @@ fun RecipeSummaryResponseDto.toDomain(): Recipe =
         id = id,
         name = name,
         category = category ?: "",
+        price = price ?: 0.0,
         isActive = active,
         ingredientCount = ingredientCount,
         allergenCount = allergenCount,
@@ -152,4 +156,17 @@ fun RecipeIngredientResponseDto.toDomain(): RecipeIngredient =
         ingredientName = ingredientName,
         quantity = quantity ?: 0.0,
         unit = unit ?: "",
+    )
+
+@OptIn(kotlin.time.ExperimentalTime::class)
+fun MenuDigitalCardResponseDto.toDomain(): MenuDigitalCard =
+    MenuDigitalCard(
+        id = id,
+        menuId = menuId,
+        dishId = dishId,
+        dishName = dishName,
+        createdAt = runCatching { Instant.parse(createdAt) }.getOrNull()
+            ?: Clock.System.now(),
+        updatedAt = runCatching { Instant.parse(updatedAt) }.getOrNull()
+            ?: Clock.System.now(),
     )

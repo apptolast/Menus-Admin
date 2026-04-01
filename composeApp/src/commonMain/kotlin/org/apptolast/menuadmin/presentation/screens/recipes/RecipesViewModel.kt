@@ -71,6 +71,7 @@ class RecipesViewModel(
             formName = "",
             formDescription = "",
             formCategory = "",
+            formPrice = "",
             formIngredients = emptyList(),
             formIsActive = true,
         )
@@ -85,6 +86,7 @@ class RecipesViewModel(
                 formName = fullRecipe.name,
                 formDescription = fullRecipe.description,
                 formCategory = fullRecipe.category,
+                formPrice = if (fullRecipe.price > 0) fullRecipe.price.toString() else "",
                 formIngredients = fullRecipe.ingredients,
                 formIsActive = fullRecipe.isActive,
             )
@@ -99,9 +101,14 @@ class RecipesViewModel(
             formName = "",
             formDescription = "",
             formCategory = "",
+            formPrice = "",
             formIngredients = emptyList(),
             formIsActive = true,
         )
+    }
+
+    fun onFormPriceChange(value: String) {
+        _formState.value = _formState.value.copy(formPrice = value)
     }
 
     fun onFormNameChange(value: String) {
@@ -138,6 +145,7 @@ class RecipesViewModel(
             try {
                 val state = _formState.value
                 val existing = state.editingRecipe
+                val parsedPrice = state.formPrice.toDoubleOrNull() ?: 0.0
 
                 if (existing != null) {
                     recipeRepository.updateRecipe(
@@ -145,6 +153,7 @@ class RecipesViewModel(
                             name = state.formName,
                             description = state.formDescription,
                             category = state.formCategory,
+                            price = parsedPrice,
                             ingredients = state.formIngredients,
                             isActive = state.formIsActive,
                         ),
@@ -156,6 +165,7 @@ class RecipesViewModel(
                             name = state.formName,
                             description = state.formDescription,
                             category = state.formCategory,
+                            price = parsedPrice,
                             ingredients = state.formIngredients,
                             isActive = state.formIsActive,
                         ),

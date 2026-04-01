@@ -71,6 +71,7 @@ class RemoteRecipeRepository(
                 name = recipe.name,
                 description = recipe.description.ifEmpty { null },
                 category = recipe.category.ifEmpty { null },
+                price = if (recipe.price > 0) recipe.price else null,
                 ingredients = recipe.ingredients.map { it.toRequest() },
             ),
         )
@@ -86,6 +87,7 @@ class RemoteRecipeRepository(
                 name = recipe.name,
                 description = recipe.description.ifEmpty { null },
                 category = recipe.category.ifEmpty { null },
+                price = if (recipe.price > 0) recipe.price else null,
                 active = recipe.isActive,
                 ingredients = recipe.ingredients.map { it.toRequest() },
             ),

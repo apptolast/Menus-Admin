@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
-import org.apptolast.menuadmin.domain.model.Dish
+import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
 import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.BorderLight
@@ -176,7 +176,7 @@ fun CartaDigitalContent(
                     .padding(16.dp),
             ) {
                 Text(
-                    text = "${uiState.safeDishes.size} Platos Seguros de ${uiState.allDishes.size} total",
+                    text = "${uiState.safeRecipes.size} Platos Seguros de ${uiState.allRecipes.size} total",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Green500,
@@ -184,43 +184,62 @@ fun CartaDigitalContent(
             }
         }
 
-        // Safe Dishes
-        if (uiState.selectedAllergens.isNotEmpty() && uiState.safeDishes.isNotEmpty()) {
-            DishSection(
+        // Safe Recipes
+        if (uiState.selectedAllergens.isNotEmpty() && uiState.safeRecipes.isNotEmpty()) {
+            RecipeSection(
                 title = "Platos Seguros",
                 titleColor = Green500,
                 borderColor = Green500,
                 bgColor = Green100,
-                dishes = uiState.safeDishes,
+                recipes = uiState.safeRecipes,
                 userAllergens = uiState.selectedAllergens,
             )
         }
 
-        // Unsafe Dishes
-        if (uiState.selectedAllergens.isNotEmpty() && uiState.unsafeDishes.isNotEmpty()) {
-            DishSection(
+        // Unsafe Recipes
+        if (uiState.selectedAllergens.isNotEmpty() && uiState.unsafeRecipes.isNotEmpty()) {
+            RecipeSection(
                 title = "Platos con Alergenos",
                 titleColor = Red500,
                 borderColor = Red500,
                 bgColor = Red100,
-                dishes = uiState.unsafeDishes,
+                recipes = uiState.unsafeRecipes,
                 userAllergens = uiState.selectedAllergens,
             )
         }
 
-        // Show all dishes when no allergens selected
-        if (uiState.selectedAllergens.isEmpty() && uiState.allDishes.isNotEmpty()) {
+        // Show all recipes when no allergens selected
+        if (uiState.selectedAllergens.isEmpty() && uiState.allRecipes.isNotEmpty()) {
             Text(
-                text = "Todos los platos (${uiState.allDishes.size})",
+                text = "Todos los platos (${uiState.allRecipes.size})",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary,
             )
-            uiState.allDishes.forEach { dish ->
-                DishCard(
-                    dish = dish,
+            uiState.allRecipes.forEach { recipe ->
+                RecipeCard(
+                    recipe = recipe,
                     userAllergens = emptySet(),
                     accentColor = Blue500,
+                )
+            }
+        }
+
+        // Empty state
+        if (uiState.allRecipes.isEmpty() && !uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Blue500.copy(alpha = 0.05f))
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "Este menu no tiene recetas asociadas. " +
+                        "Ve a la pestana Menus para editar el menu y seleccionar recetas.",
+                    fontSize = 14.sp,
+                    color = TextSecondary,
                 )
             }
         }
@@ -238,26 +257,26 @@ fun CartaDigitalContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DishSection(
+private fun RecipeSection(
     title: String,
     titleColor: androidx.compose.ui.graphics.Color,
     borderColor: androidx.compose.ui.graphics.Color,
     bgColor: androidx.compose.ui.graphics.Color,
-    dishes: List<Dish>,
+    recipes: List<Recipe>,
     userAllergens: Set<AllergenType>,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = "$title (${dishes.size})",
+            text = "$title (${recipes.size})",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = titleColor,
         )
-        dishes.forEach { dish ->
-            DishCard(
-                dish = dish,
+        recipes.forEach { recipe ->
+            RecipeCard(
+                recipe = recipe,
                 userAllergens = userAllergens,
                 accentColor = borderColor,
             )
@@ -267,8 +286,8 @@ private fun DishSection(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DishCard(
-    dish: Dish,
+private fun RecipeCard(
+    recipe: Recipe,
     userAllergens: Set<AllergenType>,
     accentColor: androidx.compose.ui.graphics.Color,
     modifier: Modifier = Modifier,
@@ -301,40 +320,47 @@ private fun DishCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = dish.name,
+                        text = recipe.name,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary,
                     )
+                    if (recipe.category.isNotBlank()) {
+                        Text(
+                            text = recipe.category,
+                            fontSize = 12.sp,
+                            color = TextSecondary,
+                        )
+                    }
+                }
+                if (recipe.price > 0) {
+                    val priceInt = recipe.price.toInt()
+                    val priceDec = ((recipe.price * 100).toInt() % 100)
+                        .toString().padStart(2, '0')
                     Text(
-                        text = dish.category,
-                        fontSize = 12.sp,
-                        color = TextSecondary,
+                        text = "$priceInt.${priceDec}\u20AC",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
                     )
                 }
-                Text(
-                    text = "${dish.price.toInt()}.${((dish.price * 100).toInt() % 100).toString().padStart(2, '0')}€",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                )
             }
 
-            if (dish.description.isNotBlank()) {
+            if (recipe.description.isNotBlank()) {
                 Text(
-                    text = dish.description,
+                    text = recipe.description,
                     fontSize = 13.sp,
                     color = TextSecondary,
                     maxLines = 2,
                 )
             }
 
-            if (dish.allergens.isNotEmpty()) {
+            if (recipe.computedAllergens.isNotEmpty()) {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    dish.allergens.forEach { allergen ->
+                    recipe.computedAllergens.forEach { allergen ->
                         val isConflict = allergen in userAllergens
                         AllergenBadge(
                             allergenType = allergen,
@@ -355,42 +381,42 @@ private fun CartaDigitalContentPreview() {
             uiState = CartaDigitalUiState(
                 isLoading = false,
                 selectedAllergens = setOf(AllergenType.GLUTEN),
-                allDishes = listOf(
-                    Dish(
-                        id = "d1",
+                allRecipes = listOf(
+                    Recipe(
+                        id = "r1",
                         name = "Butifarra a la Brasa",
                         description = "Butifarra artesana",
                         price = 14.50,
                         category = "Combinados",
-                        allergens = emptySet(),
+                        computedAllergens = emptySet(),
                     ),
-                    Dish(
-                        id = "d2",
+                    Recipe(
+                        id = "r2",
                         name = "Croquetas Ibericas",
                         description = "Croquetas cremosas",
                         price = 12.50,
                         category = "Entrantes",
-                        allergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
+                        computedAllergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
                     ),
                 ),
-                safeDishes = listOf(
-                    Dish(
-                        id = "d1",
+                safeRecipes = listOf(
+                    Recipe(
+                        id = "r1",
                         name = "Butifarra a la Brasa",
                         description = "Butifarra artesana",
                         price = 14.50,
                         category = "Combinados",
-                        allergens = emptySet(),
+                        computedAllergens = emptySet(),
                     ),
                 ),
-                unsafeDishes = listOf(
-                    Dish(
-                        id = "d2",
+                unsafeRecipes = listOf(
+                    Recipe(
+                        id = "r2",
                         name = "Croquetas Ibericas",
                         description = "Croquetas cremosas",
                         price = 12.50,
                         category = "Entrantes",
-                        allergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
+                        computedAllergens = setOf(AllergenType.GLUTEN, AllergenType.DAIRY),
                     ),
                 ),
             ),

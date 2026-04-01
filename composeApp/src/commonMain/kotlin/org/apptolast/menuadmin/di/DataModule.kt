@@ -8,12 +8,14 @@ import org.apptolast.menuadmin.data.remote.createHttpClient
 import org.apptolast.menuadmin.data.remote.dish.DishService
 import org.apptolast.menuadmin.data.remote.ingredient.IngredientService
 import org.apptolast.menuadmin.data.remote.menu.MenuService
+import org.apptolast.menuadmin.data.remote.menudigitalcard.MenuDigitalCardService
 import org.apptolast.menuadmin.data.remote.recipe.RecipeService
 import org.apptolast.menuadmin.data.remote.restaurant.RestaurantService
 import org.apptolast.menuadmin.data.repository.ApiDashboardRepository
 import org.apptolast.menuadmin.data.repository.RemoteAuthRepository
 import org.apptolast.menuadmin.data.repository.RemoteDishRepository
 import org.apptolast.menuadmin.data.repository.RemoteIngredientRepository
+import org.apptolast.menuadmin.data.repository.RemoteMenuDigitalCardRepository
 import org.apptolast.menuadmin.data.repository.RemoteMenuRepository
 import org.apptolast.menuadmin.data.repository.RemoteRecipeRepository
 import org.apptolast.menuadmin.data.repository.RemoteRestaurantRepository
@@ -21,6 +23,7 @@ import org.apptolast.menuadmin.domain.repository.AuthRepository
 import org.apptolast.menuadmin.domain.repository.DashboardRepository
 import org.apptolast.menuadmin.domain.repository.DishRepository
 import org.apptolast.menuadmin.domain.repository.IngredientRepository
+import org.apptolast.menuadmin.domain.repository.MenuDigitalCardRepository
 import org.apptolast.menuadmin.domain.repository.MenuRepository
 import org.apptolast.menuadmin.domain.repository.RecipeRepository
 import org.apptolast.menuadmin.domain.repository.RestaurantRepository
@@ -51,6 +54,7 @@ val dataModule = module {
     singleOf(::DishService)
     singleOf(::IngredientService)
     singleOf(::RecipeService)
+    singleOf(::MenuDigitalCardService)
 
     // Repositories (API-backed)
     singleOf(::RemoteAuthRepository) bind AuthRepository::class
@@ -59,6 +63,7 @@ val dataModule = module {
     singleOf(::RemoteMenuRepository) bind MenuRepository::class
     singleOf(::RemoteIngredientRepository) bind IngredientRepository::class
     singleOf(::RemoteRecipeRepository) bind RecipeRepository::class
+    singleOf(::RemoteMenuDigitalCardRepository) bind MenuDigitalCardRepository::class
     singleOf(::ApiDashboardRepository) bind DashboardRepository::class
 
     // Shared state holders

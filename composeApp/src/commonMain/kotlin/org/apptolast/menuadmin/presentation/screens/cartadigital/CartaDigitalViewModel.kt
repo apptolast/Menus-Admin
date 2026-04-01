@@ -10,9 +10,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.repository.MenuRepository
+import org.apptolast.menuadmin.domain.repository.RecipeRepository
 
 class CartaDigitalViewModel(
     menuRepository: MenuRepository,
+    recipeRepository: RecipeRepository,
     private val restaurantId: String,
 ) : ViewModel() {
     private val _selectedAllergens = MutableStateFlow<Set<AllergenType>>(emptySet())
@@ -20,18 +22,22 @@ class CartaDigitalViewModel(
 
     val uiState: StateFlow<CartaDigitalUiState> = combine(
         menuRepository.getMenusByRestaurant(restaurantId),
+        recipeRepository.getRecipesByRestaurant(restaurantId),
         _selectedAllergens,
         _selectedMenuId,
-    ) { menus, allergens, menuId ->
+    ) { menus, allRecipes, allergens, menuId ->
         val effectiveMenuId = menuId ?: menus.firstOrNull()?.id
         val selectedMenu = menus.find { it.id == effectiveMenuId }
-        val dishes = selectedMenu?.dishes.orEmpty()
+
+        // Only show recipes that are associated with this menu
+        val menuRecipeIds = selectedMenu?.recipes?.map { it.id }?.toSet().orEmpty()
+        val recipes = allRecipes.filter { it.id in menuRecipeIds }
 
         val (safe, unsafe) = if (allergens.isEmpty()) {
-            dishes to emptyList()
+            recipes to emptyList()
         } else {
-            dishes.partition { dish ->
-                dish.allergens.none { it in allergens }
+            recipes.partition { recipe ->
+                recipe.computedAllergens.none { it in allergens }
             }
         }
 
@@ -40,9 +46,9 @@ class CartaDigitalViewModel(
             availableMenus = menus,
             selectedMenuId = effectiveMenuId,
             selectedAllergens = allergens,
-            allDishes = dishes,
-            safeDishes = safe,
-            unsafeDishes = unsafe,
+            allRecipes = recipes,
+            safeRecipes = safe,
+            unsafeRecipes = unsafe,
         )
     }
         .catch { throwable ->

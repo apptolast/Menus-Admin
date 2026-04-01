@@ -31,7 +31,6 @@ data class DishRequestDto(
     val name: String,
     val sectionId: String,
     val description: String? = null,
-    val price: Double? = null,
     val imageUrl: String? = null,
     val available: Boolean? = null,
     val displayOrder: Int? = null,

@@ -26,7 +26,7 @@ val presentationModule = module {
         MenusViewModel(get(), get(), restaurantId)
     }
     viewModel { (restaurantId: String) ->
-        CartaDigitalViewModel(get(), restaurantId)
+        CartaDigitalViewModel(get(), get(), restaurantId)
     }
     viewModelOf(::BackupViewModel)
     viewModelOf(::SettingsViewModel)

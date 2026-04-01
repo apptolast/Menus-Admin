@@ -128,7 +128,9 @@ class RemoteMenuRepository(
                 displayOrder = menu.displayOrder,
                 restaurantLogoUrl = menu.restaurantLogoUrl,
                 companyLogoUrl = menu.companyLogoUrl,
-                recipeIds = menu.recipes.map { it.id }.ifEmpty { null },
+                // Always send recipeIds on update (PUT semantics: full replacement)
+                // null = keep existing, [] = clear all, [...] = replace
+                recipeIds = menu.recipes.map { it.id },
             ),
         )
         val updated = response.toDomain()
