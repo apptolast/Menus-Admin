@@ -29,7 +29,7 @@ val presentationModule = module {
         CartaDigitalViewModel(get(), get(), restaurantId)
     }
     viewModelOf(::BackupViewModel)
-    viewModelOf(::SettingsViewModel)
+    viewModel { SettingsViewModel(get()) }
     viewModelOf(::ProfileViewModel)
     viewModelOf(::RestaurantsListViewModel)
     viewModelOf(::RestaurantDetailViewModel)

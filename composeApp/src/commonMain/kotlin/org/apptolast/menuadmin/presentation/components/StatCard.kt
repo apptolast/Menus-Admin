@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,13 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
 @Composable
 fun StatCard(
@@ -45,8 +42,8 @@ fun StatCard(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .border(width = 1.dp, color = BorderLight, shape = RoundedCornerShape(12.dp))
-            .background(BgCard)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant, shape = RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(20.dp),
     ) {
         Column(
@@ -61,7 +58,7 @@ fun StatCard(
                     text = label,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Box(
                     modifier = Modifier
@@ -86,7 +83,7 @@ fun StatCard(
                     text = value,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (changeText != null) {
                     Box(

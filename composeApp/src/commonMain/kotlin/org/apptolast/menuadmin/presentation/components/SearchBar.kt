@@ -7,6 +7,7 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -15,10 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextMuted
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
 
 @Composable
 fun SearchBar(
@@ -33,14 +31,14 @@ fun SearchBar(
         placeholder = {
             Text(
                 text = placeholder,
-                color = TextMuted,
+                color = MenuAdminTheme.colors.textMuted,
             )
         },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Outlined.Search,
                 contentDescription = "Buscar",
-                tint = TextMuted,
+                tint = MenuAdminTheme.colors.textMuted,
             )
         },
         trailingIcon = {
@@ -49,7 +47,7 @@ fun SearchBar(
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = "Limpiar",
-                        tint = TextMuted,
+                        tint = MenuAdminTheme.colors.textMuted,
                     )
                 }
             }
@@ -58,10 +56,10 @@ fun SearchBar(
         shape = RoundedCornerShape(8.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = Blue500,
-            unfocusedBorderColor = BorderLight,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
             cursorColor = Blue500,
-            focusedTextColor = TextPrimary,
-            unfocusedTextColor = TextPrimary,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
         ),
         modifier = modifier.fillMaxWidth(),
     )

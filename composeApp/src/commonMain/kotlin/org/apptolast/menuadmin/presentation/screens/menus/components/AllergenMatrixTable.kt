@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,15 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Dish
-import org.apptolast.menuadmin.presentation.theme.BgCard
-import org.apptolast.menuadmin.presentation.theme.BgSecondary
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red100
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextMuted
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
 private val allergenHeaders = mapOf(
     AllergenType.GLUTEN to "Gluten",
@@ -77,14 +72,14 @@ fun AllergenMatrixTable(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .border(width = 1.dp, color = BorderLight),
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant),
     ) {
         // Header row
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
-                .background(BgSecondary),
+                .background(MaterialTheme.colorScheme.background),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // Dish name header
@@ -100,7 +95,7 @@ fun AllergenMatrixTable(
                     text = "PRODUCTO / PLATO",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     letterSpacing = 0.5.sp,
                 )
             }
@@ -113,7 +108,7 @@ fun AllergenMatrixTable(
             }
         }
 
-        HorizontalDivider(color = BorderLight, thickness = 1.dp)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
         // Data rows
         filteredDishes.forEachIndexed { index, dish ->
@@ -122,7 +117,7 @@ fun AllergenMatrixTable(
                 allergens = allergens,
             )
             if (index < filteredDishes.lastIndex) {
-                HorizontalDivider(color = BorderLight, thickness = 0.5.dp)
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp)
             }
         }
     }
@@ -144,7 +139,7 @@ private fun RowScope.AllergenHeaderCell(
             text = text,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -162,7 +157,7 @@ private fun DishAllergenRow(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
-            .background(BgCard),
+            .background(MaterialTheme.colorScheme.surface),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Dish name cell
@@ -178,7 +173,7 @@ private fun DishAllergenRow(
                 text = dish.name,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -190,7 +185,7 @@ private fun DishAllergenRow(
                 modifier = Modifier
                     .weight(ALLERGEN_CELL_WEIGHT)
                     .fillMaxHeight()
-                    .background(if (hasAllergen) Red100 else BgCard)
+                    .background(if (hasAllergen) Red100 else MaterialTheme.colorScheme.surface)
                     .borderEnd()
                     .padding(vertical = 10.dp),
                 contentAlignment = Alignment.Center,
@@ -199,7 +194,7 @@ private fun DishAllergenRow(
                     text = if (hasAllergen) "X" else "–",
                     fontSize = 12.sp,
                     fontWeight = if (hasAllergen) FontWeight.Bold else FontWeight.Normal,
-                    color = if (hasAllergen) Red500 else TextMuted,
+                    color = if (hasAllergen) Red500 else MenuAdminTheme.colors.textMuted,
                     textAlign = TextAlign.Center,
                 )
             }
@@ -207,7 +202,9 @@ private fun DishAllergenRow(
     }
 }
 
-private fun Modifier.borderEnd(): Modifier = this.border(width = 0.5.dp, color = BorderLight)
+@Composable
+private fun Modifier.borderEnd(): Modifier =
+    this.border(width = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
 @Composable
 fun AllergenTableLegend(modifier: Modifier = Modifier) {
@@ -217,8 +214,8 @@ fun AllergenTableLegend(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .clip(shape)
-            .border(width = 1.dp, color = BorderLight, shape = shape)
-            .background(BgSecondary)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant, shape = shape)
+            .background(MaterialTheme.colorScheme.background)
             .padding(20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top,
@@ -231,7 +228,7 @@ fun AllergenTableLegend(modifier: Modifier = Modifier) {
                 text = "LEYENDA",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 letterSpacing = 0.5.sp,
             )
             Row(
@@ -260,7 +257,7 @@ fun AllergenTableLegend(modifier: Modifier = Modifier) {
                 Text(
                     text = "Contiene el alérgeno",
                     fontSize = 13.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Row(
@@ -275,13 +272,13 @@ fun AllergenTableLegend(modifier: Modifier = Modifier) {
                         text = "–",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
-                        color = TextMuted,
+                        color = MenuAdminTheme.colors.textMuted,
                     )
                 }
                 Text(
                     text = "No contiene",
                     fontSize = 13.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -297,13 +294,13 @@ fun AllergenTableLegend(modifier: Modifier = Modifier) {
                 text = "Nota Informativa:",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "Esta información ha sido elaborada en base a las fichas técnicas/fotografías de " +
                     "listado de ingredientes facilitadas por nuestros clientes.",
                 fontSize = 12.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 18.sp,
             )
         }

@@ -12,7 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -25,14 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.apptolast.menuadmin.presentation.theme.BgCard
-import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
-import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -40,6 +33,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     SettingsContent(
         uiState = uiState,
+        onToggleDarkTheme = viewModel::onToggleDarkTheme,
         onDismissMessage = viewModel::dismissMessage,
     )
 }
@@ -47,6 +41,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
 @Composable
 fun SettingsContent(
     uiState: SettingsUiState,
+    onToggleDarkTheme: (Boolean) -> Unit,
     onDismissMessage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -62,100 +57,57 @@ fun SettingsContent(
                 text = "Configuracion",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "Personaliza tu experiencia",
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
-        // Messages
         uiState.error?.let { error ->
-            Text(text = error, color = Red500, fontSize = 13.sp)
+            Text(text = error, color = MaterialTheme.colorScheme.error, fontSize = 13.sp)
         }
         uiState.successMessage?.let { msg ->
-            Text(text = msg, color = Green500, fontSize = 13.sp)
+            Text(text = msg, color = MenuAdminTheme.colors.success, fontSize = 13.sp)
         }
 
-        // App settings card
-        AppSettingsCard()
-    }
-}
-
-@Composable
-private fun AppSettingsCard() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = BgCard),
-        border = BorderStroke(1.dp, BorderLight),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Idioma",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = TextPrimary,
-                )
-                Text(
-                    text = "Espanol",
-                    fontSize = 14.sp,
-                    color = Blue500,
-                    fontWeight = FontWeight.Medium,
-                )
-            }
-
-            HorizontalDivider(color = BorderLight)
-
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Tema oscuro",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = TextPrimary,
-                )
-                Switch(
-                    checked = false,
-                    onCheckedChange = null,
-                    enabled = false,
-                    colors = SwitchDefaults.colors(
-                        checkedTrackColor = Blue500,
-                    ),
-                )
-            }
-
-            HorizontalDivider(color = BorderLight)
-
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Notificaciones",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = TextPrimary,
-                )
-                Switch(
-                    checked = false,
-                    onCheckedChange = null,
-                    enabled = false,
-                    colors = SwitchDefaults.colors(
-                        checkedTrackColor = Blue500,
-                    ),
-                )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column {
+                        Text(
+                            text = "Tema oscuro",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Text(
+                            text = "Cambia la apariencia de la aplicacion",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Switch(
+                        checked = uiState.isDarkTheme,
+                        onCheckedChange = onToggleDarkTheme,
+                        colors = SwitchDefaults.colors(
+                            checkedTrackColor = MaterialTheme.colorScheme.primary,
+                        ),
+                    )
+                }
             }
         }
     }
@@ -167,6 +119,7 @@ private fun SettingsContentPreview() {
     MenuAdminTheme {
         SettingsContent(
             uiState = SettingsUiState(),
+            onToggleDarkTheme = {},
             onDismissMessage = {},
         )
     }

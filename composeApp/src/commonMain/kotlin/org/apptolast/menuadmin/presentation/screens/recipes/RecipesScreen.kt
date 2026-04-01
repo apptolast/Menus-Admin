@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,14 +59,9 @@ import org.apptolast.menuadmin.presentation.components.AllergenBadge
 import org.apptolast.menuadmin.presentation.components.AllergenSummaryCard
 import org.apptolast.menuadmin.presentation.components.SearchBar
 import org.apptolast.menuadmin.presentation.screens.recipes.components.RecipeCard
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 
 @Composable
 fun RecipesScreen(viewModel: RecipesViewModel) {
@@ -131,7 +127,7 @@ fun RecipesContent(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Volver",
-                            tint = TextPrimary,
+                            tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
@@ -140,7 +136,7 @@ fun RecipesContent(
                         text = "Recetas y Subelaboraciones",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         text = if (uiState.isEditing) {
@@ -149,7 +145,7 @@ fun RecipesContent(
                             "Gestiona tus recetas y sus ingredientes"
                         },
                         fontSize = 14.sp,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -162,13 +158,13 @@ fun RecipesContent(
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = "Nueva",
-                        tint = TextWhite,
+                        tint = Color.White,
                         modifier = Modifier.size(18.dp),
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Nueva Receta",
-                        color = TextWhite,
+                        color = Color.White,
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
@@ -293,7 +289,7 @@ private fun RecipeEditorForm(
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Blue500,
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     ),
                 )
 
@@ -308,7 +304,7 @@ private fun RecipeEditorForm(
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Blue500,
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     ),
                 )
 
@@ -327,7 +323,7 @@ private fun RecipeEditorForm(
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Blue500,
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     ),
                 )
 
@@ -345,7 +341,7 @@ private fun RecipeEditorForm(
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Blue500,
-                            unfocusedBorderColor = BorderLight,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                         ),
                     )
                     val suggestions = if (categoryFieldFocused && uiState.formCategory.isNotBlank()) {
@@ -378,7 +374,7 @@ private fun RecipeEditorForm(
                         text = "Anadir Componentes",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     OutlinedTextField(
                         value = ingredientSearchQuery,
@@ -389,7 +385,7 @@ private fun RecipeEditorForm(
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Blue500,
-                            unfocusedBorderColor = BorderLight,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                         ),
                     )
                     // Show matching ingredients
@@ -403,9 +399,9 @@ private fun RecipeEditorForm(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .border(1.dp, BorderLight, RoundedCornerShape(8.dp))
+                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                                     .clip(RoundedCornerShape(8.dp))
-                                    .background(BgCard),
+                                    .background(MaterialTheme.colorScheme.surface),
                             ) {
                                 matchingIngredients.forEach { ingredient ->
                                     Row(
@@ -427,7 +423,7 @@ private fun RecipeEditorForm(
                                         Text(
                                             text = ingredient.name,
                                             fontSize = 14.sp,
-                                            color = TextPrimary,
+                                            color = MaterialTheme.colorScheme.onSurface,
                                         )
                                         Icon(
                                             imageVector = Icons.Filled.Add,
@@ -447,9 +443,9 @@ private fun RecipeEditorForm(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, BorderLight, RoundedCornerShape(8.dp))
+                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                             .clip(RoundedCornerShape(8.dp))
-                            .background(BgCard)
+                            .background(MaterialTheme.colorScheme.surface)
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
@@ -461,13 +457,13 @@ private fun RecipeEditorForm(
                                 text = "COMPOSICION DETALLADA",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = TextSecondary,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                             Text(
                                 text = "${uiState.formIngredients.size} items",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = TextSecondary,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         uiState.formIngredients.forEach { ri ->
@@ -488,7 +484,7 @@ private fun RecipeEditorForm(
                                         text = ri.ingredientName,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Medium,
-                                        color = TextPrimary,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                     )
                                     if (ingredientAllergens.isNotEmpty()) {
                                         FlowRow(
@@ -531,7 +527,7 @@ private fun RecipeEditorForm(
                     text = "Resumen Total de Alergenos",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -581,21 +577,21 @@ private fun RecipeEditorForm(
                 if (uiState.isSaving) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(18.dp),
-                        color = TextWhite,
+                        color = Color.White,
                         strokeWidth = 2.dp,
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Filled.Save,
                         contentDescription = null,
-                        tint = TextWhite,
+                        tint = Color.White,
                         modifier = Modifier.size(18.dp),
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Guardar Cambios",
-                    color = TextWhite,
+                    color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                 )
             }

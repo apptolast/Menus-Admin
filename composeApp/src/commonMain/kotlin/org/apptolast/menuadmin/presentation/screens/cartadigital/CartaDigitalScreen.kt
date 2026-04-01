@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,15 +37,11 @@ import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.Green100
 import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red100
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 
 @Composable
 fun CartaDigitalScreen(viewModel: CartaDigitalViewModel) {
@@ -84,12 +81,12 @@ fun CartaDigitalContent(
                 text = "Carta Digital Interactiva",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "Filtra platos segun las alergias del cliente",
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
@@ -112,11 +109,11 @@ fun CartaDigitalContent(
                         },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = Blue500,
-                            selectedLabelColor = TextWhite,
-                            labelColor = TextPrimary,
+                            selectedLabelColor = Color.White,
+                            labelColor = MaterialTheme.colorScheme.onSurface,
                         ),
                         border = FilterChipDefaults.filterChipBorder(
-                            borderColor = BorderLight,
+                            borderColor = MaterialTheme.colorScheme.outlineVariant,
                             selectedBorderColor = Blue500,
                             enabled = true,
                             selected = menu.id == uiState.selectedMenuId,
@@ -139,7 +136,7 @@ fun CartaDigitalContent(
                     text = "¿A que tiene alergia el cliente?",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (uiState.selectedAllergens.isNotEmpty()) {
                     TextButton(onClick = { onClearAllergens() }) {
@@ -172,14 +169,14 @@ fun CartaDigitalContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Green100)
+                    .background(MenuAdminTheme.colors.successContainer)
                     .padding(16.dp),
             ) {
                 Text(
                     text = "${uiState.safeRecipes.size} Platos Seguros de ${uiState.allRecipes.size} total",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Green500,
+                    color = MenuAdminTheme.colors.success,
                 )
             }
         }
@@ -214,7 +211,7 @@ fun CartaDigitalContent(
                 text = "Todos los platos (${uiState.allRecipes.size})",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             uiState.allRecipes.forEach { recipe ->
                 RecipeCard(
@@ -239,7 +236,7 @@ fun CartaDigitalContent(
                     text = "Este menu no tiene recetas asociadas. " +
                         "Ve a la pestana Menus para editar el menu y seleccionar recetas.",
                     fontSize = 14.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -259,9 +256,9 @@ fun CartaDigitalContent(
 @Composable
 private fun RecipeSection(
     title: String,
-    titleColor: androidx.compose.ui.graphics.Color,
-    borderColor: androidx.compose.ui.graphics.Color,
-    bgColor: androidx.compose.ui.graphics.Color,
+    titleColor: Color,
+    borderColor: Color,
+    bgColor: Color,
     recipes: List<Recipe>,
     userAllergens: Set<AllergenType>,
 ) {
@@ -289,15 +286,15 @@ private fun RecipeSection(
 private fun RecipeCard(
     recipe: Recipe,
     userAllergens: Set<AllergenType>,
-    accentColor: androidx.compose.ui.graphics.Color,
+    accentColor: Color,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .border(width = 1.dp, color = BorderLight, shape = RoundedCornerShape(8.dp))
-            .background(androidx.compose.ui.graphics.Color.White),
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant, shape = RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surface),
     ) {
         // Left accent bar
         Box(
@@ -323,13 +320,13 @@ private fun RecipeCard(
                         text = recipe.name,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     if (recipe.category.isNotBlank()) {
                         Text(
                             text = recipe.category,
                             fontSize = 12.sp,
-                            color = TextSecondary,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -341,7 +338,7 @@ private fun RecipeCard(
                         text = "$priceInt.${priceDec}\u20AC",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -350,7 +347,7 @@ private fun RecipeCard(
                 Text(
                     text = recipe.description,
                     fontSize = 13.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                 )
             }

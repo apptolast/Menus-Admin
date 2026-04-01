@@ -50,6 +50,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,15 +62,10 @@ import org.apptolast.menuadmin.domain.model.IngredientAllergen
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
 import org.apptolast.menuadmin.presentation.components.SearchBar
 import org.apptolast.menuadmin.presentation.screens.ingredients.components.AllergenSelector
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.Blue600
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -138,7 +134,7 @@ fun IngredientsContent(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Volver",
-                            tint = TextPrimary,
+                            tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
@@ -147,7 +143,7 @@ fun IngredientsContent(
                         text = "Maestro de Ingredientes",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         text = if (uiState.isEditing) {
@@ -156,7 +152,7 @@ fun IngredientsContent(
                             "Gestiona los ingredientes y sus alergenos"
                         },
                         fontSize = 14.sp,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -169,13 +165,13 @@ fun IngredientsContent(
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = "Nuevo",
-                        tint = TextWhite,
+                        tint = Color.White,
                         modifier = Modifier.size(18.dp),
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "Nuevo Ingrediente",
-                        color = TextWhite,
+                        color = Color.White,
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
@@ -195,11 +191,11 @@ fun IngredientsContent(
                         .fillMaxWidth()
                         .border(
                             width = 1.dp,
-                            color = BorderLight,
+                            color = MaterialTheme.colorScheme.outlineVariant,
                             shape = RoundedCornerShape(8.dp),
                         )
                         .clip(RoundedCornerShape(8.dp))
-                        .background(BgCard)
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(16.dp),
                 ) {
                     Column(
@@ -226,7 +222,7 @@ fun IngredientsContent(
                                 shape = RoundedCornerShape(8.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = Blue500,
-                                    unfocusedBorderColor = BorderLight,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                                 ),
                             )
                             Column(
@@ -254,11 +250,11 @@ fun IngredientsContent(
                                     Icon(
                                         imageVector = Icons.Outlined.Search,
                                         contentDescription = "Analizar",
-                                        tint = TextWhite,
+                                        tint = Color.White,
                                         modifier = Modifier.size(16.dp),
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Analizar", color = TextWhite)
+                                    Text("Analizar", color = Color.White)
                                 }
                             }
                         }
@@ -280,7 +276,7 @@ fun IngredientsContent(
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Blue500,
-                            unfocusedBorderColor = BorderLight,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                         ),
                     )
                     OutlinedTextField(
@@ -293,7 +289,7 @@ fun IngredientsContent(
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Blue500,
-                            unfocusedBorderColor = BorderLight,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                         ),
                     )
                 }
@@ -308,7 +304,7 @@ fun IngredientsContent(
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Blue500,
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     ),
                 )
 
@@ -320,7 +316,7 @@ fun IngredientsContent(
                         text = "Alergenos (Click: Contiene / Puede contener / Desactivar)",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     AllergenSelector(
                         allergens = uiState.formAllergens,
@@ -372,20 +368,20 @@ fun IngredientsContent(
                             CircularProgressIndicator(
                                 modifier = Modifier.size(18.dp),
                                 strokeWidth = 2.dp,
-                                color = TextWhite,
+                                color = Color.White,
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Filled.Save,
                                 contentDescription = null,
-                                tint = TextWhite,
+                                tint = Color.White,
                                 modifier = Modifier.size(18.dp),
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Guardar Ingrediente",
-                            color = TextWhite,
+                            color = Color.White,
                             fontWeight = FontWeight.SemiBold,
                         )
                     }
@@ -494,8 +490,8 @@ private fun IngredientCard(
     Column(
         modifier = modifier
             .clip(shape)
-            .border(width = 1.dp, color = BorderLight, shape = shape)
-            .background(BgCard)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant, shape = shape)
+            .background(MaterialTheme.colorScheme.surface)
             .clickable(onClick = onClick)
             .defaultMinSize(minHeight = 120.dp)
             .padding(16.dp),
@@ -505,7 +501,7 @@ private fun IngredientCard(
             text = ingredient.name,
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -513,7 +509,7 @@ private fun IngredientCard(
             Text(
                 text = ingredient.brand,
                 fontSize = 13.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -534,7 +530,7 @@ private fun IngredientCard(
             Text(
                 text = "Sin alergenos",
                 fontSize = 12.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

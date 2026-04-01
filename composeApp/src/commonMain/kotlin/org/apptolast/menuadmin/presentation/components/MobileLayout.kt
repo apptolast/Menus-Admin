@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -24,8 +25,7 @@ import org.apptolast.menuadmin.presentation.screens.mobile.MobileExploreScreen
 import org.apptolast.menuadmin.presentation.screens.mobile.MobileFavoritesScreen
 import org.apptolast.menuadmin.presentation.screens.mobile.MobileProfileScreen
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.TextMuted
-import org.apptolast.menuadmin.presentation.theme.TextWhite
+import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 
 private enum class MobileTab(
     val label: String,
@@ -58,9 +58,9 @@ fun MobileLayout(modifier: Modifier = Modifier) {
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = Blue500,
                             selectedTextColor = Blue500,
-                            unselectedIconColor = TextMuted,
-                            unselectedTextColor = TextMuted,
-                            indicatorColor = TextWhite,
+                            unselectedIconColor = MenuAdminTheme.colors.textMuted,
+                            unselectedTextColor = MenuAdminTheme.colors.textMuted,
+                            indicatorColor = MaterialTheme.colorScheme.surface,
                         ),
                     )
                 }

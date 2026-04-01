@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,9 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
-import org.apptolast.menuadmin.presentation.theme.AllergenInactiveBg
-import org.apptolast.menuadmin.presentation.theme.AllergenInactiveText
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 
 @Composable
@@ -32,10 +30,10 @@ fun AllergenBadge(
     val backgroundColor = if (isActive) {
         allergenType.color.copy(alpha = 0.15f)
     } else {
-        AllergenInactiveBg
+        MenuAdminTheme.colors.allergenInactiveBg
     }
-    val contentColor = if (isActive) allergenType.color else AllergenInactiveText
-    val borderColor = if (isActive) allergenType.color else BorderLight
+    val contentColor = if (isActive) allergenType.color else MenuAdminTheme.colors.allergenInactiveText
+    val borderColor = if (isActive) allergenType.color else MaterialTheme.colorScheme.outlineVariant
 
     val shape = RoundedCornerShape(12.dp)
 

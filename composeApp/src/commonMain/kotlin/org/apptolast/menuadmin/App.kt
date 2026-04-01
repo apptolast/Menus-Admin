@@ -7,12 +7,16 @@ import androidx.navigation.compose.rememberNavController
 import org.apptolast.menuadmin.presentation.components.AdminLayout
 import org.apptolast.menuadmin.presentation.screens.auth.AuthScreen
 import org.apptolast.menuadmin.presentation.screens.auth.AuthViewModel
+import org.apptolast.menuadmin.presentation.screens.settings.SettingsViewModel
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App() {
-    MenuAdminTheme {
+    val settingsViewModel: SettingsViewModel = koinViewModel()
+    val settingsState by settingsViewModel.uiState.collectAsState()
+
+    MenuAdminTheme(darkTheme = settingsState.isDarkTheme) {
         val authViewModel: AuthViewModel = koinViewModel()
         val authState by authViewModel.uiState.collectAsState()
 

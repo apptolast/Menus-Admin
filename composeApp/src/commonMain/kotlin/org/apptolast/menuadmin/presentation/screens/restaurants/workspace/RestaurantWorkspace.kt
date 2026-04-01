@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -43,12 +44,8 @@ import org.apptolast.menuadmin.presentation.screens.recipes.RecipesScreen
 import org.apptolast.menuadmin.presentation.screens.recipes.RecipesViewModel
 import org.apptolast.menuadmin.presentation.screens.restaurants.detail.RestaurantDetailViewModel
 import org.apptolast.menuadmin.presentation.screens.restaurants.detail.RestaurantOverviewContent
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -91,10 +88,10 @@ fun RestaurantWorkspace(
         @OptIn(ExperimentalMaterial3Api::class)
         PrimaryScrollableTabRow(
             selectedTabIndex = selectedTab,
-            containerColor = BgCard,
+            containerColor = MaterialTheme.colorScheme.surface,
             contentColor = Blue500,
             edgePadding = 16.dp,
-            divider = { HorizontalDivider(color = BorderLight) },
+            divider = { HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant) },
         ) {
             tabs.forEachIndexed { index, tab ->
                 Tab(
@@ -108,7 +105,7 @@ fun RestaurantWorkspace(
                             } else {
                                 FontWeight.Normal
                             },
-                            color = if (selectedTab == index) Blue500 else TextSecondary,
+                            color = if (selectedTab == index) Blue500 else MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     },
                 )
@@ -173,7 +170,7 @@ private fun WorkspaceHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(BgCard)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -181,7 +178,7 @@ private fun WorkspaceHeader(
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = "Volver a restaurantes",
-                tint = TextPrimary,
+                tint = MaterialTheme.colorScheme.onSurface,
             )
         }
         Column(modifier = Modifier.weight(1f)) {
@@ -196,12 +193,12 @@ private fun WorkspaceHeader(
                     text = restaurantName,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     text = restaurantSlug,
                     fontSize = 13.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }

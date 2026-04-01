@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,8 +47,6 @@ import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.SidebarDark
 import org.apptolast.menuadmin.presentation.theme.SidebarDarkSurface
-import org.apptolast.menuadmin.presentation.theme.TextMuted
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 
 @Composable
 fun Sidebar(
@@ -78,7 +77,7 @@ fun Sidebar(
             )
             Text(
                 text = "AllergenGuard",
-                color = TextWhite,
+                color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
             )
@@ -90,7 +89,7 @@ fun Sidebar(
             ) {
                 Text(
                     text = "PRO",
-                    color = TextWhite,
+                    color = Color.White,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -184,7 +183,7 @@ private fun SectionHeader(
 ) {
     Text(
         text = title,
-        color = TextMuted,
+        color = MenuAdminTheme.colors.textMuted,
         fontSize = 11.sp,
         fontWeight = FontWeight.SemiBold,
         letterSpacing = 1.sp,

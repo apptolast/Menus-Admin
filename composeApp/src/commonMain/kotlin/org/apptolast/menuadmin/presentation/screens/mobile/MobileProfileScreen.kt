@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,19 +29,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 
 @Composable
 fun MobileProfileScreen() {
@@ -75,7 +72,7 @@ fun MobileProfileContent(
             text = "Mi Perfil",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         // Avatar + user info
@@ -94,7 +91,7 @@ fun MobileProfileContent(
                 Icon(
                     imageVector = Icons.Outlined.Person,
                     contentDescription = "Perfil",
-                    tint = TextWhite,
+                    tint = Color.White,
                     modifier = Modifier.size(40.dp),
                 )
             }
@@ -102,24 +99,28 @@ fun MobileProfileContent(
                 text = "Usuario",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "usuario@ejemplo.com",
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
-        HorizontalDivider(color = BorderLight)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
         // Allergen preferences
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .border(width = 1.dp, color = BorderLight, shape = RoundedCornerShape(12.dp))
-                .background(BgCard)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = RoundedCornerShape(12.dp),
+                )
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -127,12 +128,12 @@ fun MobileProfileContent(
                 text = "Mis Alergias",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "Selecciona tus alergias para filtrar automaticamente",
                 fontSize = 13.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

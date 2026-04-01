@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,10 +26,7 @@ import org.apptolast.menuadmin.domain.model.ContainmentLevel
 import org.apptolast.menuadmin.presentation.components.LucideIcon
 import org.apptolast.menuadmin.presentation.theme.Amber500
 import org.apptolast.menuadmin.presentation.theme.Blue100
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
 /**
  * Allergen selector with containment level support.
@@ -71,8 +69,8 @@ private fun AllergenCard(
     } else {
         Blue100.copy(alpha = 0.3f)
     }
-    val borderColor = if (isActive) accentColor else BorderLight
-    val textColor = if (isActive) accentColor else TextSecondary
+    val borderColor = if (isActive) accentColor else MaterialTheme.colorScheme.outlineVariant
+    val textColor = if (isActive) accentColor else MaterialTheme.colorScheme.onSurfaceVariant
     val shape = RoundedCornerShape(12.dp)
 
     Column(
@@ -93,11 +91,11 @@ private fun AllergenCard(
         LucideIcon(
             codepoint = allergenType.icon,
             size = 28.sp,
-            color = if (isActive) accentColor else TextSecondary.copy(alpha = 0.5f),
+            color = if (isActive) accentColor else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
         )
         Text(
             text = allergenType.nameEs,
-            color = if (isActive) TextPrimary else textColor,
+            color = if (isActive) MaterialTheme.colorScheme.onSurface else textColor,
             fontSize = 12.sp,
             fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Medium,
             textAlign = TextAlign.Center,

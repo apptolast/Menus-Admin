@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,12 +23,9 @@ import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.ActivityEntry
 import org.apptolast.menuadmin.domain.model.ActivityType
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import kotlin.time.Clock
 
 @Composable
@@ -42,7 +40,7 @@ fun RecentActivityList(
             ActivityItem(activity = activity)
             if (index < activities.lastIndex) {
                 HorizontalDivider(
-                    color = BorderLight,
+                    color = MaterialTheme.colorScheme.outlineVariant,
                     modifier = Modifier.padding(vertical = 4.dp),
                 )
             }
@@ -82,14 +80,14 @@ private fun ActivityItem(
                 text = activity.description,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
 
         Text(
             text = formatTimestamp(activity.timestamp),
             fontSize = 12.sp,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

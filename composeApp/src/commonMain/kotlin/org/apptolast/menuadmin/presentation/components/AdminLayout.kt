@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -29,7 +30,6 @@ import org.apptolast.menuadmin.presentation.screens.profile.ProfileScreen
 import org.apptolast.menuadmin.presentation.screens.restaurants.RestaurantsListScreen
 import org.apptolast.menuadmin.presentation.screens.restaurants.workspace.RestaurantWorkspace
 import org.apptolast.menuadmin.presentation.screens.settings.SettingsScreen
-import org.apptolast.menuadmin.presentation.theme.BgSecondary
 
 @Composable
 fun AdminLayout(
@@ -62,7 +62,7 @@ fun AdminLayout(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                .background(BgSecondary),
+                .background(MaterialTheme.colorScheme.background),
         ) {
             NavHost(
                 navController = navController,

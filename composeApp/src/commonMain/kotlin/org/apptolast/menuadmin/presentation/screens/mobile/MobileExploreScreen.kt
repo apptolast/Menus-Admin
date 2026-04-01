@@ -18,6 +18,7 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,12 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.presentation.components.SearchBar
 import org.apptolast.menuadmin.presentation.theme.Amber500
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
 @Composable
 fun MobileExploreScreen() {
@@ -54,7 +51,7 @@ fun MobileExploreContent(modifier: Modifier = Modifier) {
             text = "Explorar Restaurantes",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         SearchBar(
@@ -67,7 +64,7 @@ fun MobileExploreContent(modifier: Modifier = Modifier) {
             text = "Cerca de ti",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         listOf(
@@ -91,8 +88,8 @@ private fun RestaurantCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .border(width = 1.dp, color = BorderLight, shape = RoundedCornerShape(12.dp))
-            .background(BgCard)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant, shape = RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -117,7 +114,7 @@ private fun RestaurantCard(
                 text = name,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -126,13 +123,13 @@ private fun RestaurantCard(
                 Icon(
                     imageVector = Icons.Outlined.LocationOn,
                     contentDescription = null,
-                    tint = TextSecondary,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(14.dp),
                 )
                 Text(
                     text = cuisine,
                     fontSize = 13.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -151,7 +148,7 @@ private fun RestaurantCard(
                 text = rating,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }

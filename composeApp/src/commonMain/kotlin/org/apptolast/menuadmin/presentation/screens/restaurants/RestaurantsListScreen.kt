@@ -28,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,22 +37,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.Restaurant
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextMuted
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -111,12 +107,12 @@ fun RestaurantsListContent(
                     text = "Restaurantes",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     text = "Gestiona tus restaurantes",
                     fontSize = 14.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Button(
@@ -124,7 +120,7 @@ fun RestaurantsListContent(
                 colors = ButtonDefaults.buttonColors(containerColor = Blue500),
                 shape = RoundedCornerShape(8.dp),
             ) {
-                Text("Nuevo Restaurante", color = TextWhite)
+                Text("Nuevo Restaurante", color = Color.White)
             }
         }
 
@@ -135,7 +131,7 @@ fun RestaurantsListContent(
 
         // Success message
         uiState.successMessage?.let { msg ->
-            Text(text = msg, color = Green500, fontSize = 13.sp)
+            Text(text = msg, color = MenuAdminTheme.colors.success, fontSize = 13.sp)
         }
 
         // Loading
@@ -154,7 +150,7 @@ fun RestaurantsListContent(
             Text(
                 text = "No tienes restaurantes. Crea uno con el boton superior.",
                 fontSize = 14.sp,
-                color = TextMuted,
+                color = MenuAdminTheme.colors.textMuted,
                 modifier = Modifier.padding(vertical = 24.dp),
             )
         } else {
@@ -208,8 +204,8 @@ private fun RestaurantCard(
         modifier = modifier
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = BgCard),
-        border = BorderStroke(1.dp, BorderLight),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -225,7 +221,7 @@ private fun RestaurantCard(
                     text = restaurant.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
@@ -237,7 +233,7 @@ private fun RestaurantCard(
                     Icon(
                         imageVector = Icons.Outlined.Edit,
                         contentDescription = "Editar",
-                        tint = TextSecondary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(18.dp),
                     )
                 }
@@ -247,7 +243,7 @@ private fun RestaurantCard(
             Text(
                 text = restaurant.slug,
                 fontSize = 13.sp,
-                color = TextMuted,
+                color = MenuAdminTheme.colors.textMuted,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -257,7 +253,7 @@ private fun RestaurantCard(
                 Text(
                     text = restaurant.description,
                     fontSize = 14.sp,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -272,13 +268,13 @@ private fun RestaurantCard(
                     Icon(
                         imageVector = Icons.Outlined.LocationOn,
                         contentDescription = null,
-                        tint = TextSecondary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(14.dp),
                     )
                     Text(
                         text = restaurant.address,
                         fontSize = 13.sp,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -294,13 +290,13 @@ private fun RestaurantCard(
                     Icon(
                         imageVector = Icons.Outlined.Phone,
                         contentDescription = null,
-                        tint = TextSecondary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(14.dp),
                     )
                     Text(
                         text = restaurant.phone,
                         fontSize = 13.sp,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -337,7 +333,7 @@ private fun RestaurantFormDialog(
             Text(
                 text = if (uiState.editingRestaurant != null) "Editar Restaurante" else "Nuevo Restaurante",
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         },
         text = {
@@ -396,11 +392,11 @@ private fun RestaurantFormDialog(
                 if (uiState.isSaving) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(16.dp),
-                        color = TextWhite,
+                        color = Color.White,
                         strokeWidth = 2.dp,
                     )
                 } else {
-                    Text("Guardar", color = TextWhite)
+                    Text("Guardar", color = Color.White)
                 }
             }
         },
@@ -413,7 +409,7 @@ private fun RestaurantFormDialog(
             }
         },
         shape = RoundedCornerShape(16.dp),
-        containerColor = BgCard,
+        containerColor = MaterialTheme.colorScheme.surface,
     )
 }
 

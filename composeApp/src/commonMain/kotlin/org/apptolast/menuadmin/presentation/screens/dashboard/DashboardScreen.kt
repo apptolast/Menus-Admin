@@ -38,8 +38,6 @@ import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -74,12 +72,12 @@ fun DashboardContent(
                 text = "Dashboard",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "Bienvenido de nuevo, aqui tienes un resumen de tu actividad",
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
@@ -129,7 +127,7 @@ fun DashboardContent(
                     text = "Actividad Reciente",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
             Text(
@@ -153,7 +151,7 @@ fun DashboardContent(
             text = "Alergenos mas comunes",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         if (stats != null && stats.allergenFrequency.isNotEmpty()) {

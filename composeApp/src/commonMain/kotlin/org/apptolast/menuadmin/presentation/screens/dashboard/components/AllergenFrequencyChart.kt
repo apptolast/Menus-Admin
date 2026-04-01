@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,10 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
-import org.apptolast.menuadmin.presentation.theme.BgSecondary
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
 @Composable
 fun AllergenFrequencyChart(
@@ -68,7 +66,7 @@ private fun AllergenBarRow(
             text = allergen.nameEs,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.width(120.dp),
         )
 
@@ -77,7 +75,7 @@ private fun AllergenBarRow(
                 .weight(1f)
                 .height(20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(BgSecondary),
+                .background(MaterialTheme.colorScheme.background),
         ) {
             Box(
                 modifier = Modifier
@@ -92,7 +90,7 @@ private fun AllergenBarRow(
             text = percentageText,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.width(40.dp),
         )
     }

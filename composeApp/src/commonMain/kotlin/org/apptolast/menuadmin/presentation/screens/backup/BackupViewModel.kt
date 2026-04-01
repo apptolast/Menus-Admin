@@ -43,7 +43,8 @@ class BackupViewModel(
                 _uiState.update {
                     it.copy(
                         isExporting = false,
-                        message = "Exportacion completada: ${ingredients.size} ingredientes, ${recipes.size} recetas, ${menus.size} menus",
+                        message = "Exportacion completada: ${ingredients.size} ingredientes, " +
+                            "${recipes.size} recetas, ${menus.size} menus",
                     )
                 }
             } catch (e: Exception) {
@@ -69,7 +70,9 @@ class BackupViewModel(
                 _uiState.update {
                     it.copy(
                         isImporting = false,
-                        message = "Importacion completada: ${result.ingredients.size} ingredientes, ${result.recipes.size} recetas",
+                        message = "Importacion completada: " +
+                            "${result.ingredients.size} ingredientes, " +
+                            "${result.recipes.size} recetas",
                     )
                 }
             } catch (e: Exception) {

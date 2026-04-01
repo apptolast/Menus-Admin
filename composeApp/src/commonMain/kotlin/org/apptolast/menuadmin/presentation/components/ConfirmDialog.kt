@@ -7,12 +7,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import org.apptolast.menuadmin.presentation.theme.Blue500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 
 @Composable
 fun ConfirmDialog(
@@ -44,7 +44,7 @@ fun ConfirmDialog(
                 onClick = onConfirm,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = confirmButtonColor,
-                    contentColor = TextWhite,
+                    contentColor = Color.White,
                 ),
             ) {
                 Text(text = confirmText)

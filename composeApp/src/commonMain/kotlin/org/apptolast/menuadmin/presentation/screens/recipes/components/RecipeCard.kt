@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,13 +31,8 @@ import org.apptolast.menuadmin.domain.model.Recipe
 import org.apptolast.menuadmin.domain.model.RecipeIngredient
 import org.apptolast.menuadmin.presentation.components.AllergenBadge
 import org.apptolast.menuadmin.presentation.components.LucideIcon
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextMuted
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -51,8 +47,8 @@ fun RecipeCard(
     Column(
         modifier = modifier
             .clip(shape)
-            .border(width = 1.dp, color = BorderLight, shape = shape)
-            .background(BgCard)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant, shape = shape)
+            .background(MaterialTheme.colorScheme.surface)
             .clickable(onClick = onClick),
     ) {
         // === Top section: Name + Category + Allergen badges ===
@@ -70,7 +66,7 @@ fun RecipeCard(
                     text = recipe.name,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
@@ -88,7 +84,7 @@ fun RecipeCard(
                             text = "$priceInt.${priceDec}\u20AC",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(start = 12.dp),
                         )
                     }
@@ -128,7 +124,7 @@ fun RecipeCard(
 
         // === Bottom section: Ingredient breakdown ===
         if (recipe.ingredients.isNotEmpty()) {
-            HorizontalDivider(color = BorderLight, thickness = 1.dp)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -139,7 +135,7 @@ fun RecipeCard(
                     text = "${recipe.ingredients.size} ingredientes",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 // Ingredient rows
@@ -153,7 +149,7 @@ fun RecipeCard(
                 }
             }
         } else if (recipe.ingredientCount > 0) {
-            HorizontalDivider(color = BorderLight, thickness = 1.dp)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -163,7 +159,7 @@ fun RecipeCard(
                     text = "${recipe.ingredientCount} ingredientes",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -186,7 +182,7 @@ private fun IngredientRow(
         Text(
             text = name,
             fontSize = 13.sp,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
@@ -208,7 +204,7 @@ private fun IngredientRow(
             Text(
                 text = "–",
                 fontSize = 14.sp,
-                color = TextMuted,
+                color = MenuAdminTheme.colors.textMuted,
                 modifier = Modifier.padding(start = 12.dp),
             )
         }

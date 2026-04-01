@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,18 +31,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -75,12 +72,12 @@ fun BackupRestoreContent(
                 text = "Backup / Restaurar",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "Exporta e importa tus datos",
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
@@ -96,7 +93,7 @@ fun BackupRestoreContent(
                     text = message,
                     modifier = Modifier.padding(16.dp),
                     fontSize = 14.sp,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
@@ -105,8 +102,8 @@ fun BackupRestoreContent(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = BgCard),
-            border = BorderStroke(1.dp, BorderLight),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -121,7 +118,7 @@ fun BackupRestoreContent(
                         text = "Exportar Datos",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
 
@@ -130,7 +127,7 @@ fun BackupRestoreContent(
                 Text(
                     text = "Descarga todos tus ingredientes, recetas y menus en formato JSON",
                     fontSize = 14.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -140,14 +137,14 @@ fun BackupRestoreContent(
                     enabled = !uiState.isExporting,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Blue500,
-                        contentColor = TextWhite,
+                        contentColor = Color.White,
                     ),
                     shape = RoundedCornerShape(8.dp),
                 ) {
                     if (uiState.isExporting) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(18.dp),
-                            color = TextWhite,
+                            color = Color.White,
                             strokeWidth = 2.dp,
                         )
                     } else {
@@ -167,8 +164,8 @@ fun BackupRestoreContent(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = BgCard),
-            border = BorderStroke(1.dp, BorderLight),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -183,7 +180,7 @@ fun BackupRestoreContent(
                         text = "Importar Datos",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
 
@@ -192,7 +189,7 @@ fun BackupRestoreContent(
                 Text(
                     text = "Restaura tus datos desde un archivo JSON (formato interno o externo)",
                     fontSize = 14.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -200,13 +197,13 @@ fun BackupRestoreContent(
                 OutlinedButton(
                     onClick = onImport,
                     enabled = !uiState.isImporting,
-                    border = BorderStroke(1.dp, BorderLight),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     shape = RoundedCornerShape(8.dp),
                 ) {
                     if (uiState.isImporting) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(18.dp),
-                            color = TextPrimary,
+                            color = MaterialTheme.colorScheme.onSurface,
                             strokeWidth = 2.dp,
                         )
                     } else {
@@ -214,13 +211,13 @@ fun BackupRestoreContent(
                             imageVector = Icons.Outlined.FileUpload,
                             contentDescription = null,
                             modifier = Modifier.size(18.dp),
-                            tint = TextPrimary,
+                            tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Importar JSON",
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }

@@ -26,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,15 +49,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.apptolast.menuadmin.presentation.theme.BgPrimary
-import org.apptolast.menuadmin.presentation.theme.BgSecondary
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextMuted
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -97,7 +93,7 @@ fun AuthContent(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(BgSecondary),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center,
     ) {
         Column(
@@ -105,8 +101,8 @@ fun AuthContent(
                 .widthIn(max = 420.dp)
                 .padding(24.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .border(1.dp, BorderLight, RoundedCornerShape(16.dp))
-                .background(BgPrimary)
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -121,7 +117,7 @@ fun AuthContent(
             Text(
                 text = "Panel de administración",
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
 
@@ -136,14 +132,14 @@ fun AuthContent(
                     Text(
                         text = "Iniciar sesión",
                         fontWeight = if (uiState.isLoginMode) FontWeight.Bold else FontWeight.Normal,
-                        color = if (uiState.isLoginMode) Blue500 else TextMuted,
+                        color = if (uiState.isLoginMode) Blue500 else MenuAdminTheme.colors.textMuted,
                     )
                 }
                 TextButton(onClick = { if (uiState.isLoginMode) onToggleMode() }) {
                     Text(
                         text = "Crear cuenta",
                         fontWeight = if (!uiState.isLoginMode) FontWeight.Bold else FontWeight.Normal,
-                        color = if (!uiState.isLoginMode) Blue500 else TextMuted,
+                        color = if (!uiState.isLoginMode) Blue500 else MenuAdminTheme.colors.textMuted,
                     )
                 }
             }
@@ -190,7 +186,11 @@ fun AuthContent(
                         )
                     }
                 },
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = if (uiState.isLoginMode) ImeAction.Done else ImeAction.Next,
@@ -244,14 +244,14 @@ fun AuthContent(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
-                        color = TextWhite,
+                        color = Color.White,
                         strokeWidth = 2.dp,
                     )
                 } else {
                     Text(
                         text = if (uiState.isLoginMode) "Iniciar sesión" else "Crear cuenta",
                         fontWeight = FontWeight.SemiBold,
-                        color = TextWhite,
+                        color = Color.White,
                     )
                 }
             }

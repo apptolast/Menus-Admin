@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,10 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.domain.model.AllergenType
-import org.apptolast.menuadmin.presentation.theme.BgCard
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
 @Composable
 fun AllergenSummaryCard(
@@ -33,10 +31,10 @@ fun AllergenSummaryCard(
     val bgColor = if (isPresent) {
         allergenType.color.copy(alpha = 0.12f)
     } else {
-        BgCard
+        MaterialTheme.colorScheme.surface
     }
-    val borderColor = if (isPresent) allergenType.color else BorderLight
-    val textColor = if (isPresent) allergenType.color else TextSecondary.copy(alpha = 0.5f)
+    val borderColor = if (isPresent) allergenType.color else MaterialTheme.colorScheme.outlineVariant
+    val textColor = if (isPresent) allergenType.color else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
     val shape = RoundedCornerShape(12.dp)
 
     Column(

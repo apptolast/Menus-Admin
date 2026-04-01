@@ -41,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,15 +55,10 @@ import org.apptolast.menuadmin.presentation.components.ConfirmDialog
 import org.apptolast.menuadmin.presentation.screens.menus.components.AllergenMatrixTable
 import org.apptolast.menuadmin.presentation.screens.menus.components.AllergenTableLegend
 import org.apptolast.menuadmin.presentation.screens.menus.components.CategoryFilterRow
-import org.apptolast.menuadmin.presentation.theme.BgCard
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.Green500
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
 import org.apptolast.menuadmin.presentation.theme.Red500
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 import kotlin.time.Clock
 
 @Composable
@@ -200,7 +196,7 @@ private fun MenuEditorForm(
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = "Volver",
-                        tint = TextPrimary,
+                        tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
                 Column {
@@ -208,12 +204,12 @@ private fun MenuEditorForm(
                         text = if (uiState.editingMenu != null) "Editar Menu" else "Nuevo Menu",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         text = "Configura el menu y selecciona las recetas",
                         fontSize = 14.sp,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -241,7 +237,7 @@ private fun MenuEditorForm(
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Blue500,
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     ),
                 )
                 OutlinedTextField(
@@ -254,7 +250,7 @@ private fun MenuEditorForm(
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Blue500,
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     ),
                 )
             }
@@ -274,7 +270,7 @@ private fun MenuEditorForm(
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Blue500,
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     ),
                 )
                 OutlinedTextField(
@@ -287,7 +283,7 @@ private fun MenuEditorForm(
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Blue500,
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
                     ),
                 )
             }
@@ -297,27 +293,27 @@ private fun MenuEditorForm(
                 text = "Recetas del Menu",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             if (uiState.availableRecipes.isEmpty()) {
                 Text(
                     text = "No hay recetas disponibles. Crea recetas primero.",
                     fontSize = 14.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
                 Text(
                     text = "${uiState.formSelectedRecipeIds.size} de ${uiState.availableRecipes.size} seleccionadas",
                     fontSize = 13.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, BorderLight, RoundedCornerShape(12.dp))
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
-                        .background(BgCard),
+                        .background(MaterialTheme.colorScheme.surface),
                 ) {
                     uiState.availableRecipes.forEach { recipe ->
                         val isSelected = recipe.id in uiState.formSelectedRecipeIds
@@ -345,21 +341,21 @@ private fun MenuEditorForm(
                 if (uiState.isSaving) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(18.dp),
-                        color = TextWhite,
+                        color = Color.White,
                         strokeWidth = 2.dp,
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Filled.Save,
                         contentDescription = null,
-                        tint = TextWhite,
+                        tint = Color.White,
                         modifier = Modifier.size(18.dp),
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = if (uiState.editingMenu != null) "Guardar Cambios" else "Crear Menu",
-                    color = TextWhite,
+                    color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -387,7 +383,7 @@ private fun RecipeSelectionRow(
         Icon(
             imageVector = if (isSelected) Icons.Filled.CheckBox else Icons.Filled.CheckBoxOutlineBlank,
             contentDescription = if (isSelected) "Seleccionada" else "No seleccionada",
-            tint = if (isSelected) Blue500 else TextSecondary,
+            tint = if (isSelected) Blue500 else MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(24.dp),
         )
         Column(modifier = Modifier.weight(1f)) {
@@ -395,7 +391,7 @@ private fun RecipeSelectionRow(
                 text = recipe.name,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -403,14 +399,14 @@ private fun RecipeSelectionRow(
                 Text(
                     text = categoryLabel,
                     fontSize = 12.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
         Text(
             text = "${recipe.ingredientCount} ing.",
             fontSize = 12.sp,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -441,12 +437,12 @@ private fun MenuListView(
                     text = "Menus",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     text = "Gestiona los menus y sus alergenos",
                     fontSize = 14.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Button(
@@ -457,13 +453,13 @@ private fun MenuListView(
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Nuevo",
-                    tint = TextWhite,
+                    tint = Color.White,
                     modifier = Modifier.size(18.dp),
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = "Nuevo Menu",
-                    color = TextWhite,
+                    color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -493,8 +489,8 @@ private fun MenuCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .border(width = 1.dp, color = BorderLight, shape = RoundedCornerShape(12.dp))
-            .background(BgCard)
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant, shape = RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface)
             .clickable(onClick = onClick)
             .padding(20.dp),
     ) {
@@ -510,13 +506,13 @@ private fun MenuCard(
                     text = menu.name,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (menu.description.isNotBlank()) {
                     Text(
                         text = menu.description,
                         fontSize = 14.sp,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 Row(
@@ -526,7 +522,7 @@ private fun MenuCard(
                     if (menu.sections.isNotEmpty()) {
                         Badge(
                             text = "${menu.sections.size} secciones",
-                            color = TextSecondary,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     if (menu.dishes.isNotEmpty()) {
@@ -548,7 +544,7 @@ private fun MenuCard(
                     Icon(
                         imageVector = Icons.Filled.Edit,
                         contentDescription = "Editar",
-                        tint = TextSecondary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp),
                     )
                 }
@@ -568,7 +564,7 @@ private fun MenuCard(
 @Composable
 private fun Badge(
     text: String,
-    color: androidx.compose.ui.graphics.Color,
+    color: Color,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -613,7 +609,7 @@ private fun AllergenMatrixView(
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                     contentDescription = "Volver",
-                    tint = TextPrimary,
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
             Column(
@@ -622,13 +618,13 @@ private fun AllergenMatrixView(
                 Text(
                     text = menu.name,
                     fontSize = 13.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     text = "Menu de Alergenos",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
             OutlinedButton(
@@ -652,11 +648,11 @@ private fun AllergenMatrixView(
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = null,
-                    tint = TextWhite,
+                    tint = Color.White,
                     modifier = Modifier.size(16.dp),
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Editar Menu", color = TextWhite)
+                Text("Editar Menu", color = Color.White)
             }
             Spacer(modifier = Modifier.width(8.dp))
             OutlinedButton(
@@ -691,7 +687,7 @@ private fun AllergenMatrixView(
                 text = "Generar Menu Adaptado (Libre de...): Selecciona una categoria y consulta " +
                     "la tabla de alergenos para cada plato.",
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
@@ -722,8 +718,8 @@ private fun AllergenMatrixView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp))
-                    .background(BgCard)
-                    .border(1.dp, BorderLight, RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                     .padding(24.dp),
                 contentAlignment = Alignment.Center,
             ) {
@@ -731,7 +727,7 @@ private fun AllergenMatrixView(
                     text = "Este menu no tiene recetas asociadas. " +
                         "Edita el menu para seleccionar recetas y ver la tabla de alergenos.",
                     fontSize = 14.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         } else {

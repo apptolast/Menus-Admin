@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,9 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextMuted
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 
 @Composable
 fun MobileFavoritesScreen() {
@@ -39,7 +37,7 @@ fun MobileFavoritesContent(modifier: Modifier = Modifier) {
             text = "Favoritos",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         Column(
@@ -52,19 +50,19 @@ fun MobileFavoritesContent(modifier: Modifier = Modifier) {
             Icon(
                 imageVector = Icons.Outlined.FavoriteBorder,
                 contentDescription = "Sin favoritos",
-                tint = TextMuted,
+                tint = MenuAdminTheme.colors.textMuted,
                 modifier = Modifier.size(64.dp),
             )
             Text(
                 text = "Aun no tienes favoritos",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "Guarda tus restaurantes favoritos para acceder rapidamente",
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
         }

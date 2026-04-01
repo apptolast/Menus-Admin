@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,11 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.apptolast.menuadmin.presentation.theme.BgCard
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextSecondary
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -54,12 +51,12 @@ fun ProfileContent(
                 text = "Mi Perfil",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = "Informacion de tu cuenta de administrador",
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
@@ -67,8 +64,8 @@ fun ProfileContent(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = BgCard),
-            border = BorderStroke(1.dp, BorderLight),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -78,12 +75,12 @@ fun ProfileContent(
                     text = "Cuenta",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     text = "Sesion iniciada como administrador",
                     fontSize = 14.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }

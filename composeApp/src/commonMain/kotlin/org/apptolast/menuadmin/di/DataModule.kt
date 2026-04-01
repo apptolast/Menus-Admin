@@ -1,6 +1,7 @@
 package org.apptolast.menuadmin.di
 
 import kotlinx.serialization.json.Json
+import org.apptolast.menuadmin.data.local.ThemePreferences
 import org.apptolast.menuadmin.data.remote.auth.AuthService
 import org.apptolast.menuadmin.data.remote.auth.TokenManager
 import org.apptolast.menuadmin.data.remote.createAuthHttpClient
@@ -65,6 +66,9 @@ val dataModule = module {
     singleOf(::RemoteRecipeRepository) bind RecipeRepository::class
     singleOf(::RemoteMenuDigitalCardRepository) bind MenuDigitalCardRepository::class
     singleOf(::ApiDashboardRepository) bind DashboardRepository::class
+
+    // Local preferences
+    single { ThemePreferences() }
 
     // Shared state holders
     single { SelectedRestaurantHolder() }

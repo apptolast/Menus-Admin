@@ -5,18 +5,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.apptolast.menuadmin.presentation.theme.Blue500
-import org.apptolast.menuadmin.presentation.theme.BorderLight
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
-import org.apptolast.menuadmin.presentation.theme.TextPrimary
-import org.apptolast.menuadmin.presentation.theme.TextWhite
 
 @Composable
 fun CategoryFilterRow(
@@ -42,12 +41,12 @@ fun CategoryFilterRow(
             },
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = Blue500,
-                selectedLabelColor = TextWhite,
-                containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                labelColor = TextPrimary,
+                selectedLabelColor = Color.White,
+                containerColor = Color.Transparent,
+                labelColor = MaterialTheme.colorScheme.onSurface,
             ),
             border = FilterChipDefaults.filterChipBorder(
-                borderColor = BorderLight,
+                borderColor = MaterialTheme.colorScheme.outlineVariant,
                 selectedBorderColor = Blue500,
                 enabled = true,
                 selected = selectedCategory == null,
@@ -67,12 +66,12 @@ fun CategoryFilterRow(
                 },
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = Blue500,
-                    selectedLabelColor = TextWhite,
-                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                    labelColor = TextPrimary,
+                    selectedLabelColor = Color.White,
+                    containerColor = Color.Transparent,
+                    labelColor = MaterialTheme.colorScheme.onSurface,
                 ),
                 border = FilterChipDefaults.filterChipBorder(
-                    borderColor = BorderLight,
+                    borderColor = MaterialTheme.colorScheme.outlineVariant,
                     selectedBorderColor = Blue500,
                     enabled = true,
                     selected = selectedCategory == category,
