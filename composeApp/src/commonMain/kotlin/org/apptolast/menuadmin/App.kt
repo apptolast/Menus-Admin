@@ -4,19 +4,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
+import org.apptolast.menuadmin.data.local.ThemePreferences
 import org.apptolast.menuadmin.presentation.components.AdminLayout
 import org.apptolast.menuadmin.presentation.screens.auth.AuthScreen
 import org.apptolast.menuadmin.presentation.screens.auth.AuthViewModel
-import org.apptolast.menuadmin.presentation.screens.settings.SettingsViewModel
 import org.apptolast.menuadmin.presentation.theme.MenuAdminTheme
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App() {
-    val settingsViewModel: SettingsViewModel = koinViewModel()
-    val settingsState by settingsViewModel.uiState.collectAsState()
+    val themePreferences: ThemePreferences = koinInject()
+    val isDarkTheme by themePreferences.isDarkThemeFlow.collectAsState()
 
-    MenuAdminTheme(darkTheme = settingsState.isDarkTheme) {
+    MenuAdminTheme(darkTheme = isDarkTheme) {
         val authViewModel: AuthViewModel = koinViewModel()
         val authState by authViewModel.uiState.collectAsState()
 
