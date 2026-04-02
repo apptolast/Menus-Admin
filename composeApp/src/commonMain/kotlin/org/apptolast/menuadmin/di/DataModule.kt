@@ -12,9 +12,11 @@ import org.apptolast.menuadmin.data.remote.menu.MenuService
 import org.apptolast.menuadmin.data.remote.menudigitalcard.MenuDigitalCardService
 import org.apptolast.menuadmin.data.remote.recipe.RecipeService
 import org.apptolast.menuadmin.data.remote.restaurant.RestaurantService
+import org.apptolast.menuadmin.data.remote.upload.FileUploadService
 import org.apptolast.menuadmin.data.repository.ApiDashboardRepository
 import org.apptolast.menuadmin.data.repository.RemoteAuthRepository
 import org.apptolast.menuadmin.data.repository.RemoteDishRepository
+import org.apptolast.menuadmin.data.repository.RemoteFileUploadRepository
 import org.apptolast.menuadmin.data.repository.RemoteIngredientRepository
 import org.apptolast.menuadmin.data.repository.RemoteMenuDigitalCardRepository
 import org.apptolast.menuadmin.data.repository.RemoteMenuRepository
@@ -23,6 +25,7 @@ import org.apptolast.menuadmin.data.repository.RemoteRestaurantRepository
 import org.apptolast.menuadmin.domain.repository.AuthRepository
 import org.apptolast.menuadmin.domain.repository.DashboardRepository
 import org.apptolast.menuadmin.domain.repository.DishRepository
+import org.apptolast.menuadmin.domain.repository.FileUploadRepository
 import org.apptolast.menuadmin.domain.repository.IngredientRepository
 import org.apptolast.menuadmin.domain.repository.MenuDigitalCardRepository
 import org.apptolast.menuadmin.domain.repository.MenuRepository
@@ -56,6 +59,7 @@ val dataModule = module {
     singleOf(::IngredientService)
     singleOf(::RecipeService)
     singleOf(::MenuDigitalCardService)
+    singleOf(::FileUploadService)
 
     // Repositories (API-backed)
     singleOf(::RemoteAuthRepository) bind AuthRepository::class
@@ -65,6 +69,7 @@ val dataModule = module {
     singleOf(::RemoteIngredientRepository) bind IngredientRepository::class
     singleOf(::RemoteRecipeRepository) bind RecipeRepository::class
     singleOf(::RemoteMenuDigitalCardRepository) bind MenuDigitalCardRepository::class
+    singleOf(::RemoteFileUploadRepository) bind FileUploadRepository::class
     singleOf(::ApiDashboardRepository) bind DashboardRepository::class
 
     // Local preferences

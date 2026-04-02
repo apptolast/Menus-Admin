@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.apptolast.menuadmin.domain.platform.FileHandler
+import org.apptolast.menuadmin.domain.repository.FileUploadRepository
 import org.apptolast.menuadmin.domain.repository.IngredientRepository
 import org.apptolast.menuadmin.domain.repository.MenuRepository
 import org.apptolast.menuadmin.domain.repository.RecipeRepository
@@ -27,6 +28,7 @@ class BackupViewModel(
     private val menuRepository: MenuRepository,
     private val fileHandler: FileHandler,
     private val json: Json,
+    private val fileUploadRepository: FileUploadRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BackupUiState())
     val uiState: StateFlow<BackupUiState> = _uiState.asStateFlow()
@@ -64,15 +66,15 @@ class BackupViewModel(
                     _uiState.update { it.copy(isImporting = false) }
                     return@launch
                 }
-                val result = JsonExporter.importExternalData(content, json)
-                ingredientRepository.replaceAll(result.ingredients)
-                recipeRepository.replaceAll(result.recipes)
+                val url = fileUploadRepository.uploadImage(
+                    fileBytes = content.encodeToByteArray(),
+                    fileName = "import.json",
+                    contentType = "application/json",
+                )
                 _uiState.update {
                     it.copy(
                         isImporting = false,
-                        message = "Importacion completada: " +
-                            "${result.ingredients.size} ingredientes, " +
-                            "${result.recipes.size} recetas",
+                        message = "Archivo importado correctamente: $url",
                     )
                 }
             } catch (e: Exception) {

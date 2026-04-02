@@ -110,13 +110,13 @@ fun Sidebar(
         NavItem(
             icon = Icons.Outlined.Dashboard,
             label = "Dashboard",
-            isSelected = currentRoute == DashboardRoute::class.qualifiedName,
+            isSelected = currentRoute?.contains("DashboardRoute") == true,
             onClick = { onNavigate(DashboardRoute) },
         )
         NavItem(
             icon = Icons.Outlined.Inventory2,
             label = "Ingredientes",
-            isSelected = currentRoute == IngredientsRoute::class.qualifiedName,
+            isSelected = currentRoute?.contains("IngredientsRoute") == true,
             onClick = { onNavigate(IngredientsRoute) },
         )
         NavItem(
@@ -137,13 +137,13 @@ fun Sidebar(
         NavItem(
             icon = Icons.Outlined.Storage,
             label = "Backup / Restaurar",
-            isSelected = currentRoute == BackupRestoreRoute::class.qualifiedName,
+            isSelected = currentRoute?.contains("BackupRestoreRoute") == true,
             onClick = { onNavigate(BackupRestoreRoute) },
         )
         NavItem(
             icon = Icons.Outlined.Settings,
             label = "Configuracion",
-            isSelected = currentRoute == SettingsRoute::class.qualifiedName,
+            isSelected = currentRoute?.contains("SettingsRoute") == true,
             onClick = { onNavigate(SettingsRoute) },
         )
 
@@ -157,7 +157,7 @@ fun Sidebar(
         NavItem(
             icon = Icons.Outlined.Person,
             label = "Mi Perfil",
-            isSelected = currentRoute == ProfileRoute::class.qualifiedName,
+            isSelected = currentRoute?.contains("ProfileRoute") == true,
             onClick = { onNavigate(ProfileRoute) },
         )
 
